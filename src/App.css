@@ -1,0 +1,33 @@
+.header {
+  background-color: #0e0f12;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-text {
+  font-size: 2em;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .main-text {
+    font-size: 1.5em;
+  }
+
+  @media screen and (max-width: 480px) {
+    .main-text {
+      font-size: 1em;
+    }
+
+    @media screen and (max-width: 320px) {
+      .main-text {
+        font-size: 0.8em;
+      }
+    }
+  }
+}
