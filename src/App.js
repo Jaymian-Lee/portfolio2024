@@ -25,6 +25,10 @@ const Portfolio = () => {
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;700&family=Roboto+Slab:wght@300;400;700&family=Montserrat:wght@300;400;700&display=swap');
 
+        html, body {
+          overflow: hidden;
+        }
+
         .portfolio {
           color: white;
           min-height: 100vh;
