@@ -160,7 +160,7 @@ const Portfolio = () => {
             <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 10-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2V9zm2-7a2 2 0 110 4 2 2 0 010-4z"/>
           </svg>
         </a>
-        <a href="hhttps://www.instagram.com/jaymianlee/" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.instagram.com/jaymianlee/" target="_blank" rel="noopener noreferrer">
           <svg className="icon instagram-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5a4.25 4.25 0 00-4.25-4.25h-8.5zM12 7.75a4.25 4.25 0 110 8.5 4.25 4.25 0 010-8.5zm0 1.5a2.75 2.75 0 100 5.5 2.75 2.75 0 000-5.5zM17 6.25a.875.875 0 110 1.75.875.875 0 010-1.75z"/>
           </svg>
