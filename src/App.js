@@ -2,10 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 const Portfolio = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [activeCard, setActiveCard] = useState(null);
-  const [gameCompleted, setGameCompleted] = useState(false);
   const nameRef = useRef(null);
-  const workCardsRef = useRef(null);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -23,61 +20,6 @@ const Portfolio = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const handleCardMouseMove = (e) => {
-    if (activeCard === null || !workCardsRef.current) return;
-    const card = workCardsRef.current.children[activeCard];
-    if (!card) return;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    const mx = x / rect.width;
-    const my = y / rect.height;
-    card.style.transform = `rotateY(${mx * 10}deg) rotateX(${-my * 10}deg) translateZ(50px)`;
-  };
-
-  const handleCardMouseEnter = (index) => {
-    setActiveCard(index);
-  };
-
-  const handleCardMouseLeave = () => {
-    setActiveCard(null);
-    if (workCardsRef.current) {
-      Array.from(workCardsRef.current.children).forEach(card => {
-        card.style.transform = '';
-      });
-    }
-  };
-
-  const MiniGame = () => {
-    const [position, setPosition] = useState(0);
-    const maxPosition = 100;
-
-    useEffect(() => {
-      const handleKeyDown = (e) => {
-        if (e.key === 'ArrowRight' && position < maxPosition) {
-          setPosition(prev => Math.min(prev + 10, maxPosition));
-        } else if (e.key === 'ArrowLeft' && position > 0) {
-          setPosition(prev => Math.max(prev - 10, 0));
-        }
-        if (position === maxPosition) {
-          setGameCompleted(true);
-        }
-      };
-
-      window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [position]);
-
-    return (
-      <div className="mini-game">
-        <div className="game-instructions">Use left and right arrow keys to move the block to the end</div>
-        <div className="game-container">
-          <div className="game-block" style={{ left: `${position}%` }}></div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="portfolio">
       <style jsx>{`
@@ -90,6 +32,7 @@ const Portfolio = () => {
           overflow-x: hidden;
           font-family: 'Raleway', sans-serif;
           background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+          position: relative;
         }
         .section {
           min-height: 100vh;
@@ -137,66 +80,60 @@ const Portfolio = () => {
           pointer-events: none;
           z-index: 1;
         }
-        .work-cards-container {
-          display: flex;
-          justify-content: center;
-          gap: 20px;
-          margin-top: 50px;
+        .icon {
+          width: 40px;
+          height: 40px;
+          fill: none;
+          stroke: white;
+          stroke-width: 2;
+          position: fixed;
+          z-index: 2;
         }
-        .work-card {
-          width: 250px;
-          height: 300px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          transition: transform 0.3s ease;
+        .linkedin-icon {
+          right: 20px;
+          bottom: 20px;
         }
-        .work-card:hover {
-          transform: translateY(-10px);
+        .instagram-icon {
+          left: 20px;
+          bottom: 20px;
         }
-        .contact-form {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          max-width: 400px;
-        }
-        .contact-form input,
-        .contact-form textarea {
-          margin-bottom: 10px;
-          padding: 10px;
-          border-radius: 5px;
+        .contact-button {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          font-size: 16px;
+          font-weight: 700;
+          font-family: 'Montserrat', sans-serif;
+          letter-spacing: 1px;
+          color: transparent;
+          -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+          text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.3),
+            0 0 20px rgba(255, 255, 255, 0.2);
+          transition: transform 0.1s ease;
+          background: none;
           border: none;
-          background: rgba(255, 255, 255, 0.1);
-        }
-        .contact-form button {
-          padding: 10px;
-          border-radius: 5px;
-          border: none;
-          background: #6495ED;
-          color: white;
           cursor: pointer;
-        }
-        .mini-game {
-          width: 100%;
-          max-width: 400px;
-        }
-        .game-container {
-          height: 20px;
+          padding: 5px 10px;
           background: rgba(255, 255, 255, 0.1);
-          position: relative;
-          border-radius: 10px;
+          border-radius: 5px;
+          border: 1px solid rgba(255, 255, 255, 0.8);
         }
-        .game-block {
-          width: 20px;
-          height: 20px;
-          background: #6495ED;
-          position: absolute;
-          border-radius: 50%;
+        @media (max-width: 600px) {
+          .stylized-name {
+            font-size: 12vw;
+          }
+          .slogan {
+            font-size: 4vw;
+          }
+          .contact-button {
+            font-size: 12px;
+            padding: 3px 7px;
+          }
+          .icon {
+            width: 30px;
+            height: 30px;
+          }
         }
       `}</style>
 
@@ -204,7 +141,7 @@ const Portfolio = () => {
         className="moving-bg" 
         style={{ '--x': `${mousePosition.x}px`, '--y': `${mousePosition.y}px` }}
       ></div>
-      
+
       <section id="home" className="section">
         <div className="name-container">
           <div className="stylized-name" ref={nameRef}>
@@ -212,43 +149,22 @@ const Portfolio = () => {
           </div>
           <div className="slogan">Developing the future</div>
         </div>
-      </section>
-
-      <section id="work" className="section">
-        <h2>My Work Experience</h2>
-        <div 
-          className="work-cards-container"
-          ref={workCardsRef}
-          onMouseMove={handleCardMouseMove}
-          onMouseLeave={handleCardMouseLeave}
+        <button
+          className="contact-button"
+          onClick={() => window.location.href = 'mailto:info@jaymian-lee.nl'}
         >
-          <div className="work-card" onMouseEnter={() => handleCardMouseEnter(0)}>
-            <h3>RP Web Design</h3>
-            <p>Software Company Founder</p>
-          </div>
-          <div className="work-card" onMouseEnter={() => handleCardMouseEnter(1)}>
-            <h3>Lee-Solutions</h3>
-            <p>Hardware Company Founder</p>
-          </div>
-          <div className="work-card" onMouseEnter={() => handleCardMouseEnter(2)}>
-            <h3>LinkedIn</h3>
-            <a href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noopener noreferrer">Connect with me</a>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="section">
-        <h2>Contact Me</h2>
-        {!gameCompleted ? (
-          <MiniGame />
-        ) : (
-          <form className="contact-form">
-            <input type="text" placeholder="Name" required />
-            <input type="email" placeholder="Email" required />
-            <textarea placeholder="Message" required />
-            <button type="submit">Send Message</button>
-          </form>
-        )}
+          Contact Me
+        </button>
+        <a href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/" target="_blank" rel="noopener noreferrer">
+          <svg className="icon linkedin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 10-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2V9zm2-7a2 2 0 110 4 2 2 0 010-4z"/>
+          </svg>
+        </a>
+        <a href="hhttps://www.instagram.com/jaymianlee/" target="_blank" rel="noopener noreferrer">
+          <svg className="icon instagram-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5a4.25 4.25 0 00-4.25-4.25h-8.5zM12 7.75a4.25 4.25 0 110 8.5 4.25 4.25 0 010-8.5zm0 1.5a2.75 2.75 0 100 5.5 2.75 2.75 0 000-5.5zM17 6.25a.875.875 0 110 1.75.875.875 0 010-1.75z"/>
+          </svg>
+        </a>
       </section>
     </div>
   );
