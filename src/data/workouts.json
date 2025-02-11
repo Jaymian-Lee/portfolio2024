@@ -1,0 +1,19 @@
+{
+  "exercises": [
+    {
+      "id": "bench-press",
+      "name": "Bench Press",
+      "history": []
+    },
+    {
+      "id": "squat",
+      "name": "Squat", 
+      "history": []
+    },
+    {
+      "id": "deadlift",
+      "name": "Deadlift",
+      "history": []
+    }
+  ]
+}
