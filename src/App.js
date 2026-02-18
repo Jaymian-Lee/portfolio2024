@@ -161,6 +161,7 @@ const experience = {
     {
       role: 'Co-Founder',
       company: 'Corthex',
+      website: 'https://corthex.app',
       period: '2026 to Present',
       summary:
         'Building practical AI products and automation workflows with a strong focus on real business outcomes.',
@@ -169,6 +170,7 @@ const experience = {
     {
       role: 'Founder',
       company: 'Botforger',
+      website: 'https://botforger.com',
       period: '2025 to 2026',
       summary:
         'Created the foundation for scalable chatbot and workflow automation systems.',
@@ -177,6 +179,7 @@ const experience = {
     {
       role: 'Software Developer | Owner',
       company: 'Refacthor',
+      website: 'https://refacthor.nl',
       period: 'November 2021 to Present',
       summary:
         'Develops custom web solutions focused on digital growth, usability, and technical reliability.',
@@ -187,6 +190,7 @@ const experience = {
     {
       role: 'Co-Founder',
       company: 'Corthex',
+      website: 'https://corthex.app',
       period: '2026 tot Nu',
       summary:
         'Bouwt praktische AI-producten en automation workflows met focus op echte business resultaten.',
@@ -195,6 +199,7 @@ const experience = {
     {
       role: 'Founder',
       company: 'Botforger',
+      website: 'https://botforger.com',
       period: '2025 tot 2026',
       summary: 'Bouwde de basis voor schaalbare chatbot en workflow automation systemen.',
       highlight: 'Zette de basisarchitectuur en productvisie neer die later verder groeide.'
@@ -202,6 +207,7 @@ const experience = {
     {
       role: 'Softwareontwikkelaar | Eigenaar',
       company: 'Refacthor',
+      website: 'https://refacthor.nl',
       period: 'november 2021 tot Nu',
       summary:
         'Ontwikkelt maatwerk websites met focus op digitale groei, gebruiksvriendelijkheid en technische betrouwbaarheid.',
@@ -290,7 +296,7 @@ const copy = {
     experienceTitle: 'Rollen binnen product, engineering en automation.',
     socialsKicker: 'Connect',
     socialsTitle: 'Professionele kanalen en project updates.',
-    workKicker: 'Geselecteerd werk',
+    workKicker: 'Geselecteerde projecten',
     workTitle: 'Projecten gebouwd voor helderheid, snelheid en duurzame kwaliteit.',
     contactKicker: 'Contact',
     contactTitle: 'Laten we je volgende build bespreken.',
@@ -590,7 +596,7 @@ function App() {
       <div className="scroll-indicator" style={{ width: `${scrollProgress}%` }} />
 
       <aside className="project-nav" aria-label="Project navigator">
-        <p className="project-nav-label">Selected work</p>
+        <p className="project-nav-label">{t.workKicker}</p>
         {projectLinks.map((project) => (
           <a key={project.name} href={project.url} target="_blank" rel="noreferrer" className="project-pill">
             {project.name}
@@ -785,7 +791,7 @@ function App() {
                     <p className="experience-role">{item.role}</p>
                     <p className="experience-period">{item.period}</p>
                   </div>
-                  <h3>{item.company}</h3>
+                  <h3>{item.website ? (<a href={item.website} target="_blank" rel="noreferrer" className="experience-link">{item.company}</a>) : item.company}</h3>
                   <p>{item.summary}</p>
                   <p className="experience-highlight">{item.highlight}</p>
                 </article>
