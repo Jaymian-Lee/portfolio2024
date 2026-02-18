@@ -812,28 +812,29 @@ body {
 
 @media (max-width: 767px) {
   .site {
-    --stack-top-base: calc(0.5rem + env(safe-area-inset-top));
-    --stack-top-step: 0.28rem;
+    --stack-top: calc(0.8rem + env(safe-area-inset-top));
+    --stack-peek: 14px;
   }
 
   .stack-section {
-    min-height: 120svh;
+    min-height: 132svh;
     margin: 0;
     padding: 0 0 1rem;
   }
 
   .stack-section + .stack-section {
-    margin-top: -18svh;
-    padding-top: 18svh;
+    margin-top: -28svh;
+    padding-top: 28svh;
   }
 
   .stack-section:last-of-type {
-    min-height: calc(100svh + 5.4rem + env(safe-area-inset-bottom));
+    min-height: calc(108svh + 5.4rem + env(safe-area-inset-bottom));
   }
 
   .section-card {
     position: sticky;
-    top: clamp(0.45rem, calc(var(--stack-top-base) + (var(--stack-index, 0) * var(--stack-top-step))), 2.4rem);
+    top: var(--stack-top);
+    transform: translateY(calc(var(--stack-index, 0) * var(--stack-peek)));
     padding: 1.05rem;
     border: 1px solid color-mix(in srgb, var(--border) 96%, transparent);
     border-radius: 22px;
