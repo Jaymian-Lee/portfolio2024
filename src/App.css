@@ -228,33 +228,48 @@ body {
 
 .language-toggle {
   position: relative;
-  width: 64px;
+  width: 68px;
   height: 30px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: linear-gradient(180deg, #f8efe3, #f2e4d6 56%, #efdfcf);
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 7px;
-  font-size: 0.7rem;
-  color: var(--muted);
+  padding: 0 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: #7e6c5d;
+  overflow: hidden;
+}
+
+:root[data-theme='dark'] .language-toggle {
+  background: linear-gradient(180deg, #3f2e25, #372821 56%, #2f241f);
+  color: #d2c2b3;
 }
 
 .lang-option {
   z-index: 1;
+  transition: color 0.28s ease;
 }
 
 .lang-knob {
   position: absolute;
   top: 3px;
   left: 3px;
-  width: 24px;
+  width: 28px;
   height: 22px;
   border-radius: 999px;
-  background: var(--surface-strong);
-  border: 1px solid var(--border);
-  transition: transform 0.3s ease;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(110, 84, 62, 0.24);
+  box-shadow: 0 3px 10px rgba(106, 76, 51, 0.18);
+  transition: transform 0.34s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root[data-theme='dark'] .lang-knob {
+  background: rgba(255, 230, 204, 0.2);
+  border-color: rgba(255, 221, 182, 0.28);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
 }
 
 .language-toggle.nl .lang-knob {
