@@ -44,7 +44,21 @@ const copy = {
     del: 'Delete',
     invalid: 'Use exactly 5 letters.',
     alreadyDone: 'You already finished this language today.',
-    answer: 'Today\'s word'
+    answer: 'Today\'s word',
+    askMe: 'Questions?',
+    askTitle: 'Questions?',
+    askSubtitle: 'Ask anything about Jaymian-Lee, projects, services, and this website.',
+    askPlaceholder: 'Type your question',
+    askSend: 'Send',
+    askThinking: 'Thinking...',
+    askError: 'The assistant is temporarily unavailable.',
+    askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Wordly.',
+    footerQuickLinksTitle: 'Quick links',
+    footerProjectsTitle: 'Projects',
+    footerConnectTitle: 'Connect',
+    footerWordlyText: 'Wordly is your daily language workout with warm, playful words.',
+    footerWordlyCta: 'Play Wordly',
+    footerBuilt: 'Built with care in Limburg'
   },
   nl: {
     title: 'Wordly',
@@ -62,6 +76,14 @@ const copy = {
     invalid: 'Gebruik precies 5 letters.',
     alreadyDone: 'Je hebt deze taal vandaag al uitgespeeld.',
     answer: 'Woord van vandaag',
+    askMe: 'Vragen?',
+    askTitle: 'Vragen?',
+    askSubtitle: 'Vraag alles over Jaymian-Lee, projecten, services en deze website.',
+    askPlaceholder: 'Typ je vraag',
+    askSend: 'Verstuur',
+    askThinking: 'Even denken...',
+    askError: 'De assistent is tijdelijk niet beschikbaar.',
+    askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Wordly.',
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
@@ -97,6 +119,11 @@ function DailyWordPage() {
   const [popRow, setPopRow] = useState(-1);
   const [error, setError] = useState('');
   const [theme, setTheme] = useState(() => localStorage.getItem('portfolio-theme') || 'light');
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([{ role: 'assistant', content: copy.en.askGreeting }]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState('');
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const answer = useMemo(() => getDailyWord(language, DAILY_WORDS, dateKey), [language, dateKey]);
@@ -109,6 +136,12 @@ function DailyWordPage() {
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', language);
+    setChatMessages((prev) => {
+      if (prev.length === 1 && prev[0].role === 'assistant') {
+        return [{ role: 'assistant', content: copy[language].askGreeting }];
+      }
+      return prev;
+    });
   }, [language]);
 
   useEffect(() => {
@@ -205,6 +238,36 @@ function DailyWordPage() {
     setError('');
   };
 
+  const submitChat = async (event) => {
+    event.preventDefault();
+    if (!chatInput.trim() || chatLoading) return;
+
+    const userMessage = { role: 'user', content: chatInput.trim() };
+    const nextMessages = [...chatMessages, userMessage];
+
+    setChatMessages(nextMessages);
+    setChatInput('');
+    setChatLoading(true);
+    setChatError('');
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: nextMessages.slice(-12) })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || copy[language].askError);
+
+      setChatMessages((prev) => [...prev, { role: 'assistant', content: data.answer }]);
+    } catch (err) {
+      setChatError(err.message || copy[language].askError);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   return (
     <main className="daily-page">
       <div className="daily-wrap">
@@ -278,6 +341,51 @@ function DailyWordPage() {
               {copy[language].del}
             </button>
           </div>
+        </section>
+      </div>
+
+      <div className={`daily-ask-widget ${isChatOpen ? 'open' : ''}`}>
+        <button
+          className="daily-ask-trigger"
+          onClick={() => setIsChatOpen((prev) => !prev)}
+          aria-label={copy[language].askTitle}
+          aria-expanded={isChatOpen}
+        >
+          <span className="daily-dot" />
+          {copy[language].askMe}
+        </button>
+
+        <section className="daily-chat-panel" aria-label="Assistant panel" aria-hidden={!isChatOpen}>
+          <header className="daily-chat-header">
+            <div>
+              <p className="daily-chat-title">{copy[language].askTitle}</p>
+              <p className="daily-chat-subtitle">{copy[language].askSubtitle}</p>
+            </div>
+            <button type="button" className="daily-chat-close" onClick={() => setIsChatOpen(false)} aria-label="Close">
+              ✕
+            </button>
+          </header>
+
+          <div className="daily-chat-box" role="log" aria-live="polite">
+            {chatMessages.map((message, index) => (
+              <div key={`${message.role}-${index}`} className={`daily-message ${message.role}`}>
+                {message.content}
+              </div>
+            ))}
+            {chatLoading && <div className="daily-message assistant">{copy[language].askThinking}</div>}
+          </div>
+
+          <form onSubmit={submitChat} className="daily-chat-form">
+            <input
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder={copy[language].askPlaceholder}
+              autoComplete="off"
+            />
+            <button type="submit" disabled={chatLoading}>{copy[language].askSend}</button>
+          </form>
+
+          {chatError && <p className="daily-chat-error">{chatError}</p>}
         </section>
       </div>
 
