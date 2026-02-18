@@ -267,6 +267,10 @@ const copy = {
     ctaSecondary: 'Jump to services',
     ctaDaily: 'Wordly',
     stickyDaily: 'Play Wordly',
+    popupWordlyTitle: 'Wordly is live',
+    popupWordlyText: 'Have you played Wordly today?',
+    popupWordlyCta: 'Play Wordly',
+    popupDismiss: 'Later',
     quickLinksLabel: 'Quick links',
     storyKicker: 'Approach',
     storyTitle: 'Simple where it should be, strong where it matters.',
@@ -324,6 +328,10 @@ const copy = {
     ctaSecondary: 'Ga naar services',
     ctaDaily: 'Wordly',
     stickyDaily: 'Speel Wordly',
+    popupWordlyTitle: 'Wordly staat klaar',
+    popupWordlyText: 'Heb je vandaag Wordly al gedaan?',
+    popupWordlyCta: 'Speel Wordly',
+    popupDismiss: 'Later',
     quickLinksLabel: 'Snelle links',
     storyKicker: 'Aanpak',
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
@@ -381,6 +389,8 @@ function App() {
   const [preloaderExiting, setPreloaderExiting] = useState(false);
   const [greetingIndex, setGreetingIndex] = useState(0);
   const [greetingVisible, setGreetingVisible] = useState(true);
+  const [showWordlyPopup, setShowWordlyPopup] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const revealRefs = useRef([]);
   const messageEndRef = useRef(null);
@@ -416,6 +426,21 @@ function App() {
     mediaQuery.addListener(updatePreference);
     return () => mediaQuery.removeListener(updatePreference);
   }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 840px)');
+    const updateMobile = () => setIsMobile(mediaQuery.matches);
+    updateMobile();
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateMobile);
+      return () => mediaQuery.removeEventListener('change', updateMobile);
+    }
+
+    mediaQuery.addListener(updateMobile);
+    return () => mediaQuery.removeListener(updateMobile);
+  }, []);
+
 
   useEffect(() => {
     const greetings = prefersReducedMotion ? PRELOADER_GREETINGS.slice(0, 4) : PRELOADER_GREETINGS;
@@ -472,6 +497,20 @@ function App() {
       document.body.style.overflow = '';
     };
   }, [showPreloader]);
+
+  useEffect(() => {
+    if (showPreloader || !isMobile) {
+      setShowWordlyPopup(false);
+      return;
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const key = `wordly-popup-seen:${today}`;
+    if (!localStorage.getItem(key)) {
+      setShowWordlyPopup(true);
+      localStorage.setItem(key, '1');
+    }
+  }, [showPreloader, isMobile]);
 
   useEffect(() => {
     localStorage.setItem('portfolio-language', language);
@@ -909,9 +948,28 @@ function App() {
         </div>
       </main>
 
-      <Link to="/daily-word" className="floating-daily-cta" aria-label="Open Wordly game">
-        {t.stickyDaily}
-      </Link>
+      {!isMobile && (
+        <Link to="/daily-word" className="floating-daily-cta" aria-label="Open Wordly game">
+          {t.stickyDaily}
+        </Link>
+      )}
+
+      {showWordlyPopup && isMobile && (
+        <div className="wordly-popup" role="dialog" aria-modal="false" aria-label={t.popupWordlyTitle}>
+          <div className="wordly-popup-inner">
+            <p className="wordly-popup-title">{t.popupWordlyTitle}</p>
+            <p className="wordly-popup-text">{t.popupWordlyText}</p>
+            <div className="wordly-popup-actions">
+              <button type="button" className="wordly-popup-dismiss" onClick={() => setShowWordlyPopup(false)}>
+                {t.popupDismiss}
+              </button>
+              <Link to="/daily-word" className="wordly-popup-cta" onClick={() => setShowWordlyPopup(false)}>
+                {t.popupWordlyCta}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="site-footer" aria-label="Footer">
         <div className="footer-shell">
