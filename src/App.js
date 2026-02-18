@@ -225,6 +225,30 @@ const socialLinks = [
   { label: 'Instagram professional', url: 'https://www.instagram.com/jaymianlee_/' }
 ];
 
+
+
+const footerQuickLinks = [
+  { label: 'Services', href: '#services' },
+  { label: 'Case studies', href: '#case-studies' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Contact', href: '#contact' }
+];
+
+const footerProjects = [
+  { label: 'Corthex', href: 'https://corthex.app' },
+  { label: 'Botforger', href: 'https://botforger.com' },
+  { label: 'Vizualy', href: 'https://vizualy.nl' },
+  { label: 'Refacthor', href: 'https://refacthor.nl' }
+];
+
+const footerConnect = [
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
+  { label: 'GitHub', href: 'https://github.com/Jaymian-Lee' },
+  { label: 'Twitch', href: 'https://twitch.tv/jaymianlee' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@JaymianLee' },
+  { label: 'Instagram', href: 'https://www.instagram.com/jaymianlee_/' }
+];
+
 const PRELOADER_GREETINGS = ['Hello', 'Hey', 'Hola', 'Olà', 'Hallo', 'Ciao', 'こんにちは', 'مرحبا'];
 
 const copy = {
@@ -274,8 +298,16 @@ const copy = {
     chatError: 'The assistant is temporarily unavailable.',
     greeting:
       'Hi, I can help with questions about Jay\'s services, AI automation work, and product engineering approach.',
-    footerText: 'jaymian-lee.nl',
-    footerDaily: 'Play Wordly'
+    footerBrandPosition: 'Full stack developer for AI automation and ecommerce growth.',
+    footerBrandText: 'Building warm, minimal digital products with strategy, engineering, and measurable outcomes.',
+    footerQuickLinksTitle: 'Quick links',
+    footerProjectsTitle: 'Projects',
+    footerConnectTitle: 'Connect',
+    footerWordlyTitle: 'Wordly',
+    footerWordlyText: 'Try the daily word challenge built for curious minds.',
+    footerWordlyCta: 'Play Wordly',
+    footerDomain: 'jaymian-lee.nl',
+    footerBuilt: 'Built with care in Limburg'
   },
   nl: {
     eyebrow: 'Portfolio 2026',
@@ -322,8 +354,16 @@ const copy = {
     typeQuestion: 'Typ je vraag',
     chatError: 'De assistent is tijdelijk niet beschikbaar.',
     greeting: 'Hi, ik help je graag met vragen over Jay zijn services, AI automation werk en product engineering aanpak.',
-    footerText: 'jaymian-lee.nl',
-    footerDaily: 'Speel Wordly'
+    footerBrandPosition: 'Full stack developer voor AI automation en ecommerce groei.',
+    footerBrandText: 'Bouwt warme, minimal digitale producten met strategie, engineering en meetbaar resultaat.',
+    footerQuickLinksTitle: 'Snelle links',
+    footerProjectsTitle: 'Projecten',
+    footerConnectTitle: 'Connect',
+    footerWordlyTitle: 'Wordly',
+    footerWordlyText: 'Speel de dagelijkse woord challenge voor nieuwsgierige denkers.',
+    footerWordlyCta: 'Speel Wordly',
+    footerDomain: 'jaymian-lee.nl',
+    footerBuilt: 'Met zorg gebouwd in Limburg'
   }
 };
 
@@ -585,6 +625,7 @@ function App() {
   };
 
   const t = copy[language];
+  const currentYear = new Date().getFullYear();
   const activeGreetings = prefersReducedMotion ? PRELOADER_GREETINGS.slice(0, 4) : PRELOADER_GREETINGS;
 
   return (
@@ -873,8 +914,68 @@ function App() {
       </Link>
 
       <footer className="site-footer" aria-label="Footer">
-        <p>{t.footerText}</p>
-        <Link to="/daily-word">{t.footerDaily}</Link>
+        <div className="footer-shell">
+          <div className="footer-grid">
+            <section className="footer-brand" aria-label="Brand">
+              <p className="footer-kicker">Brand</p>
+              <h2>Jaymian-Lee Reinartz</h2>
+              <p className="footer-position">{t.footerBrandPosition}</p>
+              <p className="footer-description">{t.footerBrandText}</p>
+            </section>
+
+            <nav className="footer-column" aria-label={t.footerQuickLinksTitle}>
+              <p className="footer-kicker">{t.footerQuickLinksTitle}</p>
+              <ul>
+                {footerQuickLinks.map((item) => (
+                  <li key={`quick-${item.label}`}>
+                    <a href={item.href}>{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <section className="footer-column" aria-label={t.footerProjectsTitle}>
+              <p className="footer-kicker">{t.footerProjectsTitle}</p>
+              <ul>
+                {footerProjects.map((item) => (
+                  <li key={`project-${item.label}`}>
+                    <a href={item.href} target="_blank" rel="noreferrer">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="footer-column" aria-label={t.footerConnectTitle}>
+              <p className="footer-kicker">{t.footerConnectTitle}</p>
+              <ul>
+                {footerConnect.map((item) => (
+                  <li key={`connect-${item.label}`}>
+                    <a href={item.href} target="_blank" rel="noreferrer">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="footer-wordly" aria-label="Wordly">
+              <p className="footer-kicker">{t.footerWordlyTitle}</p>
+              <h3>Daily challenge</h3>
+              <p>{t.footerWordlyText}</p>
+              <Link to="/daily-word" className="footer-wordly-cta">
+                {t.footerWordlyCta}
+              </Link>
+            </section>
+          </div>
+
+          <div className="footer-bottomline" aria-label="Copyright">
+            <p>© {currentYear} Jaymian-Lee Reinartz</p>
+            <p>{t.footerDomain}</p>
+            <p>{t.footerBuilt}</p>
+          </div>
+        </div>
       </footer>
 
       <div className={`ask-widget ${isChatOpen ? 'open' : ''}`}>
