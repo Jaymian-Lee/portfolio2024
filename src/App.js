@@ -249,7 +249,7 @@ const footerConnect = [
   { label: 'Instagram', href: 'https://www.instagram.com/jaymianlee_/' }
 ];
 
-const PRELOADER_GREETINGS = ['Hello', 'Hey', 'Hola', 'Olà', 'Hallo', 'Ciao', 'こんにちは', 'مرحبا'];
+const PRELOADER_GREETINGS = ['Hello', 'Hey', 'Hola', 'Olà', 'Hallo', 'Ciao', 'こんにちは', 'Jaymian-Lee'];
 
 const copy = {
   en: {
