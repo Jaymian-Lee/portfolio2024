@@ -256,7 +256,14 @@ body {
 
 .dock-ask-mobile {
   min-height: 34px;
+  margin: 0;
   padding: 0.3rem 0.72rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #f8efe3, #f2e4d6 56%, #efdfcf);
+}
+
+:root[data-theme='dark'] .dock-ask-mobile {
+  background: linear-gradient(180deg, #3f2e25, #372821 56%, #2f241f);
 }
 
 .dock-ask-mobile .dock-label {
