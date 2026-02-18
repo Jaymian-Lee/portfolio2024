@@ -106,12 +106,14 @@ const storyPoints = {
   en: [
     '10+ years building web products, ecommerce solutions, and software for growing teams.',
     'Focused on useful AI automation and chatbot automation with measurable business outcomes.',
-    'Based in Limburg, active across Nederland and international projects.'
+    'Based in Limburg, active across Nederland and international projects.',
+    'Also involved in digital work for deOostelijkeKrant.'
   ],
   nl: [
     '10+ jaar ervaring met webproducten, ecommerce oplossingen en software voor groeiende teams.',
     'Focus op bruikbare AI automation en chatbot automation met meetbare business resultaten.',
-    'Gebaseerd in Limburg, actief in heel Nederland en internationale projecten.'
+    'Gebaseerd in Limburg, actief in heel Nederland en internationale projecten.',
+    'Ook betrokken bij digitaal werk voor deOostelijkeKrant.'
   ]
 };
 

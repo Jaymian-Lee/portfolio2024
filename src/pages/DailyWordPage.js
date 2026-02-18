@@ -34,7 +34,6 @@ const copy = {
     title: 'Wordly',
     subtitle: 'One fun word every day.',
     switchLang: 'Language',
-    reset: 'Reset today',
     back: 'Back to portfolio',
     howTo: 'Guess the 5 letter word in 6 tries.',
     placeholder: 'Type with keyboard or tap below',
@@ -65,7 +64,6 @@ const copy = {
     title: 'Wordly',
     subtitle: 'Elke dag een leuk woord.',
     switchLang: 'Taal',
-    reset: 'Reset vandaag',
     back: 'Terug naar portfolio',
     howTo: 'Raad het woord van 5 letters in 6 pogingen.',
     placeholder: 'Typ met toetsenbord of tik hieronder',
@@ -232,13 +230,6 @@ function DailyWordPage() {
     setCurrentGuess((prev) => `${prev}${key}`);
   };
 
-  const onResetToday = () => {
-    localStorage.removeItem(buildStorageKey(language, dateKey));
-    setGame({ guesses: [], evaluations: [], status: 'playing' });
-    setCurrentGuess('');
-    setError('');
-  };
-
   const submitChat = async (event) => {
     event.preventDefault();
     if (!chatInput.trim() || chatLoading) return;
@@ -273,10 +264,10 @@ function DailyWordPage() {
     <main className="daily-page">
       <div className="daily-wrap">
         <header className="daily-header">
-          <Link to="/" className="daily-back">{copy[language].back}</Link>
-          <div className="daily-header-controls">
-            <button type="button" className="reset-btn" onClick={onResetToday}>{copy[language].reset}</button>
-          </div>
+          <Link to="/" className="daily-back" aria-label={copy[language].back}>
+            <span className="daily-back-arrow" aria-hidden="true">←</span>
+            <span>{copy[language].back}</span>
+          </Link>
         </header>
 
         <section className="daily-hero">
