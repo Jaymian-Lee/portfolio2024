@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
+import FloatingUtilityBar from './components/FloatingUtilityBar';
 import './App.css';
 
 const SITE_URL = 'https://jaymian-lee.nl';
@@ -702,48 +703,15 @@ function App() {
         ))}
       </aside>
 
-      <div className="utility-dock" aria-label="Display controls">
-        <button
-          type="button"
-          className="dock-card control"
-          onClick={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
-          aria-label="Toggle language"
-          title={language === 'en' ? 'Switch to Dutch' : 'Switch to English'}
-        >
-          <p className="dock-label">Language</p>
-          <span className={`language-toggle ${language}`} aria-hidden="true">
-            <span className="lang-knob" />
-            <span className="lang-option en">EN</span>
-            <span className="lang-option nl">NL</span>
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="dock-card control"
-          onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-          aria-label="Toggle theme"
-          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          <p className="dock-label">Theme</p>
-          <span className={`theme-toggle ${theme}`}>
-            <span className="theme-track" aria-hidden="true">
-              <span className="sun" />
-              <span className="moon" />
-            </span>
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className={`dock-card control dock-ask-mobile ${isChatOpen ? 'open' : ''}`}
-          onClick={() => setIsChatOpen((prev) => !prev)}
-          aria-label={isChatOpen ? t.closeChat : t.openChat}
-          title={isChatOpen ? t.closeChat : t.openChat}
-        >
-          <p className="dock-label ask-label">{t.askMe}</p>
-        </button>
-      </div>
+      <FloatingUtilityBar
+        language={language}
+        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        theme={theme}
+        onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+        askLabel={t.askMe}
+        onAsk={() => setIsChatOpen((prev) => !prev)}
+        askAriaLabel={isChatOpen ? t.closeChat : t.openChat}
+      />
 
       <main className="site" id="main-content" aria-hidden={showPreloader}>
         <div className="card-stack" aria-label="Portfolio card stack">

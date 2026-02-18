@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
 import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey } from '../utils/dailyWord';
+import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import './DailyWordPage.css';
 
 const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
@@ -345,16 +346,6 @@ function DailyWordPage() {
       </div>
 
       <div className={`daily-ask-widget ${isChatOpen ? 'open' : ''}`}>
-        <button
-          className="daily-ask-trigger"
-          onClick={() => setIsChatOpen((prev) => !prev)}
-          aria-label={copy[language].askTitle}
-          aria-expanded={isChatOpen}
-        >
-          <span className="daily-dot" />
-          {copy[language].askMe}
-        </button>
-
         <section className="daily-chat-panel" aria-label="Assistant panel" aria-hidden={!isChatOpen}>
           <header className="daily-chat-header">
             <div>
@@ -389,38 +380,15 @@ function DailyWordPage() {
         </section>
       </div>
 
-      <div className="daily-utility-dock" aria-label="Display controls">
-        <button
-          type="button"
-          className="dock-card control"
-          onClick={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
-          aria-label="Toggle language"
-          title={language === 'en' ? 'Switch to Dutch' : 'Switch to English'}
-        >
-          <span className="dock-label">Language</span>
-          <span className={`language-toggle ${language}`} aria-hidden="true">
-            <span className="lang-knob" />
-            <span className="lang-option en">EN</span>
-            <span className="lang-option nl">NL</span>
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="dock-card control"
-          onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-          aria-label="Toggle theme"
-          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          <span className="dock-label">Theme</span>
-          <span className={`theme-toggle ${theme}`}>
-            <span className="theme-track" aria-hidden="true">
-              <span className="sun" />
-              <span className="moon" />
-            </span>
-          </span>
-        </button>
-      </div>
+      <FloatingUtilityBar
+        language={language}
+        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        theme={theme}
+        onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+        askLabel={copy[language].askMe}
+        onAsk={() => setIsChatOpen((prev) => !prev)}
+        askAriaLabel={copy[language].askTitle}
+      />
 
       <footer className="daily-site-footer" aria-label="Footer">
         <div className="daily-footer-shell">
