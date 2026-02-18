@@ -45,7 +45,7 @@ npm run build
 ```
 
 ## SEO notes
-- Primary production domain: `https://jaymianlee.com`
+- Primary production domain: `https://jaymian-lee.nl`
 - Canonical URL staat in `public/index.html`
 - Robots file: `public/robots.txt`
 - Sitemap file: `public/sitemap.xml` → live op `/sitemap.xml`

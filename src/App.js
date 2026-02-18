@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './App.css';
 
-const SITE_URL = 'https://jaymianlee.com';
+const SITE_URL = 'https://jaymian-lee.nl';
 const SITE_NAME = 'Jaymian-Lee Reinartz Portfolio';
 
 const projectLinks = [
