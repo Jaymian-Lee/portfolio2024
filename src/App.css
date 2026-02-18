@@ -272,6 +272,8 @@ body {
 
 .ask-label {
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  font-size: 0.7rem;
 }
 
 .ask-orb {
@@ -293,6 +295,10 @@ body {
 .dock-ask-mobile:focus-visible .ask-orb {
   transform: scale(1.06);
   box-shadow: 0 0 0 4px rgba(255, 196, 116, 0.3), 0 6px 14px rgba(157, 103, 56, 0.26);
+}
+
+.ask-orb {
+  animation: softPulse 2.2s ease-in-out infinite;
 }
 
 .dock-label {
@@ -700,11 +706,18 @@ body {
   min-height: 44px;
 }
 
+.ask-trigger:hover,
+.ask-trigger:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
 .dot {
   width: 0.56rem;
   height: 0.56rem;
   border-radius: 50%;
   background: var(--accent);
+  animation: softPulse 2.2s ease-in-out infinite;
 }
 
 .chat-panel {
@@ -871,6 +884,18 @@ body {
 .revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+@keyframes softPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 767px) {

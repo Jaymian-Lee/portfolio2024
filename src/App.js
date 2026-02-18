@@ -253,8 +253,8 @@ const copy = {
       'Available for product engineering, ecommerce development, PrestaShop modules, WordPress plugins, and AI automation projects.',
     contactCta: 'Send an email',
     visit: 'Visit project',
-    askMe: 'Stel een vraag',
-    askTitle: 'Stel een vraag',
+    askMe: 'Ask a question',
+    askTitle: 'Ask a question',
     askSubtitle: 'Questions about projects, process, or collaboration',
     closeChat: 'Close chat',
     openChat: 'Open chat',
@@ -647,7 +647,7 @@ function App() {
           title={isChatOpen ? t.closeChat : t.openChat}
         >
           <span className="ask-orb" aria-hidden="true" />
-          <p className="dock-label ask-label">Vraag?</p>
+          <p className="dock-label ask-label">{t.askMe}</p>
         </button>
       </div>
 
