@@ -6,6 +6,28 @@ import './DailyWordPage.css';
 
 const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 
+const footerQuickLinks = [
+  { label: 'Services', href: '/#services' },
+  { label: 'Case studies', href: '/#case-studies' },
+  { label: 'Experience', href: '/#experience' },
+  { label: 'Contact', href: '/#contact' }
+];
+
+const footerProjects = [
+  { label: 'Corthex', href: 'https://corthex.app' },
+  { label: 'Botforger', href: 'https://botforger.com' },
+  { label: 'Vizualy', href: 'https://vizualy.nl' },
+  { label: 'Refacthor', href: 'https://refacthor.nl' }
+];
+
+const footerConnect = [
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
+  { label: 'GitHub', href: 'https://github.com/Jaymian-Lee' },
+  { label: 'Twitch', href: 'https://twitch.tv/jaymianlee' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@JaymianLee' },
+  { label: 'Instagram', href: 'https://www.instagram.com/jaymianlee_/' }
+];
+
 const copy = {
   en: {
     title: 'Wordly',
@@ -39,7 +61,13 @@ const copy = {
     del: 'Wissen',
     invalid: 'Gebruik precies 5 letters.',
     alreadyDone: 'Je hebt deze taal vandaag al uitgespeeld.',
-    answer: 'Woord van vandaag'
+    answer: 'Woord van vandaag',
+    footerQuickLinksTitle: 'Snelle links',
+    footerProjectsTitle: 'Projecten',
+    footerConnectTitle: 'Connect',
+    footerWordlyText: 'Wordly is je dagelijkse taalworkout met warme, speelse woorden.',
+    footerWordlyCta: 'Speel Wordly',
+    footerBuilt: 'Met zorg gebouwd in Limburg'
   }
 };
 
@@ -68,10 +96,20 @@ function DailyWordPage() {
   const [shakeRow, setShakeRow] = useState(-1);
   const [popRow, setPopRow] = useState(-1);
   const [error, setError] = useState('');
+  const [theme, setTheme] = useState(() => localStorage.getItem('portfolio-theme') || 'light');
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const answer = useMemo(() => getDailyWord(language, DAILY_WORDS, dateKey), [language, dateKey]);
   const [game, setGame] = useState(() => getInitialState(language, dateKey));
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    localStorage.setItem('portfolio-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('lang', language);
+  }, [language]);
 
   useEffect(() => {
     const nextState = getInitialState(language, dateKey);
@@ -173,11 +211,6 @@ function DailyWordPage() {
         <header className="daily-header">
           <Link to="/" className="daily-back">{copy[language].back}</Link>
           <div className="daily-header-controls">
-            <label className="lang-switch" htmlFor="daily-lang">{copy[language].switchLang}</label>
-            <select id="daily-lang" value={language} onChange={(e) => setLanguage(e.target.value)}>
-              <option value="en">English</option>
-              <option value="nl">Nederlands</option>
-            </select>
             <button type="button" className="reset-btn" onClick={onResetToday}>{copy[language].reset}</button>
           </div>
         </header>
@@ -247,6 +280,92 @@ function DailyWordPage() {
           </div>
         </section>
       </div>
+
+      <div className="daily-utility-dock" aria-label="Display controls">
+        <button
+          type="button"
+          className="dock-card control"
+          onClick={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+          aria-label="Toggle language"
+          title={language === 'en' ? 'Switch to Dutch' : 'Switch to English'}
+        >
+          <span className="dock-label">Language</span>
+          <span className={`language-toggle ${language}`} aria-hidden="true">
+            <span className="lang-knob" />
+            <span className="lang-option en">EN</span>
+            <span className="lang-option nl">NL</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          className="dock-card control"
+          onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+          aria-label="Toggle theme"
+          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        >
+          <span className="dock-label">Theme</span>
+          <span className={`theme-toggle ${theme}`}>
+            <span className="theme-track" aria-hidden="true">
+              <span className="sun" />
+              <span className="moon" />
+            </span>
+          </span>
+        </button>
+      </div>
+
+      <footer className="daily-site-footer" aria-label="Footer">
+        <div className="daily-footer-shell">
+          <div className="daily-footer-grid">
+            <section className="daily-footer-brand" aria-label="Brand">
+              <p className="daily-footer-kicker">Brand</p>
+              <h2>Jaymian-Lee Reinartz</h2>
+              <p>{copy[language].subtitle}</p>
+              <p>{copy[language].footerWordlyText}</p>
+            </section>
+
+            <nav className="daily-footer-column" aria-label={copy[language].footerQuickLinksTitle}>
+              <p className="daily-footer-kicker">{copy[language].footerQuickLinksTitle}</p>
+              <ul>
+                {footerQuickLinks.map((item) => (
+                  <li key={`quick-${item.label}`}>
+                    <a href={item.href}>{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <section className="daily-footer-column" aria-label={copy[language].footerProjectsTitle}>
+              <p className="daily-footer-kicker">{copy[language].footerProjectsTitle}</p>
+              <ul>
+                {footerProjects.map((item) => (
+                  <li key={`project-${item.label}`}>
+                    <a href={item.href} target="_blank" rel="noreferrer">{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="daily-footer-column" aria-label={copy[language].footerConnectTitle}>
+              <p className="daily-footer-kicker">{copy[language].footerConnectTitle}</p>
+              <ul>
+                {footerConnect.map((item) => (
+                  <li key={`connect-${item.label}`}>
+                    <a href={item.href} target="_blank" rel="noreferrer">{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
+
+          <div className="daily-footer-bottomline" aria-label="Copyright">
+            <p>© {new Date().getFullYear()} Jaymian-Lee Reinartz</p>
+            <p>jaymian-lee.nl</p>
+            <p>{copy[language].footerBuilt}</p>
+          </div>
+        </div>
+      </footer>
+
     </main>
   );
 }
