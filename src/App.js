@@ -101,70 +101,150 @@ const storyPoints = {
 const experience = {
   en: [
     {
-      role: 'Founder and Product Engineer',
+      role: 'Co-Founder',
       company: 'Corthex',
-      period: '2023 to Present',
+      period: '2026 to Present',
       summary:
-        'Leads product strategy and delivery for automation systems used by teams that need reliable operations and faster execution.',
-      highlight: 'Designed and shipped end to end workflows that reduced repetitive manual work.'
+        'Building practical AI products and automation workflows with a strong focus on real business outcomes.',
+      highlight: 'Leading product direction, delivery quality, and long term roadmap decisions.'
     },
     {
       role: 'Founder',
       company: 'Botforger',
-      period: '2021 to Present',
+      period: '2025 to 2026',
       summary:
-        'Built a practical framework for chatbot architecture and implementation, focused on quality, clarity, and maintainability.',
-      highlight: 'Helped teams move from fragmented bots to structured, production ready systems.'
+        'Created the foundation for scalable chatbot and workflow automation systems.',
+      highlight: 'Set the base architecture and product vision that evolved into later initiatives.'
     },
     {
-      role: 'Lead Full Stack Developer',
-      company: 'Independent Client Work',
-      period: '2016 to Present',
+      role: 'Software Developer | Owner',
+      company: 'Refacthor',
+      period: 'November 2021 to Present',
       summary:
-        'Partners with founders and operators to design and build scalable products across web, commerce, and internal tooling.',
-      highlight: 'Delivered multiple full stack platforms from discovery to launch with long term support.'
+        'Develops custom web solutions focused on digital growth, usability, and technical reliability.',
+      highlight: 'Delivers high performance websites and structured development workflows for clients.'
     },
     {
-      role: 'Ecommerce Technical Lead',
-      company: 'Digital Commerce Projects',
-      period: '2012 to 2016',
+      role: 'E-Commerce / Software Developer (Part-time)',
+      company: 'Martin Kozijn',
+      period: 'October 2023 to Present',
       summary:
-        'Owned technical direction for online stores and conversion focused websites, aligning code quality with business growth.',
-      highlight: 'Improved checkout performance, reliability, and release velocity across multiple projects.'
+        'Works on e-commerce and software tasks, combining implementation speed with practical design choices.',
+      highlight: 'Supports ongoing product improvements and development across commerce operations.'
+    },
+    {
+      role: 'Software Developer | Owner',
+      company: 'RP Web Design',
+      period: 'September 2023 to October 2025',
+      summary:
+        'Delivered websites and client-focused software work with a strong focus on execution quality.',
+      highlight: 'Handled end to end client delivery from technical implementation to release.'
+    },
+    {
+      role: 'Repair Technician, Electrical Devices (Part-time)',
+      company: 'Computerservice Kerkrade',
+      period: 'February 2021 to September 2023',
+      summary:
+        'Repaired devices, built computers, and helped customers with practical IT issues.',
+      highlight: 'Built strong technical troubleshooting and customer support skills in real-world environments.'
+    },
+    {
+      role: 'Programmer Intern',
+      company: 'Computerservice Kerkrade',
+      period: 'March 2020 to February 2021',
+      summary:
+        'Created websites and supported device-related technical tasks during internship period.',
+      highlight: 'Gained early production experience in development and technical operations.'
+    },
+    {
+      role: 'App Support Specialist (Part-time)',
+      company: 'Transvision B.V.',
+      period: 'May 2022 to August 2023',
+      summary:
+        'Supported app users by resolving issues, answering questions, and improving service quality.',
+      highlight: 'Combined technical support with clear communication in customer-facing workflows.'
+    },
+    {
+      role: 'Programmer Intern',
+      company: 'Shardy',
+      period: 'March 2021 to January 2022',
+      summary:
+        'Worked on multiple internal projects and contributed to product development tasks.',
+      highlight: 'Contributed to projects including SoundBored and Wayfinder.'
     }
   ],
   nl: [
     {
-      role: 'Founder en Product Engineer',
+      role: 'Co-Founder',
       company: 'Corthex',
-      period: '2023 tot Nu',
+      period: '2026 tot Nu',
       summary:
-        'Stuurt productstrategie en delivery voor automation systemen die teams helpen met betrouwbare operatie en snellere uitvoering.',
-      highlight: 'Ontwierp en lanceerde end to end workflows die repetitief handmatig werk verminderden.'
+        'Bouwt praktische AI-producten en automation workflows met focus op echte business resultaten.',
+      highlight: 'Stuurt productrichting, opleverkwaliteit en langetermijn roadmap keuzes.'
     },
     {
       role: 'Founder',
       company: 'Botforger',
-      period: '2021 tot Nu',
+      period: '2025 tot 2026',
       summary:
-        'Bouwde een praktisch framework voor chatbot architectuur en implementatie, met focus op kwaliteit, helderheid en onderhoudbaarheid.',
-      highlight: 'Hielp teams van losse bots naar gestructureerde, production ready systemen.'
+        'Bouwde de basis voor schaalbare chatbot en workflow automation systemen.',
+      highlight: 'Zette de basisarchitectuur en productvisie neer die later verder groeide.'
     },
     {
-      role: 'Lead Full Stack Developer',
-      company: 'Onafhankelijke klantprojecten',
-      period: '2016 tot Nu',
+      role: 'Softwareontwikkelaar | Eigenaar',
+      company: 'Refacthor',
+      period: 'november 2021 tot Nu',
       summary:
-        'Werkt samen met founders en operators aan schaalbare producten voor web, commerce en interne tooling.',
-      highlight: 'Leverde meerdere full stack platforms van discovery tot livegang met langdurige ondersteuning.'
+        'Ontwikkelt maatwerk websites met focus op digitale groei, gebruiksvriendelijkheid en technische betrouwbaarheid.',
+      highlight: 'Levert snelle websites en gestructureerde ontwikkeltrajecten voor klanten.'
     },
     {
-      role: 'Ecommerce Technical Lead',
-      company: 'Digital Commerce projecten',
-      period: '2012 tot 2016',
+      role: 'E-Commerce / Softwareontwikkelaar (Part-time)',
+      company: 'Martin Kozijn',
+      period: 'oktober 2023 tot Nu',
       summary:
-        'Verantwoordelijk voor technische richting van online stores en conversiegerichte websites, in lijn met businessgroei.',
-      highlight: 'Verbeterde checkout performance, betrouwbaarheid en release snelheid in meerdere projecten.'
+        'Werkt aan e-commerce en softwaretaken met een combinatie van snelheid en praktische designkeuzes.',
+      highlight: 'Ondersteunt doorlopende productverbeteringen binnen commerce processen.'
+    },
+    {
+      role: 'Softwareontwikkelaar | Eigenaar',
+      company: 'RP Web Design',
+      period: 'september 2023 tot oktober 2025',
+      summary:
+        'Leverde websites en klantgerichte software met sterke focus op uitvoering en kwaliteit.',
+      highlight: 'Verzorgde end to end oplevering van technische implementatie tot livegang.'
+    },
+    {
+      role: 'Reparateur elektrische apparaten (Part-time)',
+      company: 'Computerservice Kerkrade',
+      period: 'februari 2021 tot september 2023',
+      summary:
+        'Repareerde apparaten, bouwde computers en hielp klanten met praktische IT-vraagstukken.',
+      highlight: 'Bouwde sterke troubleshooting en klantgerichte support skills in de praktijk.'
+    },
+    {
+      role: 'Programmeur stage',
+      company: 'Computerservice Kerkrade',
+      period: 'maart 2020 tot februari 2021',
+      summary:
+        'Maakte websites en ondersteunde technische werkzaamheden tijdens de stageperiode.',
+      highlight: 'Deed vroege productie-ervaring op in development en technische operatie.'
+    },
+    {
+      role: 'App Support Medewerker (Part-time)',
+      company: 'Transvision B.V.',
+      period: 'mei 2022 tot augustus 2023',
+      summary:
+        'Ondersteunde appgebruikers door issues op te lossen, vragen te beantwoorden en service te verbeteren.',
+      highlight: 'Combineerde technische support met duidelijke communicatie in klantgerichte flows.'
+    },
+    {
+      role: 'Programmeur stage',
+      company: 'Shardy',
+      period: 'maart 2021 tot januari 2022',
+      summary:
+        'Werkte aan meerdere interne projecten en droeg bij aan productontwikkeling.',
+      highlight: 'Droeg bij aan projecten zoals SoundBored en Wayfinder.'
     }
   ]
 };
