@@ -5,71 +5,167 @@ const projectLinks = [
   {
     name: 'Corthex',
     url: 'https://corthex.app',
-    category: 'AI Product Studio',
-    summary:
-      'AI agents en automation-systemen die repetitief werk vervangen en teams sneller laten leveren.',
-    impact: 'From concept to production assistants'
+    category: { en: 'Product Studio', nl: 'Product Studio' },
+    summary: {
+      en: 'Designing practical automation systems that save teams real time.',
+      nl: 'Praktische automation systemen die teams merkbaar tijd besparen.'
+    },
+    impact: { en: 'From concept to live workflow', nl: 'Van concept tot live workflow' }
   },
   {
     name: 'Botforger',
     url: 'https://botforger.com',
-    category: 'Automation Origins',
-    summary:
-      'Het fundament voor schaalbare chatbot-architectuur, workflows en no-nonsense implementatie.',
-    impact: 'Early framework for practical AI workflows'
+    category: { en: 'Automation Foundation', nl: 'Automation Foundation' },
+    summary: {
+      en: 'A clear foundation for chatbot architecture, workflows, and hands-on implementation.',
+      nl: 'Een heldere basis voor chatbot architectuur, workflows en praktische implementatie.'
+    },
+    impact: { en: 'Early system for reliable automations', nl: 'Vroeg systeem voor betrouwbare automations' }
   },
   {
     name: 'Vizualy',
     url: 'https://vizualy.nl',
-    category: 'Visual Product Concept',
-    summary:
-      'Visuele storytelling voor merken die sneller willen overtuigen met sterke, heldere presentaties.',
-    impact: 'Presentation design with conversion focus'
+    category: { en: 'Visual Direction', nl: 'Visual Direction' },
+    summary: {
+      en: 'Visual storytelling for brands that want clarity and stronger presentations.',
+      nl: 'Visual storytelling voor merken die duidelijke, sterke presentaties willen.'
+    },
+    impact: { en: 'Narrative design with business focus', nl: 'Narrative design met business focus' }
   },
   {
     name: 'Refacthor',
     url: 'https://refacthor.nl',
-    category: 'Engineering Quality',
-    summary:
-      'Refactoring-first development: minder technische schuld, meer snelheid en onderhoudbare codebases.',
-    impact: 'Cleaner architecture, faster iteration'
+    category: { en: 'Engineering Quality', nl: 'Engineering Quality' },
+    summary: {
+      en: 'Refactoring focused development for cleaner architecture and better speed over time.',
+      nl: 'Refactoring gerichte ontwikkeling voor schonere architectuur en duurzame snelheid.'
+    },
+    impact: { en: 'Less friction, better shipping rhythm', nl: 'Minder frictie, beter shipping ritme' }
   }
 ];
 
-const capabilities = [
-  {
-    title: 'AI Strategy & Prototyping',
-    text: 'Van use case mapping tot eerste werkende AI-flows in dagen, niet maanden.'
+const capabilities = {
+  en: [
+    {
+      title: 'Product Strategy',
+      text: 'Turning ideas into clear product decisions and realistic plans.'
+    },
+    {
+      title: 'Automation Engineering',
+      text: 'Connecting tools, APIs, and workflows that support daily operations.'
+    },
+    {
+      title: 'Full Stack Build',
+      text: 'Building frontend and backend as one coherent, maintainable product.'
+    },
+    {
+      title: 'Technical Direction',
+      text: 'Making practical choices that keep teams fast and codebases healthy.'
+    }
+  ],
+  nl: [
+    {
+      title: 'Productstrategie',
+      text: 'Ideeën vertalen naar heldere productkeuzes en realistische plannen.'
+    },
+    {
+      title: 'Automation Engineering',
+      text: 'Tools, APIs en workflows verbinden die dagelijks werk ondersteunen.'
+    },
+    {
+      title: 'Full Stack Build',
+      text: 'Frontend en backend bouwen als één samenhangend en onderhoudbaar product.'
+    },
+    {
+      title: 'Technische Richting',
+      text: 'Praktische keuzes maken die teams snel houden en code gezond houden.'
+    }
+  ]
+};
+
+const storyPoints = {
+  en: [
+    'Over 10 years building commerce platforms, custom software, and modern web products.',
+    'Focused on useful automation with measurable outcomes and no hype.',
+    'Strong bridge between business goals, product thinking, and execution.'
+  ],
+  nl: [
+    'Meer dan 10 jaar ervaring met commerce platforms, maatwerk software en moderne webproducten.',
+    'Focus op bruikbare automation met meetbare resultaten en zonder hype.',
+    'Sterke brug tussen business doelen, productdenken en uitvoering.'
+  ]
+};
+
+const copy = {
+  en: {
+    eyebrow: 'Portfolio 2026',
+    heroTitleA: 'Calm digital products',
+    heroTitleB: 'designed to be useful.',
+    lead: 'I am Jaymian-Lee Reinartz. I design and build products, websites, and automations with a clean visual style and practical outcomes.',
+    metricA: 'Strategy to Build',
+    metricAText: 'Clear thinking from first concept to launch',
+    metricB: 'Full Stack',
+    metricBText: 'Frontend, backend, and workflows in one line',
+    metricC: 'Quiet Craft',
+    metricCText: 'Minimal details that improve trust and clarity',
+    ctaPrimary: 'Start a project',
+    storyKicker: 'Approach',
+    storyTitle: 'Simple where it should be, strong where it matters.',
+    capabilitiesKicker: 'Services',
+    capabilitiesTitle: 'A focused mix of strategy, design, and engineering.',
+    workKicker: 'Selected work',
+    workTitle: 'Projects built for clarity, speed, and long-term quality.',
+    visit: 'Visit',
+    askMe: 'Ask Me',
+    askTitle: 'Ask Me',
+    askSubtitle: 'Questions about projects, process, or collaboration',
+    closeChat: 'Close chat',
+    openChat: 'Open chat',
+    thinking: 'Thinking...',
+    inputPlaceholder: 'Example: What kind of projects do you take on?',
+    send: 'Send',
+    typeQuestion: 'Type your question',
+    chatError: 'The assistant is temporarily unavailable.',
+    greeting:
+      'Hi, I can help with questions about Jay’s work, services, and project approach.'
   },
-  {
-    title: 'Automation Engineering',
-    text: 'Integraties, backend logic en agent orchestration die direct bedrijfsresultaat opleveren.'
-  },
-  {
-    title: 'Full-Stack Product Build',
-    text: 'Frontend, API en infrastructuur als één coherent systeem met premium UX en performance.'
-  },
-  {
-    title: 'Technical Direction',
-    text: 'Scherpe productkeuzes, maintainable architectuur en duidelijke technische roadmap.'
+  nl: {
+    eyebrow: 'Portfolio 2026',
+    heroTitleA: 'Rustige digitale producten',
+    heroTitleB: 'gemaakt om echt te helpen.',
+    lead: 'Ik ben Jaymian-Lee Reinartz. Ik ontwerp en bouw producten, websites en automations met een cleane stijl en praktische resultaten.',
+    metricA: 'Strategie tot Build',
+    metricAText: 'Duidelijke keuzes van eerste idee tot livegang',
+    metricB: 'Full Stack',
+    metricBText: 'Frontend, backend en workflows op één lijn',
+    metricC: 'Rustige Craft',
+    metricCText: 'Minimal details die vertrouwen en helderheid vergroten',
+    ctaPrimary: 'Start een project',
+    storyKicker: 'Aanpak',
+    storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
+    capabilitiesKicker: 'Services',
+    capabilitiesTitle: 'Een gerichte mix van strategie, design en engineering.',
+    workKicker: 'Geselecteerd werk',
+    workTitle: 'Projecten gebouwd voor helderheid, snelheid en duurzame kwaliteit.',
+    visit: 'Bekijk',
+    askMe: 'Ask Me',
+    askTitle: 'Ask Me',
+    askSubtitle: 'Vragen over projecten, proces of samenwerking',
+    closeChat: 'Sluit chat',
+    openChat: 'Open chat',
+    thinking: 'Even denken...',
+    inputPlaceholder: 'Bijvoorbeeld: Wat voor projecten pak je op?',
+    send: 'Verstuur',
+    typeQuestion: 'Typ je vraag',
+    chatError: 'De assistent is tijdelijk niet beschikbaar.',
+    greeting: 'Hi, ik help je graag met vragen over Jay zijn werk, services en manier van samenwerken.'
   }
-];
-
-const storyPoints = [
-  '10+ jaar bouwen aan commerce, custom software en high-performance websites.',
-  'Gefocust op bruikbare AI: echte workflows, meetbare output, geen demo-theater.',
-  'Sterk in vertalen van business naar product: van strategy tot shipping.'
-];
-
-const defaultGreeting = {
-  role: 'assistant',
-  content:
-    'Hi, ik ben Jay’s AI-assistent. Vraag me over zijn projecten, manier van werken, stack of hoe hij AI inzet voor echte business impact.'
 };
 
 function App() {
-  const [theme, setTheme] = useState('dark');
-  const [messages, setMessages] = useState([defaultGreeting]);
+  const [theme, setTheme] = useState('light');
+  const [language, setLanguage] = useState('en');
+  const [messages, setMessages] = useState([{ role: 'assistant', content: copy.en.greeting }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [chatError, setChatError] = useState('');
@@ -81,8 +177,14 @@ function App() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('portfolio-theme');
+    const savedLanguage = localStorage.getItem('portfolio-language');
+
     if (savedTheme === 'dark' || savedTheme === 'light') {
       setTheme(savedTheme);
+    }
+    if (savedLanguage === 'en' || savedLanguage === 'nl') {
+      setLanguage(savedLanguage);
+      setMessages([{ role: 'assistant', content: copy[savedLanguage].greeting }]);
     }
   }, []);
 
@@ -90,6 +192,16 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('portfolio-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('portfolio-language', language);
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].role === 'assistant') {
+        return [{ role: 'assistant', content: copy[language].greeting }];
+      }
+      return prev;
+    });
+  }, [language]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -113,7 +225,7 @@ function App() {
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.2 }
     );
 
     revealRefs.current.forEach((el) => el && observer.observe(el));
@@ -154,24 +266,25 @@ function App() {
       try {
         data = raw ? JSON.parse(raw) : {};
       } catch {
-        throw new Error('De AI-endpoint gaf geen geldige JSON terug. Controleer de API-route op Vercel.');
+        throw new Error('The assistant endpoint returned invalid JSON.');
       }
 
       if (!response.ok) {
-        throw new Error(data?.error || 'Onbekende fout bij AI-chat.');
+        throw new Error(data?.error || copy[language].chatError);
       }
 
       setMessages((prev) => [...prev, { role: 'assistant', content: data.answer }]);
     } catch (err) {
-      setChatError(err.message || 'AI-chat is momenteel niet beschikbaar.');
+      setChatError(err.message || copy[language].chatError);
     } finally {
       setLoading(false);
     }
   };
 
+  const t = copy[language];
+
   return (
     <div className="site-shell">
-      <div className="background-noise" aria-hidden="true" />
       <div className="scroll-indicator" style={{ width: `${scrollProgress}%` }} />
 
       <aside className="project-nav" aria-label="Project navigator">
@@ -186,66 +299,100 @@ function App() {
       <main className="site">
         <header className="hero reveal" ref={(el) => (revealRefs.current[0] = el)}>
           <div className="hero-topline">
-            <p className="eyebrow">Portfolio 2026 · AI Systems · Product Engineering</p>
-            <button
-              type="button"
-              className="theme-toggle"
-              onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-              aria-label="Toggle dark and light theme"
-            >
-              {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-            </button>
+            <p className="eyebrow">{t.eyebrow}</p>
+
+            <div className="top-controls">
+              <div className="language-switch" aria-label="Language switch">
+                <button
+                  type="button"
+                  className={language === 'en' ? 'active' : ''}
+                  onClick={() => setLanguage('en')}
+                  aria-pressed={language === 'en'}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  className={language === 'nl' ? 'active' : ''}
+                  onClick={() => setLanguage('nl')}
+                  aria-pressed={language === 'nl'}
+                >
+                  NL
+                </button>
+              </div>
+
+              <button
+                type="button"
+                className={`theme-toggle ${theme}`}
+                onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+                aria-label="Toggle theme"
+                title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+              >
+                <span className="theme-track" aria-hidden="true">
+                  <span className="sun" />
+                  <span className="moon" />
+                </span>
+              </button>
+            </div>
           </div>
 
           <h1>
-            Premium digital products,
-            <span> engineered for clarity and momentum.</span>
+            {t.heroTitleA}
+            <span> {t.heroTitleB}</span>
           </h1>
 
-          <p className="lead">
-            Ik ben <strong>Jaymian-Lee Reinartz</strong> — ik ontwerp en bouw AI-gedreven producten die teams
-            sneller laten werken en merken sterker laten communiceren. Minimal, editorial en doelgericht.
-          </p>
+          <p className="lead">{t.lead}</p>
 
           <div className="hero-metrics" aria-label="Credibility highlights">
             <article>
-              <p className="metric-value">AI + Product</p>
-              <p className="metric-label">Praktische oplossingen van strategie tot shipping</p>
+              <p className="metric-value">{t.metricA}</p>
+              <p className="metric-label">{t.metricAText}</p>
             </article>
             <article>
-              <p className="metric-value">Full-stack</p>
-              <p className="metric-label">Frontend, API, automation en integraties als één geheel</p>
+              <p className="metric-value">{t.metricB}</p>
+              <p className="metric-label">{t.metricBText}</p>
             </article>
             <article>
-              <p className="metric-value">Conversion-minded</p>
-              <p className="metric-label">Sterke UX met meetbare business-impact</p>
+              <p className="metric-value">{t.metricC}</p>
+              <p className="metric-label">{t.metricCText}</p>
             </article>
           </div>
 
           <div className="hero-actions">
-            <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary">Start een project</a>
-            <a href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/" target="_blank" rel="noreferrer" className="btn btn-ghost">LinkedIn</a>
-            <a href="https://github.com/Jaymian-Lee" target="_blank" rel="noreferrer" className="btn btn-ghost">GitHub</a>
+            <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary">
+              {t.ctaPrimary}
+            </a>
+            <a
+              href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-ghost"
+            >
+              LinkedIn
+            </a>
+            <a href="https://github.com/Jaymian-Lee" target="_blank" rel="noreferrer" className="btn btn-ghost">
+              GitHub
+            </a>
           </div>
         </header>
 
         <section className="section split reveal" ref={(el) => (revealRefs.current[1] = el)}>
           <div>
-            <p className="section-kicker">Story</p>
-            <h2>Ik bouw met een editorial mindset: minder ruis, meer impact.</h2>
+            <p className="section-kicker">{t.storyKicker}</p>
+            <h2>{t.storyTitle}</h2>
           </div>
           <ul className="story-list">
-            {storyPoints.map((point) => (
+            {storyPoints[language].map((point) => (
               <li key={point}>{point}</li>
             ))}
           </ul>
         </section>
 
         <section className="section reveal" ref={(el) => (revealRefs.current[2] = el)}>
-          <p className="section-kicker">Capabilities</p>
-          <h2>Services die strategie, design en engineering verbinden.</h2>
+          <p className="section-kicker">{t.capabilitiesKicker}</p>
+          <h2>{t.capabilitiesTitle}</h2>
           <div className="capabilities-grid">
-            {capabilities.map((item) => (
+            {capabilities[language].map((item) => (
               <article className="capability-card" key={item.title}>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -255,44 +402,44 @@ function App() {
         </section>
 
         <section className="section reveal" ref={(el) => (revealRefs.current[3] = el)}>
-          <p className="section-kicker">Selected work</p>
-          <h2>Producten en initiatieven die groei, snelheid en kwaliteit samenbrengen.</h2>
+          <p className="section-kicker">{t.workKicker}</p>
+          <h2>{t.workTitle}</h2>
           <div className="work-grid">
             {projectLinks.map((project) => (
               <article className="work-card" key={project.name}>
                 <div className="work-top">
-                  <p className="work-category">{project.category}</p>
+                  <p className="work-category">{project.category[language]}</p>
                   <a href={project.url} target="_blank" rel="noreferrer" className="work-link">
-                    Visit ↗
+                    {t.visit} ↗
                   </a>
                 </div>
                 <h3>{project.name}</h3>
-                <p>{project.summary}</p>
-                <p className="work-impact">{project.impact}</p>
+                <p>{project.summary[language]}</p>
+                <p className="work-impact">{project.impact[language]}</p>
               </article>
             ))}
           </div>
         </section>
       </main>
 
-      <div className={`ai-widget ${isChatOpen ? 'open' : ''}`}>
+      <div className={`ask-widget ${isChatOpen ? 'open' : ''}`}>
         <button
-          className="ai-orb"
+          className="ask-trigger"
           onClick={() => setIsChatOpen((prev) => !prev)}
-          aria-label={isChatOpen ? 'Sluit AI assistent' : 'Open AI assistent'}
+          aria-label={isChatOpen ? t.closeChat : t.openChat}
           aria-expanded={isChatOpen}
         >
-          <span className="orb-core" />
-          AI
+          <span className="dot" />
+          {t.askMe}
         </button>
 
-        <section className="chat-panel" aria-label="AI assistant panel">
+        <section className="chat-panel" aria-label="Assistant panel">
           <header className="chat-header">
             <div>
-              <p className="chat-title">Ask Jay’s AI</p>
-              <p className="chat-subtitle">Over projecten, aanpak en expertise</p>
+              <p className="chat-title">{t.askTitle}</p>
+              <p className="chat-subtitle">{t.askSubtitle}</p>
             </div>
-            <button type="button" className="chat-close" onClick={() => setIsChatOpen(false)} aria-label="Sluit chat">
+            <button type="button" className="chat-close" onClick={() => setIsChatOpen(false)} aria-label={t.closeChat}>
               ✕
             </button>
           </header>
@@ -303,20 +450,24 @@ function App() {
                 {message.content}
               </div>
             ))}
-            {loading && <div className="message assistant">Even nadenken…</div>}
+            {loading && <div className="message assistant">{t.thinking}</div>}
             <div ref={messageEndRef} />
           </div>
 
           <form onSubmit={sendMessage} className="chat-form">
-            <label htmlFor="chat-input" className="sr-only">Typ je vraag</label>
+            <label htmlFor="chat-input" className="sr-only">
+              {t.typeQuestion}
+            </label>
             <input
               id="chat-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Bijv: Hoe helpt Jay bedrijven met AI?"
+              placeholder={t.inputPlaceholder}
               autoComplete="off"
             />
-            <button type="submit" disabled={loading}>Verstuur</button>
+            <button type="submit" disabled={loading}>
+              {t.send}
+            </button>
           </form>
 
           {chatError && <p className="chat-error">{chatError}</p>}
