@@ -105,7 +105,14 @@ function App() {
         body: JSON.stringify({ messages: [...apiMessages, userMessage] })
       });
 
-      const data = await response.json();
+      const raw = await response.text();
+      let data = {};
+
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        throw new Error('De AI-endpoint gaf geen geldige JSON terug. Controleer Vercel API routes.');
+      }
 
       if (!response.ok) {
         throw new Error(data?.error || 'Onbekende fout bij AI-chat.');
