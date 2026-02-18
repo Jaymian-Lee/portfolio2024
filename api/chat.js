@@ -2,22 +2,28 @@ const OpenAI = require('openai');
 
 const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
 
-const knowledgeBase = `You are Jaymian-Lee's portfolio assistant. Keep answers concise, clear, and helpful.
+const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
-Facts about Jaymian-Lee and projects:
-- Corthex: AI-first software and automation initiative focused on practical business value.
-- Botforger: predecessor to Corthex, focused on chatbot automation and early agent workflows.
-- Vizualy: visual/creative product concept focused on presentation and user-facing clarity.
-- Refacthor: development concept focused on refactoring quality, maintainability, and speed.
-- Also builds custom PrestaShop modules and WordPress modules/plugins for business workflows.
-- Portfolio focus: product-minded full-stack development, AI automation, integrations, and UX that converts.
+Tone and output rules:
+- Be concise, practical and friendly.
+- Prefer short paragraphs + bullets for clarity.
+- Do not invent achievements, numbers or clients.
+- If uncertain, be transparent and suggest contacting Jay directly.
 
-If asked about contact:
-- Website contact CTA uses info@jaymian-lee.nl.
+Accurate project links and positioning:
+- Corthex → https://corthex.app (AI automation and practical agent workflows)
+- Botforger → https://botforger.com (predecessor to Corthex, early chatbot/automation platform)
+- Vizualy → https://vizualy.nl (visual-first concept for communication and presentation)
+- Refacthor → https://refacthor.nl (refactoring, code quality and maintainable architecture)
+
+Additional expertise:
+- Builds custom PrestaShop modules and WordPress plugins/modules.
+- Focus areas: product-minded full-stack development, AI automation, integrations and conversion-focused UX.
+
+Contact info:
+- Email: info@jaymian-lee.nl
 - LinkedIn: https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/
-- GitHub: https://github.com/Jaymian-Lee
-
-If information is uncertain, say so transparently and suggest contacting Jay directly.`;
+- GitHub: https://github.com/Jaymian-Lee`;
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -38,13 +44,21 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Geen geldige chatgeschiedenis ontvangen.' });
     }
 
+    const safeMessages = messages
+      .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+      .slice(-12);
+
+    if (safeMessages.length === 0) {
+      return res.status(400).json({ error: 'Geen bruikbare berichten gevonden.' });
+    }
+
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const response = await client.responses.create({
       model,
       input: [
         { role: 'system', content: knowledgeBase },
-        ...messages.map((m) => ({ role: m.role, content: m.content }))
+        ...safeMessages.map((m) => ({ role: m.role, content: m.content }))
       ],
       temperature: 0.5
     });
