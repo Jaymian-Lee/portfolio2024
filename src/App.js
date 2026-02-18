@@ -564,8 +564,9 @@ function App() {
       </div>
 
       <main className="site" id="main-content">
-        <header className="hero reveal stack-section" ref={(el) => (revealRefs.current[0] = el)} style={{ '--stack-index': 0, '--stack-layer': 1 }}>
-          <div className="section-card hero-card">
+        <div className="card-stack" aria-label="Portfolio card stack">
+        <header className="hero reveal stack-card" ref={(el) => (revealRefs.current[0] = el)} style={{ '--stack-index': 0, '--stack-layer': 1 }}>
+          <div className="section-card stack-panel hero-card">
             <div className="hero-topline">
               <p className="eyebrow">{t.eyebrow}</p>
             </div>
@@ -635,8 +636,8 @@ function App() {
           </div>
         </header>
 
-        <section className="section reveal stack-section" id="about" ref={(el) => (revealRefs.current[1] = el)} style={{ '--stack-index': 1, '--stack-layer': 2 }}>
-          <div className="section-card">
+        <section className="section reveal stack-card" id="about" ref={(el) => (revealRefs.current[1] = el)} style={{ '--stack-index': 1, '--stack-layer': 2 }}>
+          <div className="section-card stack-panel">
             <div className="split">
               <div>
                 <p className="section-kicker">{t.storyKicker}</p>
@@ -654,8 +655,8 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-section" id="services" ref={(el) => (revealRefs.current[2] = el)} style={{ '--stack-index': 2, '--stack-layer': 3 }}>
-          <div className="section-card">
+        <section className="section reveal stack-card" id="services" ref={(el) => (revealRefs.current[2] = el)} style={{ '--stack-index': 2, '--stack-layer': 3 }}>
+          <div className="section-card stack-panel">
             <p className="section-kicker">{t.capabilitiesKicker}</p>
             <h2>{t.capabilitiesTitle}</h2>
             <div className="capabilities-grid">
@@ -669,8 +670,8 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-section" id="case-studies" ref={(el) => (revealRefs.current[3] = el)} style={{ '--stack-index': 3, '--stack-layer': 4 }}>
-          <div className="section-card">
+        <section className="section reveal stack-card" id="case-studies" ref={(el) => (revealRefs.current[3] = el)} style={{ '--stack-index': 3, '--stack-layer': 4 }}>
+          <div className="section-card stack-panel">
             <p className="section-kicker">{t.caseKicker}</p>
             <h2>{t.caseTitle}</h2>
             <div className="experience-grid">
@@ -685,8 +686,8 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-section" id="experience" ref={(el) => (revealRefs.current[4] = el)} style={{ '--stack-index': 4, '--stack-layer': 5 }}>
-          <div className="section-card">
+        <section className="section reveal stack-card" id="experience" ref={(el) => (revealRefs.current[4] = el)} style={{ '--stack-index': 4, '--stack-layer': 5 }}>
+          <div className="section-card stack-panel">
             <p className="section-kicker">{t.experienceKicker}</p>
             <h2>{t.experienceTitle}</h2>
             <div className="experience-grid">
@@ -705,8 +706,8 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-section" ref={(el) => (revealRefs.current[5] = el)} style={{ '--stack-index': 5, '--stack-layer': 6 }}>
-          <div className="section-card">
+        <section className="section reveal stack-card" id="selected-work" ref={(el) => (revealRefs.current[5] = el)} style={{ '--stack-index': 5, '--stack-layer': 6 }}>
+          <div className="section-card stack-panel">
             <p className="section-kicker">{t.workKicker}</p>
             <h2>{t.workTitle}</h2>
             <div className="work-grid">
@@ -727,8 +728,8 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-section" ref={(el) => (revealRefs.current[6] = el)} style={{ '--stack-index': 6, '--stack-layer': 7 }}>
-          <div className="section-card">
+        <section className="section reveal stack-card" id="connect" ref={(el) => (revealRefs.current[6] = el)} style={{ '--stack-index': 6, '--stack-layer': 7 }}>
+          <div className="section-card stack-panel">
             <p className="section-kicker">{t.socialsKicker}</p>
             <h2>{t.socialsTitle}</h2>
             <div className="social-inline-list" aria-label="Social links inline">
@@ -747,8 +748,8 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-section" id="contact" ref={(el) => (revealRefs.current[7] = el)} style={{ '--stack-index': 7, '--stack-layer': 8 }}>
-          <div className="section-card">
+        <section className="section reveal stack-card" id="contact" ref={(el) => (revealRefs.current[7] = el)} style={{ '--stack-index': 7, '--stack-layer': 8 }}>
+          <div className="section-card stack-panel">
             <p className="section-kicker">{t.contactKicker}</p>
             <h2>{t.contactTitle}</h2>
             <p className="lead">{t.contactText}</p>
@@ -759,6 +760,7 @@ function App() {
             </div>
           </div>
         </section>
+        </div>
       </main>
 
       <div className={`ask-widget ${isChatOpen ? 'open' : ''}`}>

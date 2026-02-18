@@ -127,12 +127,17 @@ body {
   padding: 2rem 0;
 }
 
-.stack-section {
+.card-stack {
+  position: relative;
+}
+
+.stack-card {
   position: relative;
   z-index: var(--stack-layer, 1);
 }
 
-.section-card {
+.section-card,
+.stack-panel {
   position: relative;
 }
 
@@ -812,33 +817,38 @@ body {
 
 @media (max-width: 767px) {
   .site {
-    --stack-top: calc(0.8rem + env(safe-area-inset-top));
-    --stack-peek: 14px;
+    --stack-top: calc(0.65rem + env(safe-area-inset-top));
+    --stack-step: 12px;
   }
 
-  .stack-section {
-    min-height: 132svh;
+  .card-stack {
+    padding-bottom: calc(6.2rem + env(safe-area-inset-bottom));
+  }
+
+  .stack-card {
+    min-height: 136svh;
     margin: 0;
-    padding: 0 0 1rem;
+    padding: 0;
   }
 
-  .stack-section + .stack-section {
-    margin-top: -28svh;
-    padding-top: 28svh;
+  .stack-card + .stack-card {
+    margin-top: -34svh;
+    padding-top: 34svh;
   }
 
-  .stack-section:last-of-type {
-    min-height: calc(108svh + 5.4rem + env(safe-area-inset-bottom));
+  .stack-card:last-child {
+    min-height: calc(112svh + 7rem + env(safe-area-inset-bottom));
   }
 
-  .section-card {
+  .stack-panel {
     position: sticky;
     top: var(--stack-top);
-    transform: translateY(calc(var(--stack-index, 0) * var(--stack-peek)));
+    transform: translateY(calc(var(--stack-index, 0) * var(--stack-step)));
+    z-index: var(--stack-layer, 1);
     padding: 1.05rem;
     border: 1px solid color-mix(in srgb, var(--border) 96%, transparent);
     border-radius: 22px;
-    background: color-mix(in srgb, var(--bg-soft) 84%, rgba(255, 255, 255, 0.38));
+    background: color-mix(in srgb, var(--bg-soft) 86%, rgba(255, 255, 255, 0.3));
     box-shadow: 0 18px 42px rgba(49, 31, 17, 0.12);
     backdrop-filter: blur(10px) saturate(1.05);
   }
@@ -858,8 +868,12 @@ body {
     padding-bottom: 0.35rem;
   }
 
+  .utility-dock {
+    z-index: 72;
+  }
+
   .ask-widget {
-    z-index: 70;
+    z-index: 74;
   }
 }
 
@@ -1033,13 +1047,13 @@ body {
     transition: none !important;
   }
 
-  .stack-section {
+  .stack-card {
     min-height: auto !important;
     margin: 0.9rem 0 !important;
     padding: 2rem 0 !important;
   }
 
-  .section-card {
+  .stack-panel {
     position: relative !important;
     top: auto !important;
     border: 0 !important;
