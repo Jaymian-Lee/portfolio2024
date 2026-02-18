@@ -64,6 +64,64 @@ body {
   overflow-y: visible;
 }
 
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% -20%, rgba(211, 161, 109, 0.18), transparent 50%), var(--bg-soft);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: all;
+}
+
+.preloader.exit {
+  opacity: 0;
+  transform: translateY(-7%);
+}
+
+.preloader-inner {
+  min-height: 84px;
+  display: grid;
+  gap: 0.55rem;
+  justify-items: center;
+  align-content: center;
+  padding: 1rem;
+}
+
+.preloader-label {
+  margin: 0;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+}
+
+.preloader-greeting {
+  margin: 0;
+  font-size: clamp(2rem, 5.6vw, 3.5rem);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.18s ease, transform 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.preloader-greeting.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.preloader-greeting.hide {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
 .scroll-indicator {
   position: fixed;
   left: 0;
@@ -1061,5 +1119,14 @@ body {
     backdrop-filter: none !important;
     background: transparent !important;
     padding: 0 !important;
+  }
+
+  .preloader {
+    transition-duration: 0.2s !important;
+  }
+
+  .preloader-greeting {
+    transition-duration: 0.12s !important;
+    transform: none !important;
   }
 }

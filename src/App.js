@@ -218,6 +218,8 @@ const socialLinks = [
   { label: 'Instagram professional', url: 'https://www.instagram.com/jaymianlee_/' }
 ];
 
+const PRELOADER_GREETINGS = ['Hello', 'Hey', 'Hola', 'Olà', 'Hallo', 'Ciao', 'こんにちは', 'مرحبا'];
+
 const copy = {
   en: {
     eyebrow: 'Portfolio 2026',
@@ -319,6 +321,11 @@ function App() {
   const [chatError, setChatError] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [showPreloader, setShowPreloader] = useState(true);
+  const [preloaderExiting, setPreloaderExiting] = useState(false);
+  const [greetingIndex, setGreetingIndex] = useState(0);
+  const [greetingVisible, setGreetingVisible] = useState(true);
 
   const revealRefs = useRef([]);
   const messageEndRef = useRef(null);
@@ -340,6 +347,76 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('portfolio-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+    updatePreference();
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updatePreference);
+      return () => mediaQuery.removeEventListener('change', updatePreference);
+    }
+
+    mediaQuery.addListener(updatePreference);
+    return () => mediaQuery.removeListener(updatePreference);
+  }, []);
+
+  useEffect(() => {
+    const greetings = prefersReducedMotion ? PRELOADER_GREETINGS.slice(0, 4) : PRELOADER_GREETINGS;
+    const exitDuration = prefersReducedMotion ? 200 : 650;
+    const totalDuration = prefersReducedMotion ? 1600 : 3000;
+    const transitionDuration = prefersReducedMotion ? 70 : 140;
+    const stepDuration = Math.max(120, Math.floor((totalDuration - exitDuration) / greetings.length));
+
+    let timer;
+    let cancelled = false;
+    let step = 0;
+
+    const finish = () => {
+      setPreloaderExiting(true);
+      timer = setTimeout(() => {
+        if (!cancelled) setShowPreloader(false);
+      }, exitDuration);
+    };
+
+    const cycle = () => {
+      if (cancelled) return;
+      if (step >= greetings.length - 1) {
+        timer = setTimeout(finish, Math.max(80, stepDuration - transitionDuration));
+        return;
+      }
+
+      timer = setTimeout(() => {
+        setGreetingVisible(false);
+        timer = setTimeout(() => {
+          if (cancelled) return;
+          step += 1;
+          setGreetingIndex(step);
+          setGreetingVisible(true);
+          cycle();
+        }, transitionDuration);
+      }, Math.max(80, stepDuration - transitionDuration));
+    };
+
+    setGreetingIndex(0);
+    setGreetingVisible(true);
+    setShowPreloader(true);
+    setPreloaderExiting(false);
+    cycle();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    document.body.style.overflow = showPreloader ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showPreloader]);
 
   useEffect(() => {
     localStorage.setItem('portfolio-language', language);
@@ -493,9 +570,21 @@ function App() {
   };
 
   const t = copy[language];
+  const activeGreetings = prefersReducedMotion ? PRELOADER_GREETINGS.slice(0, 4) : PRELOADER_GREETINGS;
 
   return (
-    <div className="site-shell">
+    <div className={`site-shell ${showPreloader ? 'is-preloading' : ''}`}>
+      {showPreloader && (
+        <div className={`preloader ${preloaderExiting ? 'exit' : ''}`} aria-hidden="true">
+          <div className="preloader-inner">
+            <p className="preloader-label">Welcome</p>
+            <p className={`preloader-greeting ${greetingVisible ? 'show' : 'hide'}`} key={activeGreetings[greetingIndex]}>
+              {activeGreetings[greetingIndex]}
+            </p>
+          </div>
+        </div>
+      )}
+
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
@@ -563,7 +652,7 @@ function App() {
         </button>
       </div>
 
-      <main className="site" id="main-content">
+      <main className="site" id="main-content" aria-hidden={showPreloader}>
         <div className="card-stack" aria-label="Portfolio card stack">
         <header className="hero reveal stack-card" ref={(el) => (revealRefs.current[0] = el)} style={{ '--stack-index': 0, '--stack-layer': 1 }}>
           <div className="section-card stack-panel hero-card">
