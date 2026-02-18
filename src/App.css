@@ -174,6 +174,19 @@ body {
   box-shadow: 0 8px 22px rgba(49, 34, 24, 0.08);
 }
 
+.dock-card.control {
+  appearance: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dock-card.control:hover,
+.dock-card.control:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
 .dock-label {
   margin: 0;
   font-size: 0.67rem;
@@ -196,26 +209,43 @@ body {
   gap: 0.6rem;
 }
 
-.language-switch {
-  display: inline-flex;
+.language-toggle {
+  position: relative;
+  width: 64px;
+  height: 30px;
+  border-radius: 999px;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.16rem;
   background: var(--surface);
-}
-
-.language-switch button {
-  border: none;
-  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px;
+  font-size: 0.7rem;
   color: var(--muted);
-  border-radius: 999px;
-  padding: 0.24rem 0.52rem;
-  font-size: 0.72rem;
-  cursor: pointer;
 }
 
-.language-switch button.active {
+.lang-option {
+  z-index: 1;
+}
+
+.lang-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 22px;
+  border-radius: 999px;
   background: var(--surface-strong);
+  border: 1px solid var(--border);
+  transition: transform 0.3s ease;
+}
+
+.language-toggle.nl .lang-knob {
+  transform: translateX(34px);
+}
+
+.language-toggle.en .lang-option.en,
+.language-toggle.nl .lang-option.nl {
   color: var(--text);
 }
 

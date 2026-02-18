@@ -476,43 +476,36 @@ function App() {
       </aside>
 
       <div className="utility-dock" aria-label="Display controls">
-        <div className="dock-card">
-          <p className="dock-label">Language</p>
-          <div className="language-switch" aria-label="Language switch">
-            <button
-              type="button"
-              className={language === 'en' ? 'active' : ''}
-              onClick={() => setLanguage('en')}
-              aria-pressed={language === 'en'}
-            >
-              EN
-            </button>
-            <button
-              type="button"
-              className={language === 'nl' ? 'active' : ''}
-              onClick={() => setLanguage('nl')}
-              aria-pressed={language === 'nl'}
-            >
-              NL
-            </button>
-          </div>
-        </div>
+        <button
+          type="button"
+          className="dock-card control"
+          onClick={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+          aria-label="Toggle language"
+          title={language === 'en' ? 'Switch to Dutch' : 'Switch to English'}
+        >
+          <span className="dock-label">Language</span>
+          <span className={`language-toggle ${language}`} aria-hidden="true">
+            <span className="lang-knob" />
+            <span className="lang-option en">EN</span>
+            <span className="lang-option nl">NL</span>
+          </span>
+        </button>
 
-        <div className="dock-card">
-          <p className="dock-label">Theme</p>
-          <button
-            type="button"
-            className={`theme-toggle ${theme}`}
-            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-            aria-label="Toggle theme"
-            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-          >
+        <button
+          type="button"
+          className="dock-card control"
+          onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+          aria-label="Toggle theme"
+          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        >
+          <span className="dock-label">Theme</span>
+          <span className={`theme-toggle ${theme}`}>
             <span className="theme-track" aria-hidden="true">
               <span className="sun" />
               <span className="moon" />
             </span>
-          </button>
-        </div>
+          </span>
+        </button>
       </div>
 
       <main className="site">
