@@ -564,181 +564,199 @@ function App() {
       </div>
 
       <main className="site" id="main-content">
-        <header className="hero reveal" ref={(el) => (revealRefs.current[0] = el)}>
-          <div className="hero-topline">
-            <p className="eyebrow">{t.eyebrow}</p>
-          </div>
+        <header className="hero reveal stack-section" ref={(el) => (revealRefs.current[0] = el)} style={{ '--stack-index': 0, '--stack-layer': 1 }}>
+          <div className="section-card hero-card">
+            <div className="hero-topline">
+              <p className="eyebrow">{t.eyebrow}</p>
+            </div>
 
-          <div className="hero-intro">
-            <figure className="portrait-wrap hero-portrait">
-              <img
-                src="/jay-portrait.jpg"
-                alt="Jaymian-Lee Reinartz"
-                loading="lazy"
-                decoding="async"
-                className="portrait-image"
-                width="1050"
-                height="1400"
-              />
-            </figure>
+            <div className="hero-intro">
+              <figure className="portrait-wrap hero-portrait">
+                <img
+                  src="/jay-portrait.jpg"
+                  alt="Jaymian-Lee Reinartz"
+                  loading="lazy"
+                  decoding="async"
+                  className="portrait-image"
+                  width="1050"
+                  height="1400"
+                />
+              </figure>
 
-            <div className="hero-copy">
-              <h1>
-                {t.heroTitleA}
-                <span> {t.heroTitleB}</span>
-              </h1>
+              <div className="hero-copy">
+                <h1>
+                  {t.heroTitleA}
+                  <span> {t.heroTitleB}</span>
+                </h1>
 
-              <p className="lead">{t.lead}</p>
+                <p className="lead">{t.lead}</p>
 
-              <nav className="quick-links" aria-label={t.quickLinksLabel}>
-                <a href="#services">Services</a>
-                <a href="#case-studies">Case Studies</a>
-                <a href="#experience">Experience</a>
-                <a href="#contact">Contact</a>
-              </nav>
+                <nav className="quick-links" aria-label={t.quickLinksLabel}>
+                  <a href="#services">Services</a>
+                  <a href="#case-studies">Case Studies</a>
+                  <a href="#experience">Experience</a>
+                  <a href="#contact">Contact</a>
+                </nav>
 
-              <div className="hero-metrics" aria-label="Credibility highlights">
-                <article>
-                  <p className="metric-value">{t.metricA}</p>
-                  <p className="metric-label">{t.metricAText}</p>
-                </article>
-                <article>
-                  <p className="metric-value">{t.metricB}</p>
-                  <p className="metric-label">{t.metricBText}</p>
-                </article>
-                <article>
-                  <p className="metric-value">{t.metricC}</p>
-                  <p className="metric-label">{t.metricCText}</p>
-                </article>
-              </div>
+                <div className="hero-metrics" aria-label="Credibility highlights">
+                  <article>
+                    <p className="metric-value">{t.metricA}</p>
+                    <p className="metric-label">{t.metricAText}</p>
+                  </article>
+                  <article>
+                    <p className="metric-value">{t.metricB}</p>
+                    <p className="metric-label">{t.metricBText}</p>
+                  </article>
+                  <article>
+                    <p className="metric-value">{t.metricC}</p>
+                    <p className="metric-label">{t.metricCText}</p>
+                  </article>
+                </div>
 
-              <div className="hero-actions">
-                <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Email Jaymian-Lee to start a project">
-                  {t.ctaPrimary}
-                </a>
-                <a href="#services" className="btn btn-ghost" aria-label="Read about services">
-                  {t.ctaSecondary}
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn btn-ghost"
-                  aria-label="Open LinkedIn profile"
-                >
-                  LinkedIn profile
-                </a>
+                <div className="hero-actions">
+                  <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Email Jaymian-Lee to start a project">
+                    {t.ctaPrimary}
+                  </a>
+                  <a href="#services" className="btn btn-ghost" aria-label="Read about services">
+                    {t.ctaSecondary}
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-ghost"
+                    aria-label="Open LinkedIn profile"
+                  >
+                    LinkedIn profile
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </header>
 
-        <section className="section split reveal" id="about" ref={(el) => (revealRefs.current[1] = el)}>
-          <div>
-            <p className="section-kicker">{t.storyKicker}</p>
-            <h2>{t.storyTitle}</h2>
+        <section className="section reveal stack-section" id="about" ref={(el) => (revealRefs.current[1] = el)} style={{ '--stack-index': 1, '--stack-layer': 2 }}>
+          <div className="section-card">
+            <div className="split">
+              <div>
+                <p className="section-kicker">{t.storyKicker}</p>
+                <h2>{t.storyTitle}</h2>
+              </div>
+              <div>
+                <ul className="story-list">
+                  {storyPoints[language].map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+                {/* portrait moved to intro */}
+              </div>
+            </div>
           </div>
-          <div>
-            <ul className="story-list">
-              {storyPoints[language].map((point) => (
-                <li key={point}>{point}</li>
+        </section>
+
+        <section className="section reveal stack-section" id="services" ref={(el) => (revealRefs.current[2] = el)} style={{ '--stack-index': 2, '--stack-layer': 3 }}>
+          <div className="section-card">
+            <p className="section-kicker">{t.capabilitiesKicker}</p>
+            <h2>{t.capabilitiesTitle}</h2>
+            <div className="capabilities-grid">
+              {capabilities[language].map((item) => (
+                <article className="capability-card" key={item.title}>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
               ))}
-            </ul>
-            {/* portrait moved to intro */}
+            </div>
           </div>
         </section>
 
-        <section className="section reveal" id="services" ref={(el) => (revealRefs.current[2] = el)}>
-          <p className="section-kicker">{t.capabilitiesKicker}</p>
-          <h2>{t.capabilitiesTitle}</h2>
-          <div className="capabilities-grid">
-            {capabilities[language].map((item) => (
-              <article className="capability-card" key={item.title}>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
+        <section className="section reveal stack-section" id="case-studies" ref={(el) => (revealRefs.current[3] = el)} style={{ '--stack-index': 3, '--stack-layer': 4 }}>
+          <div className="section-card">
+            <p className="section-kicker">{t.caseKicker}</p>
+            <h2>{t.caseTitle}</h2>
+            <div className="experience-grid">
+              {caseStudies[language].map((item) => (
+                <article className="experience-card" key={item.title}>
+                  <h3>{item.title}</h3>
+                  <p>{item.summary}</p>
+                  <p className="experience-highlight">{item.result}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="section reveal" id="case-studies" ref={(el) => (revealRefs.current[3] = el)}>
-          <p className="section-kicker">{t.caseKicker}</p>
-          <h2>{t.caseTitle}</h2>
-          <div className="experience-grid">
-            {caseStudies[language].map((item) => (
-              <article className="experience-card" key={item.title}>
-                <h3>{item.title}</h3>
-                <p>{item.summary}</p>
-                <p className="experience-highlight">{item.result}</p>
-              </article>
-            ))}
+        <section className="section reveal stack-section" id="experience" ref={(el) => (revealRefs.current[4] = el)} style={{ '--stack-index': 4, '--stack-layer': 5 }}>
+          <div className="section-card">
+            <p className="section-kicker">{t.experienceKicker}</p>
+            <h2>{t.experienceTitle}</h2>
+            <div className="experience-grid">
+              {experience[language].map((item) => (
+                <article className="experience-card" key={`${item.company}-${item.role}`}>
+                  <div className="experience-top">
+                    <p className="experience-role">{item.role}</p>
+                    <p className="experience-period">{item.period}</p>
+                  </div>
+                  <h3>{item.company}</h3>
+                  <p>{item.summary}</p>
+                  <p className="experience-highlight">{item.highlight}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="section reveal" id="experience" ref={(el) => (revealRefs.current[4] = el)}>
-          <p className="section-kicker">{t.experienceKicker}</p>
-          <h2>{t.experienceTitle}</h2>
-          <div className="experience-grid">
-            {experience[language].map((item) => (
-              <article className="experience-card" key={`${item.company}-${item.role}`}>
-                <div className="experience-top">
-                  <p className="experience-role">{item.role}</p>
-                  <p className="experience-period">{item.period}</p>
-                </div>
-                <h3>{item.company}</h3>
-                <p>{item.summary}</p>
-                <p className="experience-highlight">{item.highlight}</p>
-              </article>
-            ))}
+        <section className="section reveal stack-section" ref={(el) => (revealRefs.current[5] = el)} style={{ '--stack-index': 5, '--stack-layer': 6 }}>
+          <div className="section-card">
+            <p className="section-kicker">{t.workKicker}</p>
+            <h2>{t.workTitle}</h2>
+            <div className="work-grid">
+              {projectLinks.map((project) => (
+                <article className="work-card" key={project.name}>
+                  <div className="work-top">
+                    <p className="work-category">{project.category[language]}</p>
+                    <a href={project.url} target="_blank" rel="noreferrer" className="work-link" aria-label={`Visit ${project.name} project`}>
+                      {t.visit} ↗
+                    </a>
+                  </div>
+                  <h3>{project.name}</h3>
+                  <p>{project.summary[language]}</p>
+                  <p className="work-impact">{project.impact[language]}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="section reveal" ref={(el) => (revealRefs.current[5] = el)}>
-          <p className="section-kicker">{t.workKicker}</p>
-          <h2>{t.workTitle}</h2>
-          <div className="work-grid">
-            {projectLinks.map((project) => (
-              <article className="work-card" key={project.name}>
-                <div className="work-top">
-                  <p className="work-category">{project.category[language]}</p>
-                  <a href={project.url} target="_blank" rel="noreferrer" className="work-link" aria-label={`Visit ${project.name} project`}>
-                    {t.visit} ↗
-                  </a>
-                </div>
-                <h3>{project.name}</h3>
-                <p>{project.summary[language]}</p>
-                <p className="work-impact">{project.impact[language]}</p>
-              </article>
-            ))}
+        <section className="section reveal stack-section" ref={(el) => (revealRefs.current[6] = el)} style={{ '--stack-index': 6, '--stack-layer': 7 }}>
+          <div className="section-card">
+            <p className="section-kicker">{t.socialsKicker}</p>
+            <h2>{t.socialsTitle}</h2>
+            <div className="social-inline-list" aria-label="Social links inline">
+              {socialLinks.map((social) => (
+                <a
+                  key={`inline-${social.label}`}
+                  href={social.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="social-inline-link"
+                >
+                  {social.label}
+                </a>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="section reveal" ref={(el) => (revealRefs.current[6] = el)}>
-          <p className="section-kicker">{t.socialsKicker}</p>
-          <h2>{t.socialsTitle}</h2>
-          <div className="social-inline-list" aria-label="Social links inline">
-            {socialLinks.map((social) => (
-              <a
-                key={`inline-${social.label}`}
-                href={social.url}
-                target="_blank"
-                rel="noreferrer"
-                className="social-inline-link"
-              >
-                {social.label}
+        <section className="section reveal stack-section" id="contact" ref={(el) => (revealRefs.current[7] = el)} style={{ '--stack-index': 7, '--stack-layer': 8 }}>
+          <div className="section-card">
+            <p className="section-kicker">{t.contactKicker}</p>
+            <h2>{t.contactTitle}</h2>
+            <p className="lead">{t.contactText}</p>
+            <div className="hero-actions">
+              <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Contact Jaymian-Lee by email">
+                {t.contactCta}
               </a>
-            ))}
-          </div>
-        </section>
-
-        <section className="section reveal" id="contact" ref={(el) => (revealRefs.current[7] = el)}>
-          <p className="section-kicker">{t.contactKicker}</p>
-          <h2>{t.contactTitle}</h2>
-          <p className="lead">{t.contactText}</p>
-          <div className="hero-actions">
-            <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Contact Jaymian-Lee by email">
-              {t.contactCta}
-            </a>
+            </div>
           </div>
         </section>
       </main>

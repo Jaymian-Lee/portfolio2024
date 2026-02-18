@@ -126,6 +126,15 @@ body {
   padding: 2rem 0;
 }
 
+.stack-section {
+  position: relative;
+  z-index: var(--stack-layer, 1);
+}
+
+.section-card {
+  position: relative;
+}
+
 .hero {
   border-bottom: 1px solid var(--line);
   padding-top: 1.2rem;
@@ -800,6 +809,53 @@ body {
   transform: translateY(0);
 }
 
+@media (max-width: 767px) {
+  .site {
+    --stack-top-base: calc(0.5rem + env(safe-area-inset-top));
+    --stack-top-step: 0.28rem;
+  }
+
+  .stack-section {
+    min-height: 120svh;
+    margin: 0;
+    padding: 0 0 1rem;
+  }
+
+  .stack-section:last-of-type {
+    min-height: calc(100svh + 5.4rem + env(safe-area-inset-bottom));
+  }
+
+  .section-card {
+    position: sticky;
+    top: clamp(0.45rem, calc(var(--stack-top-base) + (var(--stack-index, 0) * var(--stack-top-step))), 2.4rem);
+    padding: 1.05rem;
+    border: 1px solid color-mix(in srgb, var(--border) 96%, transparent);
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--bg-soft) 84%, rgba(255, 255, 255, 0.38));
+    box-shadow: 0 18px 42px rgba(49, 31, 17, 0.12);
+    backdrop-filter: blur(10px) saturate(1.05);
+  }
+
+  .hero {
+    border-bottom: 0;
+    padding-top: 0;
+  }
+
+  .hero-card {
+    padding-top: 1.35rem;
+  }
+
+  .hero .hero-actions,
+  .section .hero-actions,
+  .social-inline-list {
+    padding-bottom: 0.35rem;
+  }
+
+  .ask-widget {
+    z-index: 70;
+  }
+}
+
 @media (min-width: 768px) {
   .site {
     width: min(1000px, 90vw);
@@ -968,5 +1024,21 @@ body {
   * {
     animation: none !important;
     transition: none !important;
+  }
+
+  .stack-section {
+    min-height: auto !important;
+    margin: 0.9rem 0 !important;
+    padding: 2rem 0 !important;
+  }
+
+  .section-card {
+    position: relative !important;
+    top: auto !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    background: transparent !important;
+    padding: 0 !important;
   }
 }
