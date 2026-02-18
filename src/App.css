@@ -60,7 +60,8 @@ body {
 
 .site-shell {
   position: relative;
-  overflow: clip;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .scroll-indicator {
@@ -819,6 +820,11 @@ body {
     min-height: 120svh;
     margin: 0;
     padding: 0 0 1rem;
+  }
+
+  .stack-section + .stack-section {
+    margin-top: -18svh;
+    padding-top: 18svh;
   }
 
   .stack-section:last-of-type {
