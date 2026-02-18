@@ -1,19 +1,54 @@
-# Portfolio
+# portfolio2024
 
-This is a collection of my projects and achievements.
+Vernieuwde portfolio-site met:
+- Focus op producten/projecten (Corthex, Botforger, Vizualy, Refacthor)
+- Overzicht van maatwerk in PrestaShop en WordPress
+- Ingebouwde AI-chat-assistent via moderne OpenAI Responses API
+- Subtiele scroll UX (progress indicator + reveal animaties)
 
-## Projects
+## Stack
+- React (CRA)
+- Express API (`/api/chat`)
+- OpenAI Node SDK (`responses.create`)
 
-- [RP Web Design](https://www.rpwebdesign.nl): Brief description.
-- [Project 2](link-to-project-2): Brief description of project 2.
-- [Project 3](link-to-project-3): Brief description of project 3.
+## Installatie
+```bash
+npm install
+```
 
-## Skills
+## Environment variabelen
+Maak `.env` op basis van `.env.example`.
 
-- Skill 1
-- Skill 2
-- Skill 3
+Verplicht:
+- `OPENAI_API_KEY`
 
-## Contact
+Optioneel:
+- `OPENAI_MODEL` (default: `gpt-4.1-mini`)
+- `PORT` (default API: `3001`)
 
-Feel free to reach out to me at [jaymian-lee@ziggo.nl](mailto:jaymian-lee@ziggo.nl) or connect with me on [LinkedIn](https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/).
+## Local development
+Start frontend + API tegelijk:
+```bash
+npm run dev
+```
+
+Los starten:
+```bash
+npm run start:api
+npm start
+```
+
+## Build
+```bash
+npm run build
+```
+
+## Foutafhandeling AI
+- Als `OPENAI_API_KEY` ontbreekt geeft `/api/chat` een duidelijke foutmelding terug.
+- Frontend toont deze fout netjes in de chat-sectie.
+
+## Deploy (kort)
+1. Deploy frontend als statische React build (`npm run build`).
+2. Deploy `server.js` als Node service.
+3. Zet `OPENAI_API_KEY` (en optioneel `OPENAI_MODEL`) in server env.
+4. Zorg dat frontend `/api/*` naar de Node service routed (reverse proxy of zelfde domein).
