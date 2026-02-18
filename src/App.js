@@ -3,98 +3,156 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './App.css';
 
+const SITE_URL = 'https://jaymianlee.com';
+const SITE_NAME = 'Jaymian-Lee Reinartz Portfolio';
+
 const projectLinks = [
   {
     name: 'Corthex',
     url: 'https://corthex.app',
-    category: { en: 'Product Studio', nl: 'Product Studio' },
+    category: { en: 'AI Automation Product Studio', nl: 'AI Automation Product Studio' },
     summary: {
-      en: 'Designing practical automation systems that save teams real time.',
-      nl: 'Praktische automation systemen die teams merkbaar tijd besparen.'
+      en: 'Designing practical AI automation systems that save teams measurable time in daily work.',
+      nl: 'Praktische AI automation systemen die teams dagelijks aantoonbaar tijd besparen.'
     },
-    impact: { en: 'From concept to live workflow', nl: 'Van concept tot live workflow' }
+    impact: {
+      en: 'From strategy and product engineering to live workflows',
+      nl: 'Van strategie en product engineering naar live workflows'
+    }
   },
   {
     name: 'Botforger',
     url: 'https://botforger.com',
-    category: { en: 'Automation Foundation', nl: 'Automation Foundation' },
+    category: { en: 'Chatbot Automation', nl: 'Chatbot Automation' },
     summary: {
-      en: 'A clear foundation for chatbot architecture, workflows, and hands-on implementation.',
-      nl: 'Een heldere basis voor chatbot architectuur, workflows en praktische implementatie.'
+      en: 'A strong base for chatbot automation, conversation flow design, and maintainable implementation.',
+      nl: 'Een sterke basis voor chatbot automation, conversatieflow design en onderhoudbare implementatie.'
     },
-    impact: { en: 'Early system for reliable automations', nl: 'Vroeg systeem voor betrouwbare automations' }
+    impact: {
+      en: 'Reliable architecture for long term automation',
+      nl: 'Betrouwbare architectuur voor langdurige automation'
+    }
   },
   {
     name: 'Vizualy',
     url: 'https://vizualy.nl',
-    category: { en: 'Visual Direction', nl: 'Visual Direction' },
+    category: { en: 'Brand and Product Communication', nl: 'Brand en Product Communicatie' },
     summary: {
-      en: 'Visual storytelling for brands that want clarity and stronger presentations.',
-      nl: 'Visual storytelling voor merken die duidelijke, sterke presentaties willen.'
+      en: 'Visual storytelling for brands that need clear communication and stronger digital presence.',
+      nl: 'Visual storytelling voor merken die heldere communicatie en een sterkere digitale presence zoeken.'
     },
-    impact: { en: 'Narrative design with business focus', nl: 'Narrative design met business focus' }
+    impact: {
+      en: 'Clarity focused design that supports growth',
+      nl: 'Design met focus op helderheid en groei'
+    }
   },
   {
     name: 'Refacthor',
     url: 'https://refacthor.nl',
-    category: { en: 'Engineering Quality', nl: 'Engineering Quality' },
+    category: { en: 'Full Stack Development', nl: 'Full Stack Development' },
     summary: {
-      en: 'Refactoring focused development for cleaner architecture and better speed over time.',
-      nl: 'Refactoring gerichte ontwikkeling voor schonere architectuur en duurzame snelheid.'
+      en: 'Full stack development focused on maintainable code, speed, and clean architecture over time.',
+      nl: 'Full stack development met focus op onderhoudbare code, snelheid en schone architectuur op de lange termijn.'
     },
-    impact: { en: 'Less friction, better shipping rhythm', nl: 'Minder frictie, beter shipping ritme' }
+    impact: {
+      en: 'Lower technical debt and smoother release cycles',
+      nl: 'Minder technische schuld en soepelere releasecycli'
+    }
   }
 ];
 
 const capabilities = {
   en: [
     {
-      title: 'Product Strategy',
-      text: 'Turning ideas into clear product decisions and realistic plans.'
+      title: 'AI Automation Engineering',
+      text: 'Workflow automation with APIs, agents, and practical AI features that support operations.'
     },
     {
-      title: 'Automation Engineering',
-      text: 'Connecting tools, APIs, and workflows that support daily operations.'
+      title: 'Full Stack Development',
+      text: 'From React frontend to backend APIs, data models, and deployment pipelines.'
     },
     {
-      title: 'Full Stack Build',
-      text: 'Building frontend and backend as one coherent, maintainable product.'
+      title: 'Ecommerce Development',
+      text: 'Conversion focused ecommerce builds, custom checkout flows, and performance improvements.'
     },
     {
-      title: 'Technical Direction',
-      text: 'Making practical choices that keep teams fast and codebases healthy.'
+      title: 'PrestaShop and WordPress Extensions',
+      text: 'Custom PrestaShop modules and WordPress plugins for business specific requirements.'
     }
   ],
   nl: [
     {
-      title: 'Productstrategie',
-      text: 'Ideeën vertalen naar heldere productkeuzes en realistische plannen.'
+      title: 'AI Automation Engineering',
+      text: 'Workflow automation met APIs, agents en praktische AI features die dagelijkse operatie ondersteunen.'
     },
     {
-      title: 'Automation Engineering',
-      text: 'Tools, APIs en workflows verbinden die dagelijks werk ondersteunen.'
+      title: 'Full Stack Development',
+      text: 'Van React frontend tot backend APIs, datamodellen en deployment pipelines.'
     },
     {
-      title: 'Full Stack Build',
-      text: 'Frontend en backend bouwen als één samenhangend en onderhoudbaar product.'
+      title: 'Ecommerce Development',
+      text: 'Conversiegerichte ecommerce builds, custom checkout flows en performance verbeteringen.'
     },
     {
-      title: 'Technische Richting',
-      text: 'Praktische keuzes maken die teams snel houden en code gezond houden.'
+      title: 'PrestaShop en WordPress Extensies',
+      text: 'Maatwerk PrestaShop modules en WordPress plugins voor specifieke business behoeften.'
     }
   ]
 };
 
 const storyPoints = {
   en: [
-    'Over 10 years building commerce platforms, custom software, and modern web products.',
-    'Focused on useful automation with measurable outcomes and no hype.',
-    'Strong bridge between business goals, product thinking, and execution.'
+    '10+ years building web products, ecommerce solutions, and software for growing teams.',
+    'Focused on useful AI automation and chatbot automation with measurable business outcomes.',
+    'Based in Limburg, active across Nederland and international projects.'
   ],
   nl: [
-    'Meer dan 10 jaar ervaring met commerce platforms, maatwerk software en moderne webproducten.',
-    'Focus op bruikbare automation met meetbare resultaten en zonder hype.',
-    'Sterke brug tussen business doelen, productdenken en uitvoering.'
+    '10+ jaar ervaring met webproducten, ecommerce oplossingen en software voor groeiende teams.',
+    'Focus op bruikbare AI automation en chatbot automation met meetbare business resultaten.',
+    'Gebaseerd in Limburg, actief in heel Nederland en internationale projecten.'
+  ]
+};
+
+const caseStudies = {
+  en: [
+    {
+      title: 'Automation platform foundation',
+      summary:
+        'Designed a modular backend for automation workflows with clear observability and faster iteration speed.',
+      result: 'Lower manual workload and better release rhythm for product teams.'
+    },
+    {
+      title: 'Ecommerce growth and custom integrations',
+      summary:
+        'Implemented custom ecommerce integrations for catalog management, checkout logic, and analytics alignment.',
+      result: 'Improved conversion quality and stronger operational stability.'
+    },
+    {
+      title: 'Plugin and module engineering',
+      summary:
+        'Built maintainable WordPress plugins and PrestaShop modules for client specific workflows and features.',
+      result: 'Faster updates and less dependence on heavy third party tooling.'
+    }
+  ],
+  nl: [
+    {
+      title: 'Basis voor automation platform',
+      summary:
+        'Een modulaire backend ontworpen voor automation workflows met duidelijke observability en snellere iteratie.',
+      result: 'Minder handmatig werk en een beter release ritme voor productteams.'
+    },
+    {
+      title: 'Ecommerce groei en custom integraties',
+      summary:
+        'Custom ecommerce integraties gebouwd voor catalogbeheer, checkout logica en analytics afstemming.',
+      result: 'Betere conversiekwaliteit en stabielere operatie.'
+    },
+    {
+      title: 'Plugin en module engineering',
+      summary:
+        'Onderhoudbare WordPress plugins en PrestaShop modules gebouwd voor klantspecifieke workflows en features.',
+      result: 'Snellere updates en minder afhankelijkheid van zware third party tooling.'
+    }
   ]
 };
 
@@ -123,54 +181,6 @@ const experience = {
       summary:
         'Develops custom web solutions focused on digital growth, usability, and technical reliability.',
       highlight: 'Delivers high performance websites and structured development workflows for clients.'
-    },
-    {
-      role: 'E-Commerce / Software Developer (Part-time)',
-      company: 'Martin Kozijn',
-      period: 'October 2023 to Present',
-      summary:
-        'Works on e-commerce and software tasks, combining implementation speed with practical design choices.',
-      highlight: 'Supports ongoing product improvements and development across commerce operations.'
-    },
-    {
-      role: 'Software Developer | Owner',
-      company: 'RP Web Design',
-      period: 'September 2023 to October 2025',
-      summary:
-        'Delivered websites and client-focused software work with a strong focus on execution quality.',
-      highlight: 'Handled end to end client delivery from technical implementation to release.'
-    },
-    {
-      role: 'Repair Technician, Electrical Devices (Part-time)',
-      company: 'Computerservice Kerkrade',
-      period: 'February 2021 to September 2023',
-      summary:
-        'Repaired devices, built computers, and helped customers with practical IT issues.',
-      highlight: 'Built strong technical troubleshooting and customer support skills in real-world environments.'
-    },
-    {
-      role: 'Programmer Intern',
-      company: 'Computerservice Kerkrade',
-      period: 'March 2020 to February 2021',
-      summary:
-        'Created websites and supported device-related technical tasks during internship period.',
-      highlight: 'Gained early production experience in development and technical operations.'
-    },
-    {
-      role: 'App Support Specialist (Part-time)',
-      company: 'Transvision B.V.',
-      period: 'May 2022 to August 2023',
-      summary:
-        'Supported app users by resolving issues, answering questions, and improving service quality.',
-      highlight: 'Combined technical support with clear communication in customer-facing workflows.'
-    },
-    {
-      role: 'Programmer Intern',
-      company: 'Shardy',
-      period: 'March 2021 to January 2022',
-      summary:
-        'Worked on multiple internal projects and contributed to product development tasks.',
-      highlight: 'Contributed to projects including SoundBored and Wayfinder.'
     }
   ],
   nl: [
@@ -186,8 +196,7 @@ const experience = {
       role: 'Founder',
       company: 'Botforger',
       period: '2025 tot 2026',
-      summary:
-        'Bouwde de basis voor schaalbare chatbot en workflow automation systemen.',
+      summary: 'Bouwde de basis voor schaalbare chatbot en workflow automation systemen.',
       highlight: 'Zette de basisarchitectuur en productvisie neer die later verder groeide.'
     },
     {
@@ -197,138 +206,107 @@ const experience = {
       summary:
         'Ontwikkelt maatwerk websites met focus op digitale groei, gebruiksvriendelijkheid en technische betrouwbaarheid.',
       highlight: 'Levert snelle websites en gestructureerde ontwikkeltrajecten voor klanten.'
-    },
-    {
-      role: 'E-Commerce / Softwareontwikkelaar (Part-time)',
-      company: 'Martin Kozijn',
-      period: 'oktober 2023 tot Nu',
-      summary:
-        'Werkt aan e-commerce en softwaretaken met een combinatie van snelheid en praktische designkeuzes.',
-      highlight: 'Ondersteunt doorlopende productverbeteringen binnen commerce processen.'
-    },
-    {
-      role: 'Softwareontwikkelaar | Eigenaar',
-      company: 'RP Web Design',
-      period: 'september 2023 tot oktober 2025',
-      summary:
-        'Leverde websites en klantgerichte software met sterke focus op uitvoering en kwaliteit.',
-      highlight: 'Verzorgde end to end oplevering van technische implementatie tot livegang.'
-    },
-    {
-      role: 'Reparateur elektrische apparaten (Part-time)',
-      company: 'Computerservice Kerkrade',
-      period: 'februari 2021 tot september 2023',
-      summary:
-        'Repareerde apparaten, bouwde computers en hielp klanten met praktische IT-vraagstukken.',
-      highlight: 'Bouwde sterke troubleshooting en klantgerichte support skills in de praktijk.'
-    },
-    {
-      role: 'Programmeur stage',
-      company: 'Computerservice Kerkrade',
-      period: 'maart 2020 tot februari 2021',
-      summary:
-        'Maakte websites en ondersteunde technische werkzaamheden tijdens de stageperiode.',
-      highlight: 'Deed vroege productie-ervaring op in development en technische operatie.'
-    },
-    {
-      role: 'App Support Medewerker (Part-time)',
-      company: 'Transvision B.V.',
-      period: 'mei 2022 tot augustus 2023',
-      summary:
-        'Ondersteunde appgebruikers door issues op te lossen, vragen te beantwoorden en service te verbeteren.',
-      highlight: 'Combineerde technische support met duidelijke communicatie in klantgerichte flows.'
-    },
-    {
-      role: 'Programmeur stage',
-      company: 'Shardy',
-      period: 'maart 2021 tot januari 2022',
-      summary:
-        'Werkte aan meerdere interne projecten en droeg bij aan productontwikkeling.',
-      highlight: 'Droeg bij aan projecten zoals SoundBored en Wayfinder.'
     }
   ]
 };
 
 const socialLinks = [
-  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
-  { label: 'GitHub', url: 'https://github.com/Jaymian-Lee' },
-  { label: 'Twitch', url: 'https://twitch.tv/jaymianlee' },
-  { label: 'YouTube · @JaymianLee', url: 'https://www.youtube.com/@JaymianLee' },
-  { label: 'Instagram', url: 'https://www.instagram.com/jaymianlee_/' },
-  { label: 'Instagram (Personal)', url: 'https://www.instagram.com/jaymianlee/' }
+  { label: 'LinkedIn profile', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
+  { label: 'GitHub repositories', url: 'https://github.com/Jaymian-Lee' },
+  { label: 'Twitch channel', url: 'https://twitch.tv/jaymianlee' },
+  { label: 'YouTube channel @JaymianLee', url: 'https://www.youtube.com/@JaymianLee' },
+  { label: 'Instagram professional', url: 'https://www.instagram.com/jaymianlee_/' }
 ];
 
 const copy = {
   en: {
     eyebrow: 'Portfolio 2026',
-    heroTitleA: 'Calm digital products',
-    heroTitleB: 'designed to be useful.',
-    lead: 'I am Jaymian-Lee Reinartz. I design and build products, websites, and automations with a clean visual style and practical outcomes.',
-    metricA: 'Strategy to Build',
-    metricAText: 'Clear thinking from first concept to launch',
-    metricB: 'Full Stack',
-    metricBText: 'Frontend, backend, and workflows in one line',
-    metricC: 'Quiet Craft',
-    metricCText: 'Minimal details that improve trust and clarity',
+    heroTitleA: 'Full stack developer for',
+    heroTitleB: 'AI automation and ecommerce growth.',
+    lead: 'I am Jaymian-Lee Reinartz. I help companies build useful digital products with AI automation, chatbot automation, ecommerce development, and product engineering.',
+    metricA: 'Product Engineering',
+    metricAText: 'From concept to validated release',
+    metricB: 'AI + Ecommerce',
+    metricBText: 'Automation that supports real customer journeys',
+    metricC: 'Limburg, Nederland',
+    metricCText: 'Local collaboration with international delivery',
     ctaPrimary: 'Start a project',
+    ctaSecondary: 'Jump to services',
+    quickLinksLabel: 'Quick links',
     storyKicker: 'Approach',
     storyTitle: 'Simple where it should be, strong where it matters.',
     capabilitiesKicker: 'Services',
-    capabilitiesTitle: 'A focused mix of strategy, design, and engineering.',
+    capabilitiesTitle: 'Technical services for scalable digital products.',
+    caseKicker: 'Case studies',
+    caseTitle: 'Recent outcomes across automation and ecommerce.',
     experienceKicker: 'Experience',
-    experienceTitle: 'High impact roles across product, automation, and engineering.',
+    experienceTitle: 'Roles across product, engineering, and automation.',
     socialsKicker: 'Connect',
-    socialsTitle: 'Find me on the platforms below.',
+    socialsTitle: 'Professional channels and project updates.',
     workKicker: 'Selected work',
-    workTitle: 'Projects built for clarity, speed, and long-term quality.',
-    visit: 'Visit',
+    workTitle: 'Projects built for clarity, speed, and long term quality.',
+    contactKicker: 'Contact',
+    contactTitle: 'Let us discuss your next build.',
+    contactText:
+      'Available for product engineering, ecommerce development, PrestaShop modules, WordPress plugins, and AI automation projects.',
+    contactCta: 'Send an email',
+    visit: 'Visit project',
     askMe: 'Ask Me',
     askTitle: 'Ask Me',
     askSubtitle: 'Questions about projects, process, or collaboration',
     closeChat: 'Close chat',
     openChat: 'Open chat',
     thinking: 'Thinking...',
-    inputPlaceholder: 'Example: What kind of projects do you take on?',
+    inputPlaceholder: 'Example: Can you help with a PrestaShop module and chatbot flow?',
     send: 'Send',
     typeQuestion: 'Type your question',
     chatError: 'The assistant is temporarily unavailable.',
     greeting:
-      'Hi, I can help with questions about Jay’s work, services, and project approach.'
+      'Hi, I can help with questions about Jay\'s services, AI automation work, and product engineering approach.'
   },
   nl: {
     eyebrow: 'Portfolio 2026',
-    heroTitleA: 'Rustige digitale producten',
-    heroTitleB: 'gemaakt om echt te helpen.',
-    lead: 'Ik ben Jaymian-Lee Reinartz. Ik ontwerp en bouw producten, websites en automations met een cleane stijl en praktische resultaten.',
-    metricA: 'Strategie tot Build',
-    metricAText: 'Duidelijke keuzes van eerste idee tot livegang',
-    metricB: 'Full Stack',
-    metricBText: 'Frontend, backend en workflows op één lijn',
-    metricC: 'Rustige Craft',
-    metricCText: 'Minimal details die vertrouwen en helderheid vergroten',
+    heroTitleA: 'Full stack developer voor',
+    heroTitleB: 'AI automation en ecommerce groei.',
+    lead: 'Ik ben Jaymian-Lee Reinartz. Ik help bedrijven met bruikbare digitale producten via AI automation, chatbot automation, ecommerce development en product engineering.',
+    metricA: 'Product Engineering',
+    metricAText: 'Van concept naar gevalideerde release',
+    metricB: 'AI + Ecommerce',
+    metricBText: 'Automation die echte klantreizen ondersteunt',
+    metricC: 'Limburg, Nederland',
+    metricCText: 'Lokaal samenwerken met internationale oplevering',
     ctaPrimary: 'Start een project',
+    ctaSecondary: 'Ga naar services',
+    quickLinksLabel: 'Snelle links',
     storyKicker: 'Aanpak',
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
     capabilitiesKicker: 'Services',
-    capabilitiesTitle: 'Een gerichte mix van strategie, design en engineering.',
+    capabilitiesTitle: 'Technische services voor schaalbare digitale producten.',
+    caseKicker: 'Case studies',
+    caseTitle: 'Recente resultaten in automation en ecommerce.',
     experienceKicker: 'Ervaring',
-    experienceTitle: 'High impact rollen in product, automation en engineering.',
+    experienceTitle: 'Rollen binnen product, engineering en automation.',
     socialsKicker: 'Connect',
-    socialsTitle: 'Vind me op de onderstaande platformen.',
+    socialsTitle: 'Professionele kanalen en project updates.',
     workKicker: 'Geselecteerd werk',
     workTitle: 'Projecten gebouwd voor helderheid, snelheid en duurzame kwaliteit.',
-    visit: 'Bekijk',
+    contactKicker: 'Contact',
+    contactTitle: 'Laten we je volgende build bespreken.',
+    contactText:
+      'Beschikbaar voor product engineering, ecommerce development, PrestaShop modules, WordPress plugins en AI automation projecten.',
+    contactCta: 'Stuur een e-mail',
+    visit: 'Bekijk project',
     askMe: 'Ask Me',
     askTitle: 'Ask Me',
     askSubtitle: 'Vragen over projecten, proces of samenwerking',
     closeChat: 'Sluit chat',
     openChat: 'Open chat',
     thinking: 'Even denken...',
-    inputPlaceholder: 'Bijvoorbeeld: Wat voor projecten pak je op?',
+    inputPlaceholder: 'Bijvoorbeeld: Kun je helpen met een PrestaShop module en chatbot flow?',
     send: 'Verstuur',
     typeQuestion: 'Typ je vraag',
     chatError: 'De assistent is tijdelijk niet beschikbaar.',
-    greeting: 'Hi, ik help je graag met vragen over Jay zijn werk, services en manier van samenwerken.'
+    greeting: 'Hi, ik help je graag met vragen over Jay zijn services, AI automation werk en product engineering aanpak.'
   }
 };
 
@@ -365,6 +343,12 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('portfolio-language', language);
+    document.documentElement.setAttribute('lang', language);
+    document.title =
+      language === 'nl'
+        ? 'Jaymian-Lee Reinartz | Full Stack Developer, AI Automation en Ecommerce Development'
+        : 'Jaymian-Lee Reinartz | Full Stack Developer, AI Automation and Ecommerce Development';
+
     setMessages((prev) => {
       if (prev.length === 1 && prev[0].role === 'assistant') {
         return [{ role: 'assistant', content: copy[language].greeting }];
@@ -372,6 +356,63 @@ function App() {
       return prev;
     });
   }, [language]);
+
+  useEffect(() => {
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Person',
+          '@id': `${SITE_URL}/#person`,
+          name: 'Jaymian-Lee Reinartz',
+          url: SITE_URL,
+          image: `${SITE_URL}/jay.png`,
+          jobTitle: 'Full Stack Developer',
+          description:
+            'Full stack developer focused on AI automation, ecommerce development, chatbot automation, and product engineering.',
+          address: {
+            '@type': 'PostalAddress',
+            addressRegion: 'Limburg',
+            addressCountry: 'NL'
+          },
+          sameAs: socialLinks.map((item) => item.url)
+        },
+        {
+          '@type': 'WebSite',
+          '@id': `${SITE_URL}/#website`,
+          url: SITE_URL,
+          name: SITE_NAME,
+          inLanguage: ['en', 'nl']
+        },
+        {
+          '@type': 'ProfessionalService',
+          '@id': `${SITE_URL}/#service`,
+          name: 'Jaymian-Lee Reinartz Development Services',
+          url: SITE_URL,
+          areaServed: ['Nederland', 'Limburg', 'Europe'],
+          founder: { '@id': `${SITE_URL}/#person` },
+          serviceType: [
+            'AI automation',
+            'Full stack development',
+            'Ecommerce development',
+            'PrestaShop modules',
+            'WordPress plugins',
+            'Chatbot automation',
+            'Product engineering'
+          ]
+        }
+      ]
+    };
+
+    let script = document.querySelector('script[data-seo-jsonld="true"]');
+    if (!script) {
+      script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-seo-jsonld', 'true');
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(jsonLd);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -455,6 +496,9 @@ function App() {
 
   return (
     <div className="site-shell">
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       <div className="scroll-indicator" style={{ width: `${scrollProgress}%` }} />
 
       <aside className="project-nav" aria-label="Project navigator">
@@ -476,39 +520,46 @@ function App() {
       </aside>
 
       <div className="utility-dock" aria-label="Display controls">
-        <button
-          type="button"
-          className="dock-card control"
-          onClick={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
-          aria-label="Toggle language"
-          title={language === 'en' ? 'Switch to Dutch' : 'Switch to English'}
-        >
-          <span className="dock-label">Language</span>
-          <span className={`language-toggle ${language}`} aria-hidden="true">
-            <span className="lang-knob" />
-            <span className="lang-option en">EN</span>
-            <span className="lang-option nl">NL</span>
-          </span>
-        </button>
+        <div className="dock-card">
+          <p className="dock-label">Language</p>
+          <div className="language-switch" aria-label="Language switch">
+            <button
+              type="button"
+              className={language === 'en' ? 'active' : ''}
+              onClick={() => setLanguage('en')}
+              aria-pressed={language === 'en'}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              className={language === 'nl' ? 'active' : ''}
+              onClick={() => setLanguage('nl')}
+              aria-pressed={language === 'nl'}
+            >
+              NL
+            </button>
+          </div>
+        </div>
 
-        <button
-          type="button"
-          className="dock-card control"
-          onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-          aria-label="Toggle theme"
-          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          <span className="dock-label">Theme</span>
-          <span className={`theme-toggle ${theme}`}>
+        <div className="dock-card">
+          <p className="dock-label">Theme</p>
+          <button
+            type="button"
+            className={`theme-toggle ${theme}`}
+            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+            aria-label="Toggle theme"
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          >
             <span className="theme-track" aria-hidden="true">
               <span className="sun" />
               <span className="moon" />
             </span>
-          </span>
-        </button>
+          </button>
+        </div>
       </div>
 
-      <main className="site">
+      <main className="site" id="main-content">
         <header className="hero reveal" ref={(el) => (revealRefs.current[0] = el)}>
           <div className="hero-topline">
             <p className="eyebrow">{t.eyebrow}</p>
@@ -520,6 +571,13 @@ function App() {
           </h1>
 
           <p className="lead">{t.lead}</p>
+
+          <nav className="quick-links" aria-label={t.quickLinksLabel}>
+            <a href="#services">Services</a>
+            <a href="#case-studies">Case Studies</a>
+            <a href="#experience">Experience</a>
+            <a href="#contact">Contact</a>
+          </nav>
 
           <div className="hero-metrics" aria-label="Credibility highlights">
             <article>
@@ -537,36 +595,48 @@ function App() {
           </div>
 
           <div className="hero-actions">
-            <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary">
+            <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Email Jaymian-Lee to start a project">
               {t.ctaPrimary}
+            </a>
+            <a href="#services" className="btn btn-ghost" aria-label="Read about services">
+              {t.ctaSecondary}
             </a>
             <a
               href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
               target="_blank"
               rel="noreferrer"
               className="btn btn-ghost"
+              aria-label="Open LinkedIn profile"
             >
-              LinkedIn
-            </a>
-            <a href="https://github.com/Jaymian-Lee" target="_blank" rel="noreferrer" className="btn btn-ghost">
-              GitHub
+              LinkedIn profile
             </a>
           </div>
         </header>
 
-        <section className="section split reveal" ref={(el) => (revealRefs.current[1] = el)}>
+        <section className="section split reveal" id="about" ref={(el) => (revealRefs.current[1] = el)}>
           <div>
             <p className="section-kicker">{t.storyKicker}</p>
             <h2>{t.storyTitle}</h2>
           </div>
-          <ul className="story-list">
-            {storyPoints[language].map((point) => (
-              <li key={point}>{point}</li>
-            ))}
-          </ul>
+          <div>
+            <ul className="story-list">
+              {storyPoints[language].map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+            <img
+              src="/jay.png"
+              alt="Jaymian-Lee Reinartz, full stack developer"
+              loading="lazy"
+              decoding="async"
+              className="portrait-image"
+              width="680"
+              height="680"
+            />
+          </div>
         </section>
 
-        <section className="section reveal" ref={(el) => (revealRefs.current[2] = el)}>
+        <section className="section reveal" id="services" ref={(el) => (revealRefs.current[2] = el)}>
           <p className="section-kicker">{t.capabilitiesKicker}</p>
           <h2>{t.capabilitiesTitle}</h2>
           <div className="capabilities-grid">
@@ -579,19 +649,21 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal" ref={(el) => (revealRefs.current[3] = el)}>
-          <p className="section-kicker">{t.socialsKicker}</p>
-          <h2>{t.socialsTitle}</h2>
-          <div className="social-inline-list" aria-label="Social links inline">
-            {socialLinks.map((social) => (
-              <a key={`inline-${social.label}`} href={social.url} target="_blank" rel="noreferrer" className="social-inline-link">
-                {social.label}
-              </a>
+        <section className="section reveal" id="case-studies" ref={(el) => (revealRefs.current[3] = el)}>
+          <p className="section-kicker">{t.caseKicker}</p>
+          <h2>{t.caseTitle}</h2>
+          <div className="experience-grid">
+            {caseStudies[language].map((item) => (
+              <article className="experience-card" key={item.title}>
+                <h3>{item.title}</h3>
+                <p>{item.summary}</p>
+                <p className="experience-highlight">{item.result}</p>
+              </article>
             ))}
           </div>
         </section>
 
-        <section className="section reveal" ref={(el) => (revealRefs.current[4] = el)}>
+        <section className="section reveal" id="experience" ref={(el) => (revealRefs.current[4] = el)}>
           <p className="section-kicker">{t.experienceKicker}</p>
           <h2>{t.experienceTitle}</h2>
           <div className="experience-grid">
@@ -617,7 +689,7 @@ function App() {
               <article className="work-card" key={project.name}>
                 <div className="work-top">
                   <p className="work-category">{project.category[language]}</p>
-                  <a href={project.url} target="_blank" rel="noreferrer" className="work-link">
+                  <a href={project.url} target="_blank" rel="noreferrer" className="work-link" aria-label={`Visit ${project.name} project`}>
                     {t.visit} ↗
                   </a>
                 </div>
@@ -626,6 +698,35 @@ function App() {
                 <p className="work-impact">{project.impact[language]}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="section reveal" ref={(el) => (revealRefs.current[6] = el)}>
+          <p className="section-kicker">{t.socialsKicker}</p>
+          <h2>{t.socialsTitle}</h2>
+          <div className="social-inline-list" aria-label="Social links inline">
+            {socialLinks.map((social) => (
+              <a
+                key={`inline-${social.label}`}
+                href={social.url}
+                target="_blank"
+                rel="noreferrer"
+                className="social-inline-link"
+              >
+                {social.label}
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className="section reveal" id="contact" ref={(el) => (revealRefs.current[7] = el)}>
+          <p className="section-kicker">{t.contactKicker}</p>
+          <h2>{t.contactTitle}</h2>
+          <p className="lead">{t.contactText}</p>
+          <div className="hero-actions">
+            <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Contact Jaymian-Lee by email">
+              {t.contactCta}
+            </a>
           </div>
         </section>
       </main>
@@ -641,7 +742,7 @@ function App() {
           {t.askMe}
         </button>
 
-        <section className="chat-panel" aria-label="Assistant panel">
+        <section className="chat-panel" aria-label="Assistant panel" aria-hidden={!isChatOpen}>
           <header className="chat-header">
             <div>
               <p className="chat-title">{t.askTitle}</p>

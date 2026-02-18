@@ -5,6 +5,7 @@ Vernieuwde portfolio-site met:
 - Overzicht van maatwerk in PrestaShop en WordPress
 - Ingebouwde AI-chat-assistent via moderne OpenAI Responses API
 - Subtiele scroll UX (progress indicator + reveal animaties)
+- SEO baseline met metadata, structured data, robots en sitemap
 
 ## Stack
 - React (CRA)
@@ -42,6 +43,19 @@ npm start
 ```bash
 npm run build
 ```
+
+## SEO notes
+- Primary production domain: `https://jaymianlee.com`
+- Canonical URL staat in `public/index.html`
+- Robots file: `public/robots.txt`
+- Sitemap file: `public/sitemap.xml` → live op `/sitemap.xml`
+- Structured data (JSON-LD) bevat `Person`, `WebSite`, en `ProfessionalService`
+
+Als je op een ander domein deployt:
+1. Update canonical en OG URL in `public/index.html`
+2. Update `Sitemap:` regel in `public/robots.txt`
+3. Update `<loc>` in `public/sitemap.xml`
+4. Zorg dat Search Console property overeenkomt met het live domein
 
 ## Foutafhandeling AI
 - Als `OPENAI_API_KEY` ontbreekt geeft `/api/chat` een duidelijke foutmelding terug.
