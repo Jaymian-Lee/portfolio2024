@@ -747,6 +747,7 @@ function App() {
                   <a href="#case-studies">Case Studies</a>
                   <a href="#experience">Experience</a>
                   <a href="#contact">Contact</a>
+                  <Link to="/daily-word">Wordly</Link>
                 </nav>
 
                 <div className="hero-metrics" aria-label="Credibility highlights">
