@@ -241,8 +241,8 @@ const copy = {
     metricCText: 'Local collaboration with international delivery',
     ctaPrimary: 'Start a project',
     ctaSecondary: 'Jump to services',
-    ctaDaily: 'Daily Wordle',
-    stickyDaily: 'Play Daily Wordle',
+    ctaDaily: 'Wordly',
+    stickyDaily: 'Play Wordly',
     quickLinksLabel: 'Quick links',
     storyKicker: 'Approach',
     storyTitle: 'Simple where it should be, strong where it matters.',
@@ -275,7 +275,7 @@ const copy = {
     greeting:
       'Hi, I can help with questions about Jay\'s services, AI automation work, and product engineering approach.',
     footerText: 'jaymian-lee.nl',
-    footerDaily: 'Play the Daily Word game'
+    footerDaily: 'Play Wordly'
   },
   nl: {
     eyebrow: 'Portfolio 2026',
@@ -290,8 +290,8 @@ const copy = {
     metricCText: 'Lokaal samenwerken met internationale oplevering',
     ctaPrimary: 'Start een project',
     ctaSecondary: 'Ga naar services',
-    ctaDaily: 'Daily Wordle',
-    stickyDaily: 'Speel Daily Wordle',
+    ctaDaily: 'Wordly',
+    stickyDaily: 'Speel Wordly',
     quickLinksLabel: 'Snelle links',
     storyKicker: 'Aanpak',
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
@@ -323,7 +323,7 @@ const copy = {
     chatError: 'De assistent is tijdelijk niet beschikbaar.',
     greeting: 'Hi, ik help je graag met vragen over Jay zijn services, AI automation werk en product engineering aanpak.',
     footerText: 'jaymian-lee.nl',
-    footerDaily: 'Speel de Daily Word game'
+    footerDaily: 'Speel Wordly'
   }
 };
 
@@ -723,7 +723,7 @@ function App() {
                   <a href="#services" className="btn btn-ghost" aria-label="Read about services">
                     {t.ctaSecondary}
                   </a>
-                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Daily Wordle game">
+                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Wordly game">
                     {t.ctaDaily}
                   </Link>
                   <a
@@ -868,7 +868,7 @@ function App() {
         </div>
       </main>
 
-      <Link to="/daily-word" className="floating-daily-cta" aria-label="Open Daily Wordle game">
+      <Link to="/daily-word" className="floating-daily-cta" aria-label="Open Wordly game">
         {t.stickyDaily}
       </Link>
 

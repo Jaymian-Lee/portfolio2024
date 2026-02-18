@@ -8,7 +8,7 @@ const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 
 const copy = {
   en: {
-    title: 'Daily Wordle',
+    title: 'Wordly',
     subtitle: 'One fun word every day.',
     switchLang: 'Language',
     reset: 'Reset today',
@@ -25,7 +25,7 @@ const copy = {
     answer: 'Today\'s word'
   },
   nl: {
-    title: 'Daily Wordle',
+    title: 'Wordly',
     subtitle: 'Elke dag een leuk woord.',
     switchLang: 'Taal',
     reset: 'Reset vandaag',
