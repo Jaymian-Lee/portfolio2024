@@ -529,6 +529,23 @@ body {
   background: var(--surface);
 }
 
+.btn-daily {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: linear-gradient(135deg, #c38d57, #9d6d42);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-daily::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.35) 50%, transparent 80%);
+  transform: translateX(-140%);
+  animation: ctaGlow 2.8s ease-in-out infinite;
+}
+
 .section-kicker {
   margin: 0;
   color: var(--muted);
@@ -668,10 +685,59 @@ body {
   border-bottom-color: var(--accent);
 }
 
+.floating-daily-cta {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(4.15rem + env(safe-area-inset-bottom));
+  z-index: 52;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(135deg, #c38d57, #9d6d42);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 0.68rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 28px rgba(84, 52, 29, 0.26);
+  animation: floatBreathe 3.6s ease-in-out infinite;
+}
+
+.site-footer {
+  width: min(1000px, 92vw);
+  margin: 0 auto;
+  padding: 2rem 0 calc(7rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.site-footer p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.site-footer a {
+  text-decoration: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 999px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.58rem 0.9rem;
+}
+
 .ask-widget {
   position: fixed;
   right: 0.6rem;
-  bottom: calc(4.2rem + env(safe-area-inset-bottom));
+  bottom: calc(7.5rem + env(safe-area-inset-bottom));
   z-index: 55;
   display: grid;
   justify-items: end;
@@ -885,6 +951,26 @@ body {
   }
 }
 
+@keyframes ctaGlow {
+  0%,
+  100% {
+    transform: translateX(-140%);
+  }
+  50% {
+    transform: translateX(130%);
+  }
+}
+
+@keyframes floatBreathe {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-4px);
+  }
+}
+
 @media (max-width: 767px) {
   .site {
     --stack-top: calc(0.65rem + env(safe-area-inset-top));
@@ -1000,7 +1086,7 @@ body {
 
   .ask-widget {
     right: 0.8rem;
-    bottom: calc(4.6rem + env(safe-area-inset-bottom));
+    bottom: calc(7.8rem + env(safe-area-inset-bottom));
   }
 
   .ask-widget.open .chat-panel {
@@ -1055,6 +1141,14 @@ body {
   .ask-widget {
     right: 1rem;
     bottom: 1rem;
+  }
+
+  .floating-daily-cta {
+    left: auto;
+    right: 1rem;
+    bottom: calc(6rem + env(safe-area-inset-bottom));
+    transform: none;
+    animation: none;
   }
 
   .ask-trigger {

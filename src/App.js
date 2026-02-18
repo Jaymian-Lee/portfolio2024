@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Link } from 'react-router-dom';
 import './App.css';
 
 const SITE_URL = 'https://jaymian-lee.nl';
@@ -240,6 +241,8 @@ const copy = {
     metricCText: 'Local collaboration with international delivery',
     ctaPrimary: 'Start a project',
     ctaSecondary: 'Jump to services',
+    ctaDaily: 'Daily Wordle',
+    stickyDaily: 'Play Daily Wordle',
     quickLinksLabel: 'Quick links',
     storyKicker: 'Approach',
     storyTitle: 'Simple where it should be, strong where it matters.',
@@ -270,7 +273,9 @@ const copy = {
     typeQuestion: 'Type your question',
     chatError: 'The assistant is temporarily unavailable.',
     greeting:
-      'Hi, I can help with questions about Jay\'s services, AI automation work, and product engineering approach.'
+      'Hi, I can help with questions about Jay\'s services, AI automation work, and product engineering approach.',
+    footerText: 'jaymian-lee.nl',
+    footerDaily: 'Play the Daily Word game'
   },
   nl: {
     eyebrow: 'Portfolio 2026',
@@ -285,6 +290,8 @@ const copy = {
     metricCText: 'Lokaal samenwerken met internationale oplevering',
     ctaPrimary: 'Start een project',
     ctaSecondary: 'Ga naar services',
+    ctaDaily: 'Daily Wordle',
+    stickyDaily: 'Speel Daily Wordle',
     quickLinksLabel: 'Snelle links',
     storyKicker: 'Aanpak',
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
@@ -314,7 +321,9 @@ const copy = {
     send: 'Verstuur',
     typeQuestion: 'Typ je vraag',
     chatError: 'De assistent is tijdelijk niet beschikbaar.',
-    greeting: 'Hi, ik help je graag met vragen over Jay zijn services, AI automation werk en product engineering aanpak.'
+    greeting: 'Hi, ik help je graag met vragen over Jay zijn services, AI automation werk en product engineering aanpak.',
+    footerText: 'jaymian-lee.nl',
+    footerDaily: 'Speel de Daily Word game'
   }
 };
 
@@ -714,6 +723,9 @@ function App() {
                   <a href="#services" className="btn btn-ghost" aria-label="Read about services">
                     {t.ctaSecondary}
                   </a>
+                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Daily Wordle game">
+                    {t.ctaDaily}
+                  </Link>
                   <a
                     href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
                     target="_blank"
@@ -855,6 +867,15 @@ function App() {
         </section>
         </div>
       </main>
+
+      <Link to="/daily-word" className="floating-daily-cta" aria-label="Open Daily Wordle game">
+        {t.stickyDaily}
+      </Link>
+
+      <footer className="site-footer" aria-label="Footer">
+        <p>{t.footerText}</p>
+        <Link to="/daily-word">{t.footerDaily}</Link>
+      </footer>
 
       <div className={`ask-widget ${isChatOpen ? 'open' : ''}`}>
         <button
