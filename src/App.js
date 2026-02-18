@@ -96,6 +96,85 @@ const storyPoints = {
   ]
 };
 
+const experience = {
+  en: [
+    {
+      role: 'Founder and Product Engineer',
+      company: 'Corthex',
+      period: '2023 to Present',
+      summary:
+        'Leads product strategy and delivery for automation systems used by teams that need reliable operations and faster execution.',
+      highlight: 'Designed and shipped end to end workflows that reduced repetitive manual work.'
+    },
+    {
+      role: 'Founder',
+      company: 'Botforger',
+      period: '2021 to Present',
+      summary:
+        'Built a practical framework for chatbot architecture and implementation, focused on quality, clarity, and maintainability.',
+      highlight: 'Helped teams move from fragmented bots to structured, production ready systems.'
+    },
+    {
+      role: 'Lead Full Stack Developer',
+      company: 'Independent Client Work',
+      period: '2016 to Present',
+      summary:
+        'Partners with founders and operators to design and build scalable products across web, commerce, and internal tooling.',
+      highlight: 'Delivered multiple full stack platforms from discovery to launch with long term support.'
+    },
+    {
+      role: 'Ecommerce Technical Lead',
+      company: 'Digital Commerce Projects',
+      period: '2012 to 2016',
+      summary:
+        'Owned technical direction for online stores and conversion focused websites, aligning code quality with business growth.',
+      highlight: 'Improved checkout performance, reliability, and release velocity across multiple projects.'
+    }
+  ],
+  nl: [
+    {
+      role: 'Founder en Product Engineer',
+      company: 'Corthex',
+      period: '2023 tot Nu',
+      summary:
+        'Stuurt productstrategie en delivery voor automation systemen die teams helpen met betrouwbare operatie en snellere uitvoering.',
+      highlight: 'Ontwierp en lanceerde end to end workflows die repetitief handmatig werk verminderden.'
+    },
+    {
+      role: 'Founder',
+      company: 'Botforger',
+      period: '2021 tot Nu',
+      summary:
+        'Bouwde een praktisch framework voor chatbot architectuur en implementatie, met focus op kwaliteit, helderheid en onderhoudbaarheid.',
+      highlight: 'Hielp teams van losse bots naar gestructureerde, production ready systemen.'
+    },
+    {
+      role: 'Lead Full Stack Developer',
+      company: 'Onafhankelijke klantprojecten',
+      period: '2016 tot Nu',
+      summary:
+        'Werkt samen met founders en operators aan schaalbare producten voor web, commerce en interne tooling.',
+      highlight: 'Leverde meerdere full stack platforms van discovery tot livegang met langdurige ondersteuning.'
+    },
+    {
+      role: 'Ecommerce Technical Lead',
+      company: 'Digital Commerce projecten',
+      period: '2012 tot 2016',
+      summary:
+        'Verantwoordelijk voor technische richting van online stores en conversiegerichte websites, in lijn met businessgroei.',
+      highlight: 'Verbeterde checkout performance, betrouwbaarheid en release snelheid in meerdere projecten.'
+    }
+  ]
+};
+
+const socialLinks = [
+  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
+  { label: 'GitHub', url: 'https://github.com/Jaymian-Lee' },
+  { label: 'Twitch', url: 'https://twitch.tv/jaymianlee' },
+  { label: 'YouTube · jaymianlee', url: 'https://www.youtube.com/results?search_query=jaymianlee' },
+  { label: 'Instagram', url: 'https://www.instagram.com/' }
+];
+
 const copy = {
   en: {
     eyebrow: 'Portfolio 2026',
@@ -113,6 +192,10 @@ const copy = {
     storyTitle: 'Simple where it should be, strong where it matters.',
     capabilitiesKicker: 'Services',
     capabilitiesTitle: 'A focused mix of strategy, design, and engineering.',
+    experienceKicker: 'Experience',
+    experienceTitle: 'High impact roles across product, automation, and engineering.',
+    socialsKicker: 'Connect',
+    socialsTitle: 'Find me on the platforms below.',
     workKicker: 'Selected work',
     workTitle: 'Projects built for clarity, speed, and long-term quality.',
     visit: 'Visit',
@@ -145,6 +228,10 @@ const copy = {
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
     capabilitiesKicker: 'Services',
     capabilitiesTitle: 'Een gerichte mix van strategie, design en engineering.',
+    experienceKicker: 'Ervaring',
+    experienceTitle: 'High impact rollen in product, automation en engineering.',
+    socialsKicker: 'Connect',
+    socialsTitle: 'Vind me op de onderstaande platformen.',
     workKicker: 'Geselecteerd werk',
     workTitle: 'Projecten gebouwd voor helderheid, snelheid en duurzame kwaliteit.',
     visit: 'Bekijk',
@@ -296,6 +383,15 @@ function App() {
         ))}
       </aside>
 
+      <aside className="social-rail" aria-label="Social links">
+        <p className="social-rail-label">Connect</p>
+        {socialLinks.map((social) => (
+          <a key={social.label} href={social.url} target="_blank" rel="noreferrer" className="social-link">
+            {social.label}
+          </a>
+        ))}
+      </aside>
+
       <main className="site">
         <header className="hero reveal" ref={(el) => (revealRefs.current[0] = el)}>
           <div className="hero-topline">
@@ -402,6 +498,36 @@ function App() {
         </section>
 
         <section className="section reveal" ref={(el) => (revealRefs.current[3] = el)}>
+          <p className="section-kicker">{t.socialsKicker}</p>
+          <h2>{t.socialsTitle}</h2>
+          <div className="social-inline-list" aria-label="Social links inline">
+            {socialLinks.map((social) => (
+              <a key={`inline-${social.label}`} href={social.url} target="_blank" rel="noreferrer" className="social-inline-link">
+                {social.label}
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className="section reveal" ref={(el) => (revealRefs.current[4] = el)}>
+          <p className="section-kicker">{t.experienceKicker}</p>
+          <h2>{t.experienceTitle}</h2>
+          <div className="experience-grid">
+            {experience[language].map((item) => (
+              <article className="experience-card" key={`${item.company}-${item.role}`}>
+                <div className="experience-top">
+                  <p className="experience-role">{item.role}</p>
+                  <p className="experience-period">{item.period}</p>
+                </div>
+                <h3>{item.company}</h3>
+                <p>{item.summary}</p>
+                <p className="experience-highlight">{item.highlight}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section reveal" ref={(el) => (revealRefs.current[5] = el)}>
           <p className="section-kicker">{t.workKicker}</p>
           <h2>{t.workTitle}</h2>
           <div className="work-grid">
