@@ -553,12 +553,13 @@ function App() {
 
         <button
           type="button"
-          className="dock-card control dock-ask-mobile"
+          className={`dock-card control dock-ask-mobile ${isChatOpen ? 'open' : ''}`}
           onClick={() => setIsChatOpen((prev) => !prev)}
           aria-label={isChatOpen ? t.closeChat : t.openChat}
           title={isChatOpen ? t.closeChat : t.openChat}
         >
-          <p className="dock-label">Vraag?</p>
+          <span className="ask-orb" aria-hidden="true" />
+          <p className="dock-label ask-label">Vraag?</p>
         </button>
       </div>
 
