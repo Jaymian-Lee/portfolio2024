@@ -173,8 +173,9 @@ const socialLinks = [
   { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
   { label: 'GitHub', url: 'https://github.com/Jaymian-Lee' },
   { label: 'Twitch', url: 'https://twitch.tv/jaymianlee' },
-  { label: 'YouTube · jaymianlee', url: 'https://www.youtube.com/results?search_query=jaymianlee' },
-  { label: 'Instagram', url: 'https://www.instagram.com/' }
+  { label: 'YouTube · @JaymianLee', url: 'https://www.youtube.com/@JaymianLee' },
+  { label: 'Instagram', url: 'https://www.instagram.com/jaymianlee_/' },
+  { label: 'Instagram (Personal)', url: 'https://www.instagram.com/jaymianlee/' }
 ];
 
 const copy = {
