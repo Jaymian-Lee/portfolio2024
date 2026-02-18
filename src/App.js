@@ -371,7 +371,7 @@ function App() {
   useEffect(() => {
     const greetings = prefersReducedMotion ? PRELOADER_GREETINGS.slice(0, 4) : PRELOADER_GREETINGS;
     const exitDuration = prefersReducedMotion ? 200 : 650;
-    const totalDuration = prefersReducedMotion ? 1400 : 2500;
+    const totalDuration = prefersReducedMotion ? 1600 : 3000;
     const transitionDuration = prefersReducedMotion ? 70 : 140;
     const stepDuration = Math.max(120, Math.floor((totalDuration - exitDuration) / greetings.length));
 
