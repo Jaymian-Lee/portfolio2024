@@ -577,7 +577,6 @@ function App() {
       {showPreloader && (
         <div className={`preloader ${preloaderExiting ? 'exit' : ''}`} aria-hidden="true">
           <div className="preloader-inner">
-            <p className="preloader-label">Welcome</p>
             <p className={`preloader-greeting ${greetingVisible ? 'show' : 'hide'}`} key={activeGreetings[greetingIndex]}>
               {activeGreetings[greetingIndex]}
             </p>
