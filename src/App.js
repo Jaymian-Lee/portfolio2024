@@ -617,15 +617,17 @@ function App() {
                 <li key={point}>{point}</li>
               ))}
             </ul>
-            <img
-              src="/jay.png"
-              alt="Jaymian-Lee Reinartz, full stack developer"
-              loading="lazy"
-              decoding="async"
-              className="portrait-image"
-              width="680"
-              height="680"
-            />
+            <figure className="portrait-wrap">
+              <img
+                src="/jay-portrait.jpg"
+                alt="Jaymian-Lee Reinartz"
+                loading="lazy"
+                decoding="async"
+                className="portrait-image"
+                width="1050"
+                height="1400"
+              />
+            </figure>
           </div>
         </section>
 

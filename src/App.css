@@ -448,15 +448,37 @@ body {
   color: var(--muted);
 }
 
+.portrait-wrap {
+  position: relative;
+  width: min(100%, 330px);
+  margin-top: 1rem;
+  border-radius: 24px;
+  padding: 0.55rem;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 34px rgba(58, 38, 24, 0.14);
+  isolation: isolate;
+}
+
+.portrait-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 28px;
+  background: radial-gradient(circle at 20% 20%, rgba(239, 194, 146, 0.34), transparent 46%),
+    radial-gradient(circle at 82% 78%, rgba(153, 118, 88, 0.22), transparent 46%);
+  z-index: -1;
+}
+
 .portrait-image {
   display: block;
   width: 100%;
-  max-width: 320px;
   height: auto;
-  border-radius: 16px;
-  margin-top: 1rem;
-  border: 1px solid var(--border);
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
   background: var(--surface);
+  object-fit: cover;
+  filter: saturate(1.03) contrast(1.02);
 }
 
 .capability-card,
