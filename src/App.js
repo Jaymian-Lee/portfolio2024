@@ -259,8 +259,8 @@ const copy = {
       'Available for product engineering, ecommerce development, PrestaShop modules, WordPress plugins, and AI automation projects.',
     contactCta: 'Send an email',
     visit: 'Visit project',
-    askMe: 'Ask a question',
-    askTitle: 'Ask a question',
+    askMe: 'Questions?',
+    askTitle: 'Questions?',
     askSubtitle: 'Questions about projects, process, or collaboration',
     closeChat: 'Close chat',
     openChat: 'Open chat',
@@ -304,8 +304,8 @@ const copy = {
       'Beschikbaar voor product engineering, ecommerce development, PrestaShop modules, WordPress plugins en AI automation projecten.',
     contactCta: 'Stuur een e-mail',
     visit: 'Bekijk project',
-    askMe: 'Stel een vraag',
-    askTitle: 'Stel een vraag',
+    askMe: 'Vragen?',
+    askTitle: 'Vragen?',
     askSubtitle: 'Vragen over projecten, proces of samenwerking',
     closeChat: 'Sluit chat',
     openChat: 'Open chat',
@@ -652,7 +652,6 @@ function App() {
           aria-label={isChatOpen ? t.closeChat : t.openChat}
           title={isChatOpen ? t.closeChat : t.openChat}
         >
-          <span className="ask-orb" aria-hidden="true" />
           <p className="dock-label ask-label">{t.askMe}</p>
         </button>
       </div>
