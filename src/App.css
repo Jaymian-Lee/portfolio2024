@@ -316,6 +316,20 @@ body {
   opacity: 1;
 }
 
+.hero-intro {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-portrait {
+  margin: 0 0 0.4rem;
+  width: min(100%, 250px);
+}
+
 .hero h1 {
   margin: 0.8rem 0 0.65rem;
   max-width: 840px;
@@ -787,6 +801,23 @@ body {
   .split {
     grid-template-columns: 1.2fr 1fr;
     gap: 1.6rem;
+  }
+
+  .hero-intro {
+    grid-template-columns: 1.35fr 0.8fr;
+    align-items: start;
+    gap: 1.4rem;
+  }
+
+  .hero-portrait {
+    order: 2;
+    margin: 0;
+    justify-self: end;
+    width: min(100%, 320px);
+  }
+
+  .hero-copy {
+    order: 1;
   }
 
   .ask-widget {

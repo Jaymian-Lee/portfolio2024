@@ -568,51 +568,67 @@ function App() {
             <p className="eyebrow">{t.eyebrow}</p>
           </div>
 
-          <h1>
-            {t.heroTitleA}
-            <span> {t.heroTitleB}</span>
-          </h1>
+          <div className="hero-intro">
+            <figure className="portrait-wrap hero-portrait">
+              <img
+                src="/jay-portrait.jpg"
+                alt="Jaymian-Lee Reinartz"
+                loading="lazy"
+                decoding="async"
+                className="portrait-image"
+                width="1050"
+                height="1400"
+              />
+            </figure>
 
-          <p className="lead">{t.lead}</p>
+            <div className="hero-copy">
+              <h1>
+                {t.heroTitleA}
+                <span> {t.heroTitleB}</span>
+              </h1>
 
-          <nav className="quick-links" aria-label={t.quickLinksLabel}>
-            <a href="#services">Services</a>
-            <a href="#case-studies">Case Studies</a>
-            <a href="#experience">Experience</a>
-            <a href="#contact">Contact</a>
-          </nav>
+              <p className="lead">{t.lead}</p>
 
-          <div className="hero-metrics" aria-label="Credibility highlights">
-            <article>
-              <p className="metric-value">{t.metricA}</p>
-              <p className="metric-label">{t.metricAText}</p>
-            </article>
-            <article>
-              <p className="metric-value">{t.metricB}</p>
-              <p className="metric-label">{t.metricBText}</p>
-            </article>
-            <article>
-              <p className="metric-value">{t.metricC}</p>
-              <p className="metric-label">{t.metricCText}</p>
-            </article>
-          </div>
+              <nav className="quick-links" aria-label={t.quickLinksLabel}>
+                <a href="#services">Services</a>
+                <a href="#case-studies">Case Studies</a>
+                <a href="#experience">Experience</a>
+                <a href="#contact">Contact</a>
+              </nav>
 
-          <div className="hero-actions">
-            <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Email Jaymian-Lee to start a project">
-              {t.ctaPrimary}
-            </a>
-            <a href="#services" className="btn btn-ghost" aria-label="Read about services">
-              {t.ctaSecondary}
-            </a>
-            <a
-              href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-ghost"
-              aria-label="Open LinkedIn profile"
-            >
-              LinkedIn profile
-            </a>
+              <div className="hero-metrics" aria-label="Credibility highlights">
+                <article>
+                  <p className="metric-value">{t.metricA}</p>
+                  <p className="metric-label">{t.metricAText}</p>
+                </article>
+                <article>
+                  <p className="metric-value">{t.metricB}</p>
+                  <p className="metric-label">{t.metricBText}</p>
+                </article>
+                <article>
+                  <p className="metric-value">{t.metricC}</p>
+                  <p className="metric-label">{t.metricCText}</p>
+                </article>
+              </div>
+
+              <div className="hero-actions">
+                <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Email Jaymian-Lee to start a project">
+                  {t.ctaPrimary}
+                </a>
+                <a href="#services" className="btn btn-ghost" aria-label="Read about services">
+                  {t.ctaSecondary}
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-ghost"
+                  aria-label="Open LinkedIn profile"
+                >
+                  LinkedIn profile
+                </a>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -627,17 +643,7 @@ function App() {
                 <li key={point}>{point}</li>
               ))}
             </ul>
-            <figure className="portrait-wrap">
-              <img
-                src="/jay-portrait.jpg"
-                alt="Jaymian-Lee Reinartz"
-                loading="lazy"
-                decoding="async"
-                className="portrait-image"
-                width="1050"
-                height="1400"
-              />
-            </figure>
+            {/* portrait moved to intro */}
           </div>
         </section>
 
