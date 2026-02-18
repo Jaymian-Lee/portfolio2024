@@ -395,44 +395,50 @@ function App() {
         ))}
       </aside>
 
+      <div className="utility-dock" aria-label="Display controls">
+        <div className="dock-card">
+          <p className="dock-label">Language</p>
+          <div className="language-switch" aria-label="Language switch">
+            <button
+              type="button"
+              className={language === 'en' ? 'active' : ''}
+              onClick={() => setLanguage('en')}
+              aria-pressed={language === 'en'}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              className={language === 'nl' ? 'active' : ''}
+              onClick={() => setLanguage('nl')}
+              aria-pressed={language === 'nl'}
+            >
+              NL
+            </button>
+          </div>
+        </div>
+
+        <div className="dock-card">
+          <p className="dock-label">Theme</p>
+          <button
+            type="button"
+            className={`theme-toggle ${theme}`}
+            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+            aria-label="Toggle theme"
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          >
+            <span className="theme-track" aria-hidden="true">
+              <span className="sun" />
+              <span className="moon" />
+            </span>
+          </button>
+        </div>
+      </div>
+
       <main className="site">
         <header className="hero reveal" ref={(el) => (revealRefs.current[0] = el)}>
           <div className="hero-topline">
             <p className="eyebrow">{t.eyebrow}</p>
-
-            <div className="top-controls">
-              <div className="language-switch" aria-label="Language switch">
-                <button
-                  type="button"
-                  className={language === 'en' ? 'active' : ''}
-                  onClick={() => setLanguage('en')}
-                  aria-pressed={language === 'en'}
-                >
-                  EN
-                </button>
-                <button
-                  type="button"
-                  className={language === 'nl' ? 'active' : ''}
-                  onClick={() => setLanguage('nl')}
-                  aria-pressed={language === 'nl'}
-                >
-                  NL
-                </button>
-              </div>
-
-              <button
-                type="button"
-                className={`theme-toggle ${theme}`}
-                onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-                aria-label="Toggle theme"
-                title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-              >
-                <span className="theme-track" aria-hidden="true">
-                  <span className="sun" />
-                  <span className="moon" />
-                </span>
-              </button>
-            </div>
           </div>
 
           <h1>
