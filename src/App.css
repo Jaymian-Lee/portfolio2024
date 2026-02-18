@@ -181,6 +181,16 @@ body {
   border-color: var(--accent);
 }
 
+.dock-ask-mobile {
+  min-height: 34px;
+  padding: 0.3rem 0.72rem;
+}
+
+.dock-ask-mobile .dock-label {
+  display: block;
+  margin: 0;
+}
+
 .dock-label {
   display: none;
 }
@@ -558,7 +568,7 @@ body {
 }
 
 .ask-trigger {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 0.45rem;
   border: 1px solid var(--border);
@@ -836,6 +846,14 @@ body {
   .ask-widget {
     right: 1rem;
     bottom: 1rem;
+  }
+
+  .ask-trigger {
+    display: inline-flex;
+  }
+
+  .dock-ask-mobile {
+    display: none;
   }
 }
 
