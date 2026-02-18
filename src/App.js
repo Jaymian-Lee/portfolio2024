@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import './App.css';
 
 const projectLinks = [
@@ -573,7 +575,22 @@ function App() {
           <div className="chat-box" role="log" aria-live="polite">
             {messages.map((message, index) => (
               <div key={`${message.role}-${index}`} className={`message ${message.role}`}>
-                {message.content}
+                {message.role === 'assistant' ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      a: ({ node, children, ...props }) => (
+                        <a {...props} target="_blank" rel="noreferrer">
+                          {children}
+                        </a>
+                      )
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                ) : (
+                  message.content
+                )}
               </div>
             ))}
             {loading && <div className="message assistant">{t.thinking}</div>}
