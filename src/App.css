@@ -1081,6 +1081,7 @@ body {
   color: var(--text);
   padding: 0.62rem 0.62rem;
   min-height: 44px;
+  font-size: 16px;
 }
 
 .chat-form button {

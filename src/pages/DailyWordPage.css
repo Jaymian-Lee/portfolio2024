@@ -628,6 +628,7 @@
   background: var(--surface);
   color: var(--text);
   padding: 0.52rem 0.56rem;
+  font-size: 16px;
 }
 
 .daily-chat-form button {
