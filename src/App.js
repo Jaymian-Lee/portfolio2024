@@ -25,12 +25,12 @@ const projectLinks = [
     url: 'https://botforger.com',
     category: { en: 'Chatbot Automation', nl: 'Chatbot Automation' },
     summary: {
-      en: 'A strong base for chatbot automation, conversation flow design, and maintainable implementation.',
-      nl: 'Een sterke basis voor chatbot automation, conversatieflow design en onderhoudbare implementatie.'
+      en: 'A strong base for chatbot automation, conversation flow design, and maintainable implementation. Later merged into Corthex.',
+      nl: 'Een sterke basis voor chatbot automation, conversatieflow design en onderhoudbare implementatie. Later samengevoegd in Corthex.'
     },
     impact: {
-      en: 'Reliable architecture for long term automation',
-      nl: 'Betrouwbare architectuur voor langdurige automation'
+      en: 'Reliable architecture that is now part of Corthex',
+      nl: 'Betrouwbare architectuur die nu onderdeel is van Corthex'
     }
   },
   {
@@ -173,8 +173,8 @@ const experience = {
       website: 'https://botforger.com',
       period: '2025 to 2026',
       summary:
-        'Created the foundation for scalable chatbot and workflow automation systems.',
-      highlight: 'Set the base architecture and product vision that evolved into later initiatives.'
+        'Created the foundation for scalable chatbot and workflow automation systems before it was merged into Corthex.',
+      highlight: 'Set the base architecture and product vision that now lives on in Corthex.'
     },
     {
       role: 'Software Developer | Owner',
@@ -201,8 +201,8 @@ const experience = {
       company: 'Botforger',
       website: 'https://botforger.com',
       period: '2025 tot 2026',
-      summary: 'Bouwde de basis voor schaalbare chatbot en workflow automation systemen.',
-      highlight: 'Zette de basisarchitectuur en productvisie neer die later verder groeide.'
+      summary: 'Bouwde de basis voor schaalbare chatbot en workflow automation systemen, later samengevoegd in Corthex.',
+      highlight: 'Zette de basisarchitectuur en productvisie neer die nu doorleeft in Corthex.'
     },
     {
       role: 'Softwareontwikkelaar | Eigenaar',
