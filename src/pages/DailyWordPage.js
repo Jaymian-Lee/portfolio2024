@@ -33,9 +33,9 @@ const copy = {
   en: {
     title: 'Wordlee',
     subtitle: 'One fun word every day.',
-    switchLang: 'Language',
     back: 'Back to portfolio',
     howTo: 'Guess the 5 letter word in 6 tries.',
+    oneRoundRule: 'You can only play 1 full round per day per language.',
     placeholder: 'Type with keyboard or tap below',
     won: 'Great job. You solved today\'s word.',
     lost: 'Round complete. Come back tomorrow.',
@@ -53,19 +53,28 @@ const copy = {
     askThinking: 'Thinking...',
     askError: 'The assistant is temporarily unavailable.',
     askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Wordlee.',
+    leaderboardTitle: 'Daily top 3',
+    leaderboardSubtitle: 'Today\'s fastest solves',
+    leaderboardEmpty: 'No scores yet today. Be the first.',
+    leaderboardNameLabel: 'Your name',
+    leaderboardNamePlaceholder: 'Type your name',
+    leaderboardSubmit: 'Submit score',
+    leaderboardSubmitted: 'Score submitted',
+    leaderboardHint: 'Only available after solving.',
+    leaderboardAttempts: 'tries',
+    leaderboardError: 'Could not update leaderboard.',
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
     footerConnectTitle: 'Connect',
     footerWordleeText: 'Wordlee is your daily language workout with warm, playful words.',
-    footerWordleeCta: 'Play Wordlee',
     footerBuilt: 'Built with care in Limburg'
   },
   nl: {
     title: 'Wordlee',
     subtitle: 'Elke dag een leuk woord.',
-    switchLang: 'Taal',
     back: 'Terug naar portfolio',
     howTo: 'Raad het woord van 5 letters in 6 pogingen.',
+    oneRoundRule: 'Je kunt per taal maar 1 volledige ronde per dag spelen.',
     placeholder: 'Typ met toetsenbord of tik hieronder',
     won: 'Lekker bezig. Je hebt het woord geraden.',
     lost: 'Ronde klaar. Kom morgen terug.',
@@ -83,11 +92,20 @@ const copy = {
     askThinking: 'Even denken...',
     askError: 'De assistent is tijdelijk niet beschikbaar.',
     askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Wordlee.',
+    leaderboardTitle: 'Top 3 van vandaag',
+    leaderboardSubtitle: 'Snelste oplossingen van vandaag',
+    leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
+    leaderboardNameLabel: 'Jouw naam',
+    leaderboardNamePlaceholder: 'Vul je naam in',
+    leaderboardSubmit: 'Score opslaan',
+    leaderboardSubmitted: 'Score opgeslagen',
+    leaderboardHint: 'Pas beschikbaar nadat je hebt gewonnen.',
+    leaderboardAttempts: 'pogingen',
+    leaderboardError: 'Scorebord kon niet worden bijgewerkt.',
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
     footerWordleeText: 'Wordlee is je dagelijkse taalworkout met warme, speelse woorden.',
-    footerWordleeCta: 'Speel Wordlee',
     footerBuilt: 'Met zorg gebouwd in Limburg'
   }
 };
@@ -111,6 +129,9 @@ const getInitialState = (language, dateKey) => {
   return { guesses: [], evaluations: [], status: 'playing' };
 };
 
+const getScoreNameKey = (language, dateKey) => `wordlee-score-name:${language}:${dateKey}`;
+const getScoreSubmittedKey = (language, dateKey) => `wordlee-score-submitted:${language}:${dateKey}`;
+
 function DailyWordPage() {
   const [language, setLanguage] = useState(() => localStorage.getItem('portfolio-language') || 'en');
   const [currentGuess, setCurrentGuess] = useState('');
@@ -123,6 +144,12 @@ function DailyWordPage() {
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
   const [chatError, setChatError] = useState('');
+
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [scoreName, setScoreName] = useState('');
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [leaderboardError, setLeaderboardError] = useState('');
+  const [scoreSubmitted, setScoreSubmitted] = useState(false);
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const answer = useMemo(() => getDailyWord(language, DAILY_WORDS, dateKey), [language, dateKey]);
@@ -149,6 +176,9 @@ function DailyWordPage() {
     setCurrentGuess('');
     setError('');
     localStorage.setItem('portfolio-language', language);
+
+    setScoreName(localStorage.getItem(getScoreNameKey(language, dateKey)) || '');
+    setScoreSubmitted(localStorage.getItem(getScoreSubmittedKey(language, dateKey)) === '1');
   }, [language, dateKey]);
 
   useEffect(() => {
@@ -177,6 +207,25 @@ function DailyWordPage() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   });
+
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      setLeaderboardLoading(true);
+      setLeaderboardError('');
+      try {
+        const response = await fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
+        setLeaderboard(Array.isArray(data.top3) ? data.top3 : []);
+      } catch (err) {
+        setLeaderboardError(err.message || copy[language].leaderboardError);
+      } finally {
+        setLeaderboardLoading(false);
+      }
+    };
+
+    loadLeaderboard();
+  }, [language, dateKey]);
 
   const usedKeys = useMemo(() => {
     const score = {};
@@ -230,6 +279,45 @@ function DailyWordPage() {
     setCurrentGuess((prev) => `${prev}${key}`);
   };
 
+  const submitScore = async (event) => {
+    event.preventDefault();
+    if (game.status !== 'won' || scoreSubmitted) return;
+
+    const safeName = scoreName.trim();
+    if (safeName.length < 2) {
+      setLeaderboardError(copy[language].leaderboardError);
+      return;
+    }
+
+    setLeaderboardLoading(true);
+    setLeaderboardError('');
+
+    try {
+      const response = await fetch('/api/wordlee/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: safeName,
+          dateKey,
+          language,
+          attempts: game.guesses.length
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
+
+      setLeaderboard(Array.isArray(data.top3) ? data.top3 : []);
+      setScoreSubmitted(true);
+      localStorage.setItem(getScoreSubmittedKey(language, dateKey), '1');
+      localStorage.setItem(getScoreNameKey(language, dateKey), safeName);
+    } catch (err) {
+      setLeaderboardError(err.message || copy[language].leaderboardError);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  };
+
   const submitChat = async (event) => {
     event.preventDefault();
     if (!chatInput.trim() || chatLoading) return;
@@ -274,6 +362,7 @@ function DailyWordPage() {
           <h1>{copy[language].title}</h1>
           <p>{copy[language].subtitle}</p>
           <p className="daily-help">{copy[language].howTo}</p>
+          <p className="daily-help strong-rule">{copy[language].oneRoundRule}</p>
           <p className="daily-meta">{dateKey} · {copy[language].next}</p>
         </section>
 
@@ -333,6 +422,47 @@ function DailyWordPage() {
               {copy[language].del}
             </button>
           </div>
+        </section>
+
+        <section className="leaderboard" aria-label={copy[language].leaderboardTitle}>
+          <h2>{copy[language].leaderboardTitle}</h2>
+          <p className="leaderboard-subtitle">{copy[language].leaderboardSubtitle}</p>
+
+          {leaderboardLoading && <p className="daily-tip">Loading...</p>}
+          {!leaderboardLoading && leaderboard.length === 0 && (
+            <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
+          )}
+
+          {leaderboard.length > 0 && (
+            <ol className="leaderboard-list">
+              {leaderboard.map((entry, index) => (
+                <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
+                  <span className="leaderboard-rank">#{index + 1}</span>
+                  <span className="leaderboard-name">{entry.name}</span>
+                  <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+
+          <form className="leaderboard-form" onSubmit={submitScore}>
+            <label htmlFor="leaderboard-name">{copy[language].leaderboardNameLabel}</label>
+            <div className="leaderboard-form-row">
+              <input
+                id="leaderboard-name"
+                type="text"
+                value={scoreName}
+                onChange={(e) => setScoreName(e.target.value.slice(0, 24))}
+                placeholder={copy[language].leaderboardNamePlaceholder}
+                disabled={scoreSubmitted}
+              />
+              <button type="submit" disabled={game.status !== 'won' || scoreSubmitted || leaderboardLoading}>
+                {scoreSubmitted ? copy[language].leaderboardSubmitted : copy[language].leaderboardSubmit}
+              </button>
+            </div>
+            {game.status !== 'won' && <p className="daily-tip">{copy[language].leaderboardHint}</p>}
+            {leaderboardError && <p className="daily-error">{leaderboardError}</p>}
+          </form>
         </section>
       </div>
 
