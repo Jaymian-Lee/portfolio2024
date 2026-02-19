@@ -154,13 +154,32 @@ const safeJson = async (response) => {
 const getScoreNameKey = (language, dateKey) => `wordlee-score-name:${language}:${dateKey}`;
 const getScoreSubmittedKey = (language, dateKey) => `wordlee-score-submitted:${language}:${dateKey}`;
 
+
+const detectBrowserLanguage = () => {
+  const lang = (navigator.language || '').toLowerCase();
+  return lang.startsWith('nl') ? 'nl' : 'en';
+};
+
+const detectBrowserTheme = () => {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
+};
+
 function DailyWordPage() {
-  const [language, setLanguage] = useState(() => localStorage.getItem('portfolio-language') || 'en');
+  const [language, setLanguage] = useState(() => {
+    const saved = localStorage.getItem('portfolio-language');
+    if (saved === 'en' || saved === 'nl') return saved;
+    return detectBrowserLanguage();
+  });
   const [currentGuess, setCurrentGuess] = useState('');
   const [shakeRow, setShakeRow] = useState(-1);
   const [popRow, setPopRow] = useState(-1);
   const [error, setError] = useState('');
-  const [theme, setTheme] = useState(() => localStorage.getItem('portfolio-theme') || 'light');
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('portfolio-theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return detectBrowserTheme();
+  });
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([{ role: 'assistant', content: copy.en.askGreeting }]);
   const [chatInput, setChatInput] = useState('');

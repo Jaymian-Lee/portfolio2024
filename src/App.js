@@ -8,6 +8,17 @@ import './App.css';
 const SITE_URL = 'https://jaymian-lee.nl';
 const SITE_NAME = 'Jaymian-Lee Reinartz Portfolio';
 
+
+const detectBrowserLanguage = () => {
+  const lang = (navigator.language || '').toLowerCase();
+  return lang.startsWith('nl') ? 'nl' : 'en';
+};
+
+const detectBrowserTheme = () => {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
+};
+
 const projectLinks = [
   {
     name: 'Corthex',
@@ -401,13 +412,12 @@ function App() {
     const savedTheme = localStorage.getItem('portfolio-theme');
     const savedLanguage = localStorage.getItem('portfolio-language');
 
-    if (savedTheme === 'dark' || savedTheme === 'light') {
-      setTheme(savedTheme);
-    }
-    if (savedLanguage === 'en' || savedLanguage === 'nl') {
-      setLanguage(savedLanguage);
-      setMessages([{ role: 'assistant', content: copy[savedLanguage].greeting }]);
-    }
+    const nextTheme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : detectBrowserTheme();
+    const nextLanguage = savedLanguage === 'en' || savedLanguage === 'nl' ? savedLanguage : detectBrowserLanguage();
+
+    setTheme(nextTheme);
+    setLanguage(nextLanguage);
+    setMessages([{ role: 'assistant', content: copy[nextLanguage].greeting }]);
   }, []);
 
   useEffect(() => {
