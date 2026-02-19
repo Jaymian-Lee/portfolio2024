@@ -691,3 +691,48 @@
 
 .leaderboard-row:nth-child(2) .leaderboard-rank { color: #9aa7bb; }
 .leaderboard-row:nth-child(3) .leaderboard-rank { color: #b98a57; }
+
+
+.my-scores {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.8rem;
+}
+
+.my-scores h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+}
+
+.my-scores-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.my-scores-list li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+}
+
+.my-scores-date {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.my-scores-attempts {
+  font-weight: 600;
+}
+
+.my-scores-pr {
+  font-size: 0.78rem;
+  color: #b9853f;
+  font-weight: 700;
+}

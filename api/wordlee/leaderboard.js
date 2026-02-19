@@ -27,6 +27,10 @@ function leaderboardNamesKey(dateKey, language) {
   return `wordlee:names:${dateKey}:${language}`;
 }
 
+function userHistoryKey(memberKey, language) {
+  return `wordlee:user:${language}:${memberKey}`;
+}
+
 function compositeScore(attempts, submittedAt) {
   return attempts * SCORE_FACTOR + submittedAt;
 }
@@ -124,6 +128,28 @@ module.exports = async (req, res) => {
         await kvCommand(['ZADD', key, String(score), memberKey]);
         await kvCommand(['HSET', namesKey, memberKey, name]);
       }
+
+      const historyKey = userHistoryKey(memberKey, language);
+      const existingHistoryRaw = await kvCommand(['HGET', historyKey, dateKey]);
+      let historyAttempts = attempts;
+
+      if (existingHistoryRaw) {
+        try {
+          const parsed = JSON.parse(existingHistoryRaw);
+          if (Number.isInteger(parsed?.attempts)) {
+            historyAttempts = Math.min(parsed.attempts, attempts);
+          }
+        } catch {
+          historyAttempts = attempts;
+        }
+      }
+
+      await kvCommand([
+        'HSET',
+        historyKey,
+        dateKey,
+        JSON.stringify({ dateKey, language, attempts: historyAttempts, submittedAt: now })
+      ]);
 
       const top3 = await getTop3(dateKey, language);
       return res.status(200).json({ ok: true, dateKey, language, top3 });

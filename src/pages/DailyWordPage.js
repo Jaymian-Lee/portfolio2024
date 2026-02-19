@@ -68,6 +68,9 @@ const copy = {
     joinBoardCta: 'Join leaderboard',
     joinBoardTitle: 'Join today\'s leaderboard',
     joinBoardText: 'Want your name on the board? Enter it now.',
+    myScoresTitle: 'Your scores',
+    myScoresEmpty: 'No scores saved yet for this name.',
+    myScoresPR: 'PR',
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
     footerConnectTitle: 'Connect',
@@ -112,6 +115,9 @@ const copy = {
     joinBoardCta: 'Naar scorebord',
     joinBoardTitle: 'Op het scorebord van vandaag?',
     joinBoardText: 'Wil je op het scorebord? Vul dan nu je naam in.',
+    myScoresTitle: 'Jouw scores',
+    myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
+    myScoresPR: 'PR',
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
@@ -193,6 +199,8 @@ function DailyWordPage() {
   const [leaderboardError, setLeaderboardError] = useState('');
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
   const [showJoinPopup, setShowJoinPopup] = useState(false);
+  const [myScores, setMyScores] = useState([]);
+  const [myScoresLoading, setMyScoresLoading] = useState(false);
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const yesterdayDateKey = useMemo(() => {
@@ -295,6 +303,31 @@ function DailyWordPage() {
   }, [language, dateKey, yesterdayDateKey]);
 
 
+  useEffect(() => {
+    const loadMyScores = async () => {
+      const name = scoreName.trim();
+      if (name.length < 2) {
+        setMyScores([]);
+        return;
+      }
+
+      setMyScoresLoading(true);
+      try {
+        const response = await fetch(`/api/wordlee/history?name=${encodeURIComponent(name)}&language=${language}`);
+        const data = await safeJson(response);
+        if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
+        setMyScores(Array.isArray(data.records) ? data.records : []);
+      } catch {
+        setMyScores([]);
+      } finally {
+        setMyScoresLoading(false);
+      }
+    };
+
+    loadMyScores();
+  }, [language, scoreName]);
+
+
   const getRankBadge = (index) => {
     if (index === 0) return '👑 #1';
     if (index === 1) return '🥈 #2';
@@ -392,6 +425,17 @@ function DailyWordPage() {
     } finally {
       setLeaderboardLoading(false);
     }
+  };
+
+  const formatDateTime = (record) => {
+    const base = record?.submittedAt ? new Date(record.submittedAt) : new Date(`${record.dateKey}T00:00:00`);
+    return base.toLocaleString(language === 'nl' ? 'nl-NL' : 'en-US', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   const submitChat = async (event) => {
@@ -552,7 +596,28 @@ function DailyWordPage() {
             <p className="daily-tip">{game.status !== 'won' ? copy[language].leaderboardHint : copy[language].leaderboardSubmitted}</p>
           )}
 
-          {leaderboardError && <p className="daily-error">{leaderboardError}</p>}
+
+
+          <div className="my-scores" aria-label={copy[language].myScoresTitle}>
+            <h3>{copy[language].myScoresTitle}</h3>
+            {myScoresLoading && <p className="daily-tip">Loading...</p>}
+            {!myScoresLoading && myScores.length === 0 && (
+              <p className="daily-tip">{copy[language].myScoresEmpty}</p>
+            )}
+            {myScores.length > 0 && (
+              <ul className="my-scores-list">
+                {myScores.map((record) => (
+                  <li key={`${record.dateKey}-${record.submittedAt || 0}`}>
+                    <span className="my-scores-date">{formatDateTime(record)}</span>
+                    <span className="my-scores-attempts">{record.attempts} {copy[language].leaderboardAttempts}</span>
+                    {record.isPR && <span className="my-scores-pr">🏆 {copy[language].myScoresPR}</span>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+                    {leaderboardError && <p className="daily-error">{leaderboardError}</p>}
         </section>
       </div>
         
