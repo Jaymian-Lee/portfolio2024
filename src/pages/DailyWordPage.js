@@ -55,6 +55,8 @@ const copy = {
     askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Wordlee.',
     leaderboardTitle: 'Daily top 3',
     leaderboardSubtitle: 'Today\'s fastest solves',
+    yesterdayWinnerTitle: 'Yesterday\'s winner',
+    yesterdayWinnerEmpty: 'No winner stored for yesterday yet.',
     leaderboardEmpty: 'No scores yet today. Be the first.',
     leaderboardNameLabel: 'Your name',
     leaderboardNamePlaceholder: 'Type your name',
@@ -94,6 +96,8 @@ const copy = {
     askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Wordlee.',
     leaderboardTitle: 'Top 3 van vandaag',
     leaderboardSubtitle: 'Snelste oplossingen van vandaag',
+    yesterdayWinnerTitle: 'Winnaar van gisteren',
+    yesterdayWinnerEmpty: 'Nog geen winnaar van gisteren beschikbaar.',
     leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
     leaderboardNameLabel: 'Jouw naam',
     leaderboardNamePlaceholder: 'Vul je naam in',
@@ -146,12 +150,21 @@ function DailyWordPage() {
   const [chatError, setChatError] = useState('');
 
   const [leaderboard, setLeaderboard] = useState([]);
+  const [yesterdayWinner, setYesterdayWinner] = useState(null);
   const [scoreName, setScoreName] = useState('');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
 
   const dateKey = useMemo(() => getTodayKey(), []);
+  const yesterdayDateKey = useMemo(() => {
+    const d = new Date(`${dateKey}T00:00:00`);
+    d.setDate(d.getDate() - 1);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }, [dateKey]);
   const answer = useMemo(() => getDailyWord(language, DAILY_WORDS, dateKey), [language, dateKey]);
   const [game, setGame] = useState(() => getInitialState(language, dateKey));
 
@@ -213,10 +226,19 @@ function DailyWordPage() {
       setLeaderboardLoading(true);
       setLeaderboardError('');
       try {
-        const response = await fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}`);
-        const data = await response.json();
-        if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
-        setLeaderboard(Array.isArray(data.top3) ? data.top3 : []);
+        const [todayResponse, yesterdayResponse] = await Promise.all([
+          fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}`),
+          fetch(`/api/wordlee/leaderboard?date=${yesterdayDateKey}&language=${language}`)
+        ]);
+
+        const todayData = await todayResponse.json();
+        const yesterdayData = await yesterdayResponse.json();
+
+        if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
+        if (!yesterdayResponse.ok) throw new Error(yesterdayData?.error || copy[language].leaderboardError);
+
+        setLeaderboard(Array.isArray(todayData.top3) ? todayData.top3 : []);
+        setYesterdayWinner(Array.isArray(yesterdayData.top3) && yesterdayData.top3.length > 0 ? yesterdayData.top3[0] : null);
       } catch (err) {
         setLeaderboardError(err.message || copy[language].leaderboardError);
       } finally {
@@ -225,7 +247,7 @@ function DailyWordPage() {
     };
 
     loadLeaderboard();
-  }, [language, dateKey]);
+  }, [language, dateKey, yesterdayDateKey]);
 
   const usedKeys = useMemo(() => {
     const score = {};
@@ -428,6 +450,20 @@ function DailyWordPage() {
           <h2>{copy[language].leaderboardTitle}</h2>
           <p className="leaderboard-subtitle">{copy[language].leaderboardSubtitle}</p>
 
+
+          <div className="yesterday-winner" aria-label={copy[language].yesterdayWinnerTitle}>
+            <p className="yesterday-winner-title">{copy[language].yesterdayWinnerTitle}</p>
+            {yesterdayWinner ? (
+              <div className="yesterday-winner-card">
+                <span className="winner-crown" aria-hidden="true">👑</span>
+                <span className="yesterday-winner-name">{yesterdayWinner.name}</span>
+                <span className="yesterday-winner-score">{yesterdayWinner.attempts} {copy[language].leaderboardAttempts}</span>
+              </div>
+            ) : (
+              <p className="daily-tip">{copy[language].yesterdayWinnerEmpty}</p>
+            )}
+          </div>
+
           {leaderboardLoading && <p className="daily-tip">Loading...</p>}
           {!leaderboardLoading && leaderboard.length === 0 && (
             <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
@@ -437,7 +473,7 @@ function DailyWordPage() {
             <ol className="leaderboard-list">
               {leaderboard.map((entry, index) => (
                 <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
-                  <span className="leaderboard-rank">#{index + 1}</span>
+                  <span className={`leaderboard-rank ${index === 0 ? 'is-crowned' : ''}`}>{index === 0 ? '👑 #1' : `#${index + 1}`}</span>
                   <span className="leaderboard-name">{entry.name}</span>
                   <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts}</span>
                 </li>

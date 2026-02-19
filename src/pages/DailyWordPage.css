@@ -221,6 +221,45 @@
   font-size: 0.9rem;
 }
 
+
+.yesterday-winner {
+  margin-top: 0.8rem;
+  margin-bottom: 0.7rem;
+}
+
+.yesterday-winner-title {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.yesterday-winner-card {
+  margin-top: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  border-radius: 12px;
+  padding: 0.58rem 0.64rem;
+  background: linear-gradient(120deg, rgba(201, 154, 106, 0.22), rgba(255, 255, 255, 0.08));
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.winner-crown {
+  font-size: 1.05rem;
+}
+
+.yesterday-winner-name {
+  font-weight: 700;
+}
+
+.yesterday-winner-score {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
 .leaderboard-list {
   list-style: none;
   margin: 0.8rem 0 0;
@@ -241,6 +280,10 @@
 
 .leaderboard-rank {
   font-weight: 700;
+}
+
+.leaderboard-rank.is-crowned {
+  color: #b9853f;
 }
 
 .leaderboard-score {
