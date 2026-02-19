@@ -393,7 +393,6 @@ function App() {
   const [greetingIndex, setGreetingIndex] = useState(0);
   const [greetingVisible, setGreetingVisible] = useState(true);
   const [showWordleePopup, setShowWordleePopup] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   const revealRefs = useRef([]);
   const messageEndRef = useRef(null);
@@ -430,19 +429,7 @@ function App() {
     return () => mediaQuery.removeListener(updatePreference);
   }, []);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 840px)');
-    const updateMobile = () => setIsMobile(mediaQuery.matches);
-    updateMobile();
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', updateMobile);
-      return () => mediaQuery.removeEventListener('change', updateMobile);
-    }
-
-    mediaQuery.addListener(updateMobile);
-    return () => mediaQuery.removeListener(updateMobile);
-  }, []);
+;
 
 
   useEffect(() => {
@@ -502,7 +489,7 @@ function App() {
   }, [showPreloader]);
 
   useEffect(() => {
-    if (showPreloader || !isMobile) {
+    if (showPreloader) {
       setShowWordleePopup(false);
       return;
     }
@@ -513,7 +500,7 @@ function App() {
       setShowWordleePopup(true);
       localStorage.setItem(key, '1');
     }
-  }, [showPreloader, isMobile]);
+  }, [showPreloader]);
 
   useEffect(() => {
     localStorage.setItem('portfolio-language', language);
@@ -919,7 +906,7 @@ function App() {
         </div>
       </main>
 
-      {showWordleePopup && isMobile && (
+      {showWordleePopup && (
         <div className="wordly-popup" role="dialog" aria-modal="false" aria-label={t.popupWordleeTitle}>
           <div className="wordly-popup-inner">
             <p className="wordly-popup-title">{t.popupWordleeTitle}</p>
