@@ -442,57 +442,7 @@ function DailyWordPage() {
           <p className="daily-meta">{dateKey} · {copy[language].next}</p>
         </section>
 
-      <div className="leaderboard-spotlight">
-<section className="leaderboard" aria-label={copy[language].leaderboardTitle}>
-          <h2>{copy[language].leaderboardTitle}</h2>
-          <p className="leaderboard-subtitle">{copy[language].leaderboardSubtitle}</p>
 
-
-          <div className="yesterday-winner" aria-label={copy[language].yesterdayWinnerTitle}>
-            <p className="yesterday-winner-title">{copy[language].yesterdayWinnerTitle}</p>
-            {yesterdayWinner ? (
-              <div className="yesterday-winner-card">
-                <span className="winner-crown" aria-hidden="true">👑</span>
-                <span className="yesterday-winner-name">{yesterdayWinner.name}</span>
-                <span className="yesterday-winner-score">{yesterdayWinner.attempts} {copy[language].leaderboardAttempts}</span>
-              </div>
-            ) : (
-              <p className="daily-tip">{copy[language].yesterdayWinnerEmpty}</p>
-            )}
-          </div>
-
-          {leaderboardLoading && <p className="daily-tip">Loading...</p>}
-          {!leaderboardLoading && leaderboard.length === 0 && (
-            <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
-          )}
-
-          {leaderboard.length > 0 && (
-            <ol className="leaderboard-list">
-              {leaderboard.map((entry, index) => (
-                <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
-                  <span className={`leaderboard-rank`}>{getRankBadge(index)}</span>
-                  <span className="leaderboard-name">{entry.name}</span>
-                  <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts}</span>
-                </li>
-              ))}
-            </ol>
-          )}
-
-          {game.status === 'won' && !scoreSubmitted && (
-            <div className="leaderboard-join-wrap">
-              <button type="button" className="leaderboard-join-btn" onClick={() => setShowJoinPopup(true)}>
-                {copy[language].joinBoardCta}
-              </button>
-            </div>
-          )}
-
-          {(game.status !== 'won' || scoreSubmitted) && (
-            <p className="daily-tip">{game.status !== 'won' ? copy[language].leaderboardHint : copy[language].leaderboardSubmitted}</p>
-          )}
-
-          {leaderboardError && <p className="daily-error">{leaderboardError}</p>}
-        </section>
-      </div>
 
 
         <section className="daily-grid" aria-label="Word grid">
@@ -553,6 +503,58 @@ function DailyWordPage() {
           </div>
         </section>
 
+
+      <div className="leaderboard-spotlight">
+<section className="leaderboard" aria-label={copy[language].leaderboardTitle}>
+          <h2>{copy[language].leaderboardTitle}</h2>
+          <p className="leaderboard-subtitle">{copy[language].leaderboardSubtitle}</p>
+
+
+          <div className="yesterday-winner" aria-label={copy[language].yesterdayWinnerTitle}>
+            <p className="yesterday-winner-title">{copy[language].yesterdayWinnerTitle}</p>
+            {yesterdayWinner ? (
+              <div className="yesterday-winner-card">
+                <span className="winner-crown" aria-hidden="true">👑</span>
+                <span className="yesterday-winner-name">{yesterdayWinner.name}</span>
+                <span className="yesterday-winner-score">{yesterdayWinner.attempts} {copy[language].leaderboardAttempts}</span>
+              </div>
+            ) : (
+              <p className="daily-tip">{copy[language].yesterdayWinnerEmpty}</p>
+            )}
+          </div>
+
+          {leaderboardLoading && <p className="daily-tip">Loading...</p>}
+          {!leaderboardLoading && leaderboard.length === 0 && (
+            <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
+          )}
+
+          {leaderboard.length > 0 && (
+            <ol className="leaderboard-list">
+              {leaderboard.map((entry, index) => (
+                <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
+                  <span className={`leaderboard-rank`}>{getRankBadge(index)}</span>
+                  <span className="leaderboard-name">{entry.name}</span>
+                  <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+
+          {game.status === 'won' && !scoreSubmitted && (
+            <div className="leaderboard-join-wrap">
+              <button type="button" className="leaderboard-join-btn" onClick={() => setShowJoinPopup(true)}>
+                {copy[language].joinBoardCta}
+              </button>
+            </div>
+          )}
+
+          {(game.status !== 'won' || scoreSubmitted) && (
+            <p className="daily-tip">{game.status !== 'won' ? copy[language].leaderboardHint : copy[language].leaderboardSubmitted}</p>
+          )}
+
+          {leaderboardError && <p className="daily-error">{leaderboardError}</p>}
+        </section>
+      </div>
         
       </div>
 
