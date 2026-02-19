@@ -144,6 +144,61 @@ const safeJson = async (response) => {
   }
 };
 
+
+const LOCAL_LEADERBOARD_KEY = 'wordlee-local-leaderboard';
+
+const readLocalLeaderboard = () => {
+  try {
+    const raw = localStorage.getItem(LOCAL_LEADERBOARD_KEY);
+    if (!raw) return { days: {} };
+    const parsed = JSON.parse(raw);
+    return parsed && parsed.days ? parsed : { days: {} };
+  } catch {
+    return { days: {} };
+  }
+};
+
+const writeLocalLeaderboard = (data) => {
+  localStorage.setItem(LOCAL_LEADERBOARD_KEY, JSON.stringify(data));
+};
+
+const getLocalTop3 = (dateKey, language) => {
+  const data = readLocalLeaderboard();
+  const list = data.days?.[dateKey]?.[language] || [];
+  return list
+    .slice()
+    .sort((a, b) => a.attempts - b.attempts || a.submittedAt - b.submittedAt)
+    .slice(0, 3);
+};
+
+const upsertLocalScore = ({ dateKey, language, name, attempts }) => {
+  const data = readLocalLeaderboard();
+  data.days = data.days || {};
+  data.days[dateKey] = data.days[dateKey] || { en: [], nl: [] };
+  data.days[dateKey][language] = data.days[dateKey][language] || [];
+
+  const key = name.toLowerCase();
+  const now = Date.now();
+  const list = data.days[dateKey][language];
+  const i = list.findIndex((x) => String(x.name || '').toLowerCase() === key);
+
+  if (i >= 0) {
+    if (attempts < list[i].attempts) {
+      list[i] = { ...list[i], name, attempts, submittedAt: now };
+    }
+  } else {
+    list.push({ name, attempts, submittedAt: now });
+  }
+
+  data.days[dateKey][language] = list
+    .slice()
+    .sort((a, b) => a.attempts - b.attempts || a.submittedAt - b.submittedAt)
+    .slice(0, 50);
+
+  writeLocalLeaderboard(data);
+  return getLocalTop3(dateKey, language);
+};
+
 const getScoreNameKey = (language, dateKey) => `wordlee-score-name:${language}:${dateKey}`;
 const getScoreSubmittedKey = (language, dateKey) => `wordlee-score-submitted:${language}:${dateKey}`;
 
@@ -251,7 +306,11 @@ function DailyWordPage() {
         setLeaderboard(Array.isArray(todayData.top3) ? todayData.top3 : []);
         setYesterdayWinner(Array.isArray(yesterdayData.top3) && yesterdayData.top3.length > 0 ? yesterdayData.top3[0] : null);
       } catch (err) {
-        setLeaderboardError(err.message || copy[language].leaderboardError);
+        const todayLocal = getLocalTop3(dateKey, language);
+        const yesterdayLocal = getLocalTop3(yesterdayDateKey, language);
+        setLeaderboard(todayLocal);
+        setYesterdayWinner(yesterdayLocal.length ? yesterdayLocal[0] : null);
+        setLeaderboardError('');
       } finally {
         setLeaderboardLoading(false);
       }
@@ -345,7 +404,17 @@ function DailyWordPage() {
       localStorage.setItem(getScoreSubmittedKey(language, dateKey), '1');
       localStorage.setItem(getScoreNameKey(language, dateKey), safeName);
     } catch (err) {
-      setLeaderboardError(err.message || copy[language].leaderboardError);
+      const top3 = upsertLocalScore({
+        dateKey,
+        language,
+        name: safeName,
+        attempts: game.guesses.length
+      });
+      setLeaderboard(top3);
+      setScoreSubmitted(true);
+      localStorage.setItem(getScoreSubmittedKey(language, dateKey), '1');
+      localStorage.setItem(getScoreNameKey(language, dateKey), safeName);
+      setLeaderboardError('');
     } finally {
       setLeaderboardLoading(false);
     }
