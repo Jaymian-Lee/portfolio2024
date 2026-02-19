@@ -65,6 +65,9 @@ const copy = {
     leaderboardHint: 'Only available after solving.',
     leaderboardAttempts: 'tries',
     leaderboardError: 'Could not update leaderboard.',
+    joinBoardCta: 'Join leaderboard',
+    joinBoardTitle: 'Join today\'s leaderboard',
+    joinBoardText: 'Want your name on the board? Enter it now.',
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
     footerConnectTitle: 'Connect',
@@ -106,6 +109,9 @@ const copy = {
     leaderboardHint: 'Pas beschikbaar nadat je hebt gewonnen.',
     leaderboardAttempts: 'pogingen',
     leaderboardError: 'Scorebord kon niet worden bijgewerkt.',
+    joinBoardCta: 'Naar scorebord',
+    joinBoardTitle: 'Op het scorebord van vandaag?',
+    joinBoardText: 'Wil je op het scorebord? Vul dan nu je naam in.',
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
@@ -145,60 +151,6 @@ const safeJson = async (response) => {
 };
 
 
-const LOCAL_LEADERBOARD_KEY = 'wordlee-local-leaderboard';
-
-const readLocalLeaderboard = () => {
-  try {
-    const raw = localStorage.getItem(LOCAL_LEADERBOARD_KEY);
-    if (!raw) return { days: {} };
-    const parsed = JSON.parse(raw);
-    return parsed && parsed.days ? parsed : { days: {} };
-  } catch {
-    return { days: {} };
-  }
-};
-
-const writeLocalLeaderboard = (data) => {
-  localStorage.setItem(LOCAL_LEADERBOARD_KEY, JSON.stringify(data));
-};
-
-const getLocalTop3 = (dateKey, language) => {
-  const data = readLocalLeaderboard();
-  const list = data.days?.[dateKey]?.[language] || [];
-  return list
-    .slice()
-    .sort((a, b) => a.attempts - b.attempts || a.submittedAt - b.submittedAt)
-    .slice(0, 3);
-};
-
-const upsertLocalScore = ({ dateKey, language, name, attempts }) => {
-  const data = readLocalLeaderboard();
-  data.days = data.days || {};
-  data.days[dateKey] = data.days[dateKey] || { en: [], nl: [] };
-  data.days[dateKey][language] = data.days[dateKey][language] || [];
-
-  const key = name.toLowerCase();
-  const now = Date.now();
-  const list = data.days[dateKey][language];
-  const i = list.findIndex((x) => String(x.name || '').toLowerCase() === key);
-
-  if (i >= 0) {
-    if (attempts < list[i].attempts) {
-      list[i] = { ...list[i], name, attempts, submittedAt: now };
-    }
-  } else {
-    list.push({ name, attempts, submittedAt: now });
-  }
-
-  data.days[dateKey][language] = list
-    .slice()
-    .sort((a, b) => a.attempts - b.attempts || a.submittedAt - b.submittedAt)
-    .slice(0, 50);
-
-  writeLocalLeaderboard(data);
-  return getLocalTop3(dateKey, language);
-};
-
 const getScoreNameKey = (language, dateKey) => `wordlee-score-name:${language}:${dateKey}`;
 const getScoreSubmittedKey = (language, dateKey) => `wordlee-score-submitted:${language}:${dateKey}`;
 
@@ -221,6 +173,7 @@ function DailyWordPage() {
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
+  const [showJoinPopup, setShowJoinPopup] = useState(false);
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const yesterdayDateKey = useMemo(() => {
@@ -264,6 +217,13 @@ function DailyWordPage() {
     localStorage.setItem(buildStorageKey(language, dateKey), JSON.stringify(game));
   }, [language, dateKey, game]);
 
+
+  useEffect(() => {
+    if (game.status === 'won' && !scoreSubmitted) {
+      setShowJoinPopup(true);
+    }
+  }, [game.status, scoreSubmitted]);
+
   useEffect(() => {
     const onKeyDown = (event) => {
       if (game.status !== 'playing') return;
@@ -306,11 +266,7 @@ function DailyWordPage() {
         setLeaderboard(Array.isArray(todayData.top3) ? todayData.top3 : []);
         setYesterdayWinner(Array.isArray(yesterdayData.top3) && yesterdayData.top3.length > 0 ? yesterdayData.top3[0] : null);
       } catch (err) {
-        const todayLocal = getLocalTop3(dateKey, language);
-        const yesterdayLocal = getLocalTop3(yesterdayDateKey, language);
-        setLeaderboard(todayLocal);
-        setYesterdayWinner(yesterdayLocal.length ? yesterdayLocal[0] : null);
-        setLeaderboardError('');
+        setLeaderboardError(err.message || copy[language].leaderboardError);
       } finally {
         setLeaderboardLoading(false);
       }
@@ -401,20 +357,11 @@ function DailyWordPage() {
 
       setLeaderboard(Array.isArray(data.top3) ? data.top3 : []);
       setScoreSubmitted(true);
+      setShowJoinPopup(false);
       localStorage.setItem(getScoreSubmittedKey(language, dateKey), '1');
       localStorage.setItem(getScoreNameKey(language, dateKey), safeName);
     } catch (err) {
-      const top3 = upsertLocalScore({
-        dateKey,
-        language,
-        name: safeName,
-        attempts: game.guesses.length
-      });
-      setLeaderboard(top3);
-      setScoreSubmitted(true);
-      localStorage.setItem(getScoreSubmittedKey(language, dateKey), '1');
-      localStorage.setItem(getScoreNameKey(language, dateKey), safeName);
-      setLeaderboardError('');
+      setLeaderboardError(err.message || copy[language].leaderboardError);
     } finally {
       setLeaderboardLoading(false);
     }
@@ -561,26 +508,47 @@ function DailyWordPage() {
             </ol>
           )}
 
-          <form className="leaderboard-form" onSubmit={submitScore}>
-            <label htmlFor="leaderboard-name">{copy[language].leaderboardNameLabel}</label>
-            <div className="leaderboard-form-row">
-              <input
-                id="leaderboard-name"
-                type="text"
-                value={scoreName}
-                onChange={(e) => setScoreName(e.target.value.slice(0, 24))}
-                placeholder={copy[language].leaderboardNamePlaceholder}
-                disabled={scoreSubmitted}
-              />
-              <button type="submit" disabled={game.status !== 'won' || scoreSubmitted || leaderboardLoading}>
-                {scoreSubmitted ? copy[language].leaderboardSubmitted : copy[language].leaderboardSubmit}
+          {game.status === 'won' && !scoreSubmitted && (
+            <div className="leaderboard-join-wrap">
+              <button type="button" className="leaderboard-join-btn" onClick={() => setShowJoinPopup(true)}>
+                {copy[language].joinBoardCta}
               </button>
             </div>
-            {game.status !== 'won' && <p className="daily-tip">{copy[language].leaderboardHint}</p>}
-            {leaderboardError && <p className="daily-error">{leaderboardError}</p>}
-          </form>
+          )}
+
+          {(game.status !== 'won' || scoreSubmitted) && (
+            <p className="daily-tip">{game.status !== 'won' ? copy[language].leaderboardHint : copy[language].leaderboardSubmitted}</p>
+          )}
+
+          {leaderboardError && <p className="daily-error">{leaderboardError}</p>}
         </section>
       </div>
+
+
+      {showJoinPopup && game.status === 'won' && !scoreSubmitted && (
+        <div className="join-popup" role="dialog" aria-modal="true" aria-label={copy[language].joinBoardTitle}>
+          <div className="join-popup-inner">
+            <h3>{copy[language].joinBoardTitle}</h3>
+            <p>{copy[language].joinBoardText}</p>
+            <form className="leaderboard-form" onSubmit={submitScore}>
+              <label htmlFor="leaderboard-name">{copy[language].leaderboardNameLabel}</label>
+              <div className="leaderboard-form-row">
+                <input
+                  id="leaderboard-name"
+                  type="text"
+                  value={scoreName}
+                  onChange={(e) => setScoreName(e.target.value.slice(0, 24))}
+                  placeholder={copy[language].leaderboardNamePlaceholder}
+                />
+                <button type="submit" disabled={leaderboardLoading}>
+                  {copy[language].leaderboardSubmit}
+                </button>
+              </div>
+            </form>
+            <button type="button" className="join-popup-close" onClick={() => setShowJoinPopup(false)}>✕</button>
+          </div>
+        </div>
+      )}
 
       <div className={`daily-ask-widget ${isChatOpen ? 'open' : ''}`}>
         <section className="daily-chat-panel" aria-label="Assistant panel" aria-hidden={!isChatOpen}>

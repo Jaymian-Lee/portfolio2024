@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
+const { DatabaseSync } = require('node:sqlite');
 const OpenAI = require('openai');
 
 const app = express();
@@ -11,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
-const leaderboardFile = path.join(__dirname, 'data', 'wordlee-leaderboard.json');
+const dbPath = path.join(__dirname, 'data', 'wordlee.sqlite');
 
 const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
@@ -43,50 +44,33 @@ Projects and links:
 - Refacthor: https://refacthor.nl
   - Positioning: refactoring, code quality, and sustainable architecture.
 
-Website structure and features:
-- Portfolio sections include hero, services, case studies, experience, selected work, connect, and contact.
-- The site includes a multilingual preloader that ends on the word Jaymian-Lee.
-- The site includes Wordlee, a daily word game with separate EN/NL daily words and progress.
-- On mobile there is a popup for Wordlee that appears once per day.
-- Theme and language toggles are available across portfolio and Wordlee pages.
-
-Social and contact:
-- Email: info@jaymian-lee.nl
-- LinkedIn: https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/
-- GitHub: https://github.com/Jaymian-Lee
-- Twitch: https://twitch.tv/jaymianlee
-- YouTube: https://www.youtube.com/@JaymianLee
-- Instagram: https://www.instagram.com/jaymianlee_/
-
 Output constraints:
 - Keep answers useful and specific to Jay and the website.
 - Do not disclose secrets or implementation internals unless asked.
 - Use English or Dutch to match user language.`;
 
-function ensureLeaderboardFile() {
-  const dir = path.dirname(leaderboardFile);
+function ensureDataDir() {
+  const dir = path.dirname(dbPath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(leaderboardFile)) fs.writeFileSync(leaderboardFile, JSON.stringify({ days: {} }, null, 2));
 }
 
-function readLeaderboard() {
-  ensureLeaderboardFile();
-  try {
-    const raw = fs.readFileSync(leaderboardFile, 'utf8');
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== 'object' || !parsed.days || typeof parsed.days !== 'object') {
-      return { days: {} };
-    }
-    return parsed;
-  } catch {
-    return { days: {} };
-  }
-}
+ensureDataDir();
+const db = new DatabaseSync(dbPath);
 
-function writeLeaderboard(data) {
-  ensureLeaderboardFile();
-  fs.writeFileSync(leaderboardFile, JSON.stringify(data, null, 2));
-}
+db.exec(`
+  CREATE TABLE IF NOT EXISTS wordlee_scores (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date_key TEXT NOT NULL,
+    language TEXT NOT NULL,
+    name TEXT NOT NULL,
+    name_key TEXT NOT NULL,
+    attempts INTEGER NOT NULL,
+    submitted_at INTEGER NOT NULL,
+    UNIQUE(date_key, language, name_key)
+  );
+  CREATE INDEX IF NOT EXISTS idx_wordlee_scores_day_lang
+  ON wordlee_scores(date_key, language, attempts, submitted_at);
+`);
 
 function normalizeName(name) {
   return String(name || '').trim().slice(0, 24);
@@ -101,81 +85,89 @@ function normalizeLanguage(language) {
   return language === 'nl' ? 'nl' : 'en';
 }
 
+function getTop3(dateKey, language) {
+  const statement = db.prepare(`
+    SELECT name, attempts, submitted_at AS submittedAt
+    FROM wordlee_scores
+    WHERE date_key = ? AND language = ?
+    ORDER BY attempts ASC, submitted_at ASC
+    LIMIT 3
+  `);
+  return statement.all(dateKey, language);
+}
+
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, model, hasApiKey: Boolean(process.env.OPENAI_API_KEY) });
 });
 
 app.get('/api/wordlee/leaderboard', (req, res) => {
-  const dateKey = normalizeDateKey(req.query.date);
-  if (!dateKey) {
-    return res.status(400).json({ error: 'Ongeldige datum. Gebruik YYYY-MM-DD.' });
+  try {
+    const dateKey = normalizeDateKey(req.query.date);
+    if (!dateKey) {
+      return res.status(400).json({ error: 'Ongeldige datum. Gebruik YYYY-MM-DD.' });
+    }
+
+    const language = normalizeLanguage(req.query.language);
+    const top3 = getTop3(dateKey, language);
+
+    return res.json({ dateKey, language, top3 });
+  } catch (error) {
+    console.error('Leaderboard GET error:', error);
+    return res.status(500).json({ error: 'Kon scorebord niet ophalen.' });
   }
-
-  const language = normalizeLanguage(req.query.language);
-  const data = readLeaderboard();
-  const entries = data.days?.[dateKey]?.[language] || [];
-  const top3 = entries
-    .slice()
-    .sort((a, b) => a.attempts - b.attempts || a.submittedAt - b.submittedAt)
-    .slice(0, 3)
-    .map(({ name, attempts, submittedAt }) => ({ name, attempts, submittedAt }));
-
-  return res.json({ dateKey, language, top3 });
 });
 
 app.post('/api/wordlee/leaderboard', (req, res) => {
-  const name = normalizeName(req.body?.name);
-  const dateKey = normalizeDateKey(req.body?.dateKey);
-  const language = normalizeLanguage(req.body?.language);
-  const attempts = Number(req.body?.attempts);
+  try {
+    const name = normalizeName(req.body?.name);
+    const dateKey = normalizeDateKey(req.body?.dateKey);
+    const language = normalizeLanguage(req.body?.language);
+    const attempts = Number(req.body?.attempts);
 
-  if (!name || name.length < 2) {
-    return res.status(400).json({ error: 'Vul een geldige naam in (minimaal 2 tekens).' });
-  }
-
-  if (!dateKey) {
-    return res.status(400).json({ error: 'Ongeldige datum. Gebruik YYYY-MM-DD.' });
-  }
-
-  if (!Number.isInteger(attempts) || attempts < 1 || attempts > 6) {
-    return res.status(400).json({ error: 'Ongeldige score.' });
-  }
-
-  const data = readLeaderboard();
-  data.days = data.days || {};
-  data.days[dateKey] = data.days[dateKey] || { en: [], nl: [] };
-  data.days[dateKey][language] = data.days[dateKey][language] || [];
-
-  const entries = data.days[dateKey][language];
-  const normalizedNameKey = name.toLowerCase();
-  const now = Date.now();
-
-  const existingIndex = entries.findIndex((entry) => String(entry.name || '').toLowerCase() === normalizedNameKey);
-  if (existingIndex >= 0) {
-    const current = entries[existingIndex];
-    if (attempts < current.attempts) {
-      entries[existingIndex] = { ...current, name, attempts, submittedAt: now };
+    if (!name || name.length < 2) {
+      return res.status(400).json({ error: 'Vul een geldige naam in (minimaal 2 tekens).' });
     }
-  } else {
-    entries.push({ name, attempts, submittedAt: now });
+
+    if (!dateKey) {
+      return res.status(400).json({ error: 'Ongeldige datum. Gebruik YYYY-MM-DD.' });
+    }
+
+    if (!Number.isInteger(attempts) || attempts < 1 || attempts > 6) {
+      return res.status(400).json({ error: 'Ongeldige score.' });
+    }
+
+    const nameKey = name.toLowerCase();
+    const now = Date.now();
+
+    const existing = db
+      .prepare(
+        `SELECT id, attempts
+         FROM wordlee_scores
+         WHERE date_key = ? AND language = ? AND name_key = ?`
+      )
+      .get(dateKey, language, nameKey);
+
+    if (existing) {
+      if (attempts < existing.attempts) {
+        db.prepare(
+          `UPDATE wordlee_scores
+           SET name = ?, attempts = ?, submitted_at = ?
+           WHERE id = ?`
+        ).run(name, attempts, now, existing.id);
+      }
+    } else {
+      db.prepare(
+        `INSERT INTO wordlee_scores (date_key, language, name, name_key, attempts, submitted_at)
+         VALUES (?, ?, ?, ?, ?, ?)`
+      ).run(dateKey, language, name, nameKey, attempts, now);
+    }
+
+    const top3 = getTop3(dateKey, language);
+    return res.json({ ok: true, dateKey, language, top3 });
+  } catch (error) {
+    console.error('Leaderboard POST error:', error);
+    return res.status(500).json({ error: 'Kon score niet opslaan.' });
   }
-
-  data.days[dateKey][language] = entries
-    .slice()
-    .sort((a, b) => a.attempts - b.attempts || a.submittedAt - b.submittedAt)
-    .slice(0, 50);
-
-  writeLeaderboard(data);
-
-  const top3 = data.days[dateKey][language]
-    .slice(0, 3)
-    .map(({ name: entryName, attempts: entryAttempts, submittedAt }) => ({
-      name: entryName,
-      attempts: entryAttempts,
-      submittedAt
-    }));
-
-  return res.json({ ok: true, dateKey, language, top3 });
 });
 
 app.post('/api/chat', async (req, res) => {
