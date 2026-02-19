@@ -268,11 +268,11 @@ const copy = {
     metricCText: 'Local collaboration with international delivery',
     ctaPrimary: 'Start a project',
     ctaSecondary: 'Jump to services',
-    ctaDaily: 'Wordlee',
-    stickyDaily: 'Play Wordlee',
-    popupWordleeTitle: 'Wordlee is live',
-    popupWordleeText: 'Have you played Wordlee today?',
-    popupWordleeCta: 'Play Wordlee',
+    ctaDaily: 'Word-Lee',
+    stickyDaily: 'Play Word-Lee',
+    popupWordleeTitle: 'Word-Lee is live',
+    popupWordleeText: 'Have you played Word-Lee today?',
+    popupWordleeCta: 'Play Word-Lee',
     popupDismiss: 'Later',
     quickLinksLabel: 'Quick links',
     storyKicker: 'Approach',
@@ -310,9 +310,9 @@ const copy = {
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
     footerConnectTitle: 'Connect',
-    footerWordleeTitle: 'Wordlee',
+    footerWordleeTitle: 'Word-Lee',
     footerWordleeText: 'Try the daily word challenge built for curious minds.',
-    footerWordleeCta: 'Play Wordlee',
+    footerWordleeCta: 'Play Word-Lee',
     footerDomain: 'jaymian-lee.nl',
     footerBuilt: 'Built with care in Limburg'
   },
@@ -329,11 +329,11 @@ const copy = {
     metricCText: 'Lokaal samenwerken met internationale oplevering',
     ctaPrimary: 'Start een project',
     ctaSecondary: 'Ga naar services',
-    ctaDaily: 'Wordlee',
-    stickyDaily: 'Speel Wordlee',
-    popupWordleeTitle: 'Wordlee staat klaar',
-    popupWordleeText: 'Heb je vandaag Wordlee al gedaan?',
-    popupWordleeCta: 'Speel Wordlee',
+    ctaDaily: 'Word-Lee',
+    stickyDaily: 'Speel Word-Lee',
+    popupWordleeTitle: 'Word-Lee staat klaar',
+    popupWordleeText: 'Heb je vandaag Word-Lee al gedaan?',
+    popupWordleeCta: 'Speel Word-Lee',
     popupDismiss: 'Later',
     quickLinksLabel: 'Snelle links',
     storyKicker: 'Aanpak',
@@ -370,9 +370,9 @@ const copy = {
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
-    footerWordleeTitle: 'Wordlee',
+    footerWordleeTitle: 'Word-Lee',
     footerWordleeText: 'Speel de dagelijkse woord challenge voor nieuwsgierige denkers.',
-    footerWordleeCta: 'Speel Wordlee',
+    footerWordleeCta: 'Speel Word-Lee',
     footerDomain: 'jaymian-lee.nl',
     footerBuilt: 'Met zorg gebouwd in Limburg'
   }
@@ -749,7 +749,7 @@ function App() {
                   <a href="#case-studies">Case Studies</a>
                   <a href="#experience">Experience</a>
                   <a href="#contact">Contact</a>
-                  <Link to="/daily-word">Wordlee</Link>
+                  <Link to="/daily-word">Word-Lee</Link>
                 </nav>
 
                 <div className="hero-metrics" aria-label="Credibility highlights">
@@ -783,7 +783,7 @@ function App() {
                   >
                     LinkedIn profile
                   </a>
-                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Wordlee game">
+                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Word-Lee game">
                     {t.ctaDaily}
                   </Link>
                 </div>
@@ -983,7 +983,7 @@ function App() {
               </ul>
             </section>
 
-            <section className="footer-wordly" aria-label="Wordlee">
+            <section className="footer-wordly" aria-label="Word-Lee">
               <p className="footer-kicker">{t.footerWordleeTitle}</p>
               <h3>Daily challenge</h3>
               <p>{t.footerWordleeText}</p>

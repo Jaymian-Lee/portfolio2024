@@ -31,7 +31,7 @@ const footerConnect = [
 
 const copy = {
   en: {
-    title: 'Wordlee',
+    title: 'Word-Lee',
     subtitle: 'One fun word every day.',
     back: 'Back to portfolio',
     howTo: 'Guess the 5 letter word in 6 tries.',
@@ -52,7 +52,7 @@ const copy = {
     askSend: 'Send',
     askThinking: 'Thinking...',
     askError: 'The assistant is temporarily unavailable.',
-    askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Wordlee.',
+    askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Word-Lee.',
     leaderboardTitle: 'Daily top 3',
     leaderboardSubtitle: 'Today\'s fastest solves',
     yesterdayWinnerTitle: 'Yesterday\'s winner',
@@ -68,11 +68,11 @@ const copy = {
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
     footerConnectTitle: 'Connect',
-    footerWordleeText: 'Wordlee is your daily language workout with warm, playful words.',
+    footerWordleeText: 'Word-Lee is your daily language workout with warm, playful words.',
     footerBuilt: 'Built with care in Limburg'
   },
   nl: {
-    title: 'Wordlee',
+    title: 'Word-Lee',
     subtitle: 'Elke dag een leuk woord.',
     back: 'Terug naar portfolio',
     howTo: 'Raad het woord van 5 letters in 6 pogingen.',
@@ -93,7 +93,7 @@ const copy = {
     askSend: 'Verstuur',
     askThinking: 'Even denken...',
     askError: 'De assistent is tijdelijk niet beschikbaar.',
-    askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Wordlee.',
+    askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Word-Lee.',
     leaderboardTitle: 'Top 3 van vandaag',
     leaderboardSubtitle: 'Snelste oplossingen van vandaag',
     yesterdayWinnerTitle: 'Winnaar van gisteren',
@@ -109,7 +109,7 @@ const copy = {
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
-    footerWordleeText: 'Wordlee is je dagelijkse taalworkout met warme, speelse woorden.',
+    footerWordleeText: 'Word-Lee is je dagelijkse taalworkout met warme, speelse woorden.',
     footerBuilt: 'Met zorg gebouwd in Limburg'
   }
 };
