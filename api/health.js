@@ -5,6 +5,7 @@ module.exports = async (req, res) => {
 
   return res.status(200).json({
     ok: true,
-    model: process.env.OPENAI_MODEL || 'gpt-4.1-mini'
+    model: process.env.OPENAI_MODEL || 'gpt-4.1-mini',
+    hasKv: Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN)
   });
 };
