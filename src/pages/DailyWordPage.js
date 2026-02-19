@@ -133,6 +133,17 @@ const getInitialState = (language, dateKey) => {
   return { guesses: [], evaluations: [], status: 'playing' };
 };
 
+
+const safeJson = async (response) => {
+  const raw = await response.text();
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return { error: 'API gaf geen JSON terug. Controleer of de backend draait.' };
+  }
+};
+
 const getScoreNameKey = (language, dateKey) => `wordlee-score-name:${language}:${dateKey}`;
 const getScoreSubmittedKey = (language, dateKey) => `wordlee-score-submitted:${language}:${dateKey}`;
 
@@ -231,8 +242,8 @@ function DailyWordPage() {
           fetch(`/api/wordlee/leaderboard?date=${yesterdayDateKey}&language=${language}`)
         ]);
 
-        const todayData = await todayResponse.json();
-        const yesterdayData = await yesterdayResponse.json();
+        const todayData = await safeJson(todayResponse);
+        const yesterdayData = await safeJson(yesterdayResponse);
 
         if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
         if (!yesterdayResponse.ok) throw new Error(yesterdayData?.error || copy[language].leaderboardError);
@@ -326,7 +337,7 @@ function DailyWordPage() {
         })
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
       if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
 
       setLeaderboard(Array.isArray(data.top3) ? data.top3 : []);
@@ -359,7 +370,7 @@ function DailyWordPage() {
         body: JSON.stringify({ messages: nextMessages.slice(-12) })
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
       if (!response.ok) throw new Error(data?.error || copy[language].askError);
 
       setChatMessages((prev) => [...prev, { role: 'assistant', content: data.answer }]);
