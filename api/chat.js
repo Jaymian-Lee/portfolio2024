@@ -1,6 +1,9 @@
 const OpenAI = require('openai');
 
 const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
+const KV_REST_API_URL = process.env.KV_REST_API_URL;
+const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const SCORE_FACTOR = 10 ** 13;
 
 const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
@@ -35,8 +38,8 @@ Projects and links:
 Website structure and features:
 - Portfolio sections include hero, services, case studies, experience, selected work, connect, and contact.
 - The site includes a multilingual preloader that ends on the word Jaymian-Lee.
-- The site includes Wordly, a daily word game with separate EN/NL daily words and progress.
-- On mobile there is a popup for Wordly that appears once per day.
+- The site includes Word-Lee, a daily word game with separate EN/NL daily words and progress.
+- There is a popup for Word-Lee that appears once per day.
 - Theme and language toggles are available across portfolio and Wordly pages.
 
 Social and contact:
@@ -51,6 +54,67 @@ Output constraints:
 - Keep answers useful and specific to Jay and the website.
 - Do not disclose secrets or implementation internals unless asked.
 - Use English or Dutch to match user language.`;
+
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function decodeAttempts(score) {
+  return Math.floor(Number(score || 0) / SCORE_FACTOR);
+}
+
+function leaderboardKey(dateKey, language) {
+  return `wordlee:lb:${dateKey}:${language}`;
+}
+
+function leaderboardNamesKey(dateKey, language) {
+  return `wordlee:names:${dateKey}:${language}`;
+}
+
+async function kvCommand(command) {
+  if (!KV_REST_API_URL || !KV_REST_API_TOKEN) return null;
+
+  const encoded = command.map((part) => encodeURIComponent(String(part)));
+  const response = await fetch(`${KV_REST_API_URL}/${encoded.join('/')}`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
+  });
+
+  const json = await response.json().catch(() => ({}));
+  if (!response.ok || json.error) return null;
+  return json.result;
+}
+
+async function getTop3(dateKey, language) {
+  const zrangeResult = await kvCommand(['zrange', leaderboardKey(dateKey, language), '0', '2', 'WITHSCORES']);
+  const pairs = Array.isArray(zrangeResult) ? zrangeResult : [];
+  if (!pairs.length) return [];
+
+  const members = [];
+  const scores = [];
+  for (let i = 0; i < pairs.length; i += 2) {
+    members.push(String(pairs[i]));
+    scores.push(Number(pairs[i + 1]));
+  }
+
+  const names = await kvCommand(['hmget', leaderboardNamesKey(dateKey, language), ...members]);
+
+  return members.map((member, index) => ({
+    rank: index + 1,
+    name: (Array.isArray(names) ? names[index] : null) || member,
+    attempts: decodeAttempts(scores[index])
+  }));
+}
+
+async function buildWordleeContext() {
+  const dateKey = getTodayKey();
+  const [nlTop3, enTop3] = await Promise.all([getTop3(dateKey, 'nl'), getTop3(dateKey, 'en')]);
+  return `Word-Lee live leaderboard context (today ${dateKey}):
+- NL top3: ${JSON.stringify(nlTop3)}
+- EN top3: ${JSON.stringify(enTop3)}
+If user asks about standings/winners, use this data. If arrays are empty, say no submitted scores yet.`;
+}
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -80,11 +144,13 @@ module.exports = async (req, res) => {
     }
 
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const wordleeContext = await buildWordleeContext();
 
     const response = await client.responses.create({
       model,
       input: [
         { role: 'system', content: knowledgeBase },
+        { role: 'system', content: wordleeContext },
         ...safeMessages.map((m) => ({ role: m.role, content: m.content }))
       ],
       temperature: 0.5
