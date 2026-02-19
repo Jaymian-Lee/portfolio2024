@@ -191,7 +191,8 @@
     left: auto;
     transform: none;
     right: 1rem;
-    bottom: 1rem;
+    top: 1rem;
+    bottom: auto;
     background: none;
     border: 0;
     padding: 0;

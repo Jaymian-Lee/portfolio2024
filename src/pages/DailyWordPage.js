@@ -31,7 +31,7 @@ const footerConnect = [
 
 const copy = {
   en: {
-    title: 'Wordly',
+    title: 'Wordlee',
     subtitle: 'One fun word every day.',
     switchLang: 'Language',
     back: 'Back to portfolio',
@@ -52,16 +52,16 @@ const copy = {
     askSend: 'Send',
     askThinking: 'Thinking...',
     askError: 'The assistant is temporarily unavailable.',
-    askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Wordly.',
+    askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Wordlee.',
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
     footerConnectTitle: 'Connect',
-    footerWordlyText: 'Wordly is your daily language workout with warm, playful words.',
-    footerWordlyCta: 'Play Wordly',
+    footerWordleeText: 'Wordlee is your daily language workout with warm, playful words.',
+    footerWordleeCta: 'Play Wordlee',
     footerBuilt: 'Built with care in Limburg'
   },
   nl: {
-    title: 'Wordly',
+    title: 'Wordlee',
     subtitle: 'Elke dag een leuk woord.',
     switchLang: 'Taal',
     back: 'Terug naar portfolio',
@@ -82,12 +82,12 @@ const copy = {
     askSend: 'Verstuur',
     askThinking: 'Even denken...',
     askError: 'De assistent is tijdelijk niet beschikbaar.',
-    askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Wordly.',
+    askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Wordlee.',
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
-    footerWordlyText: 'Wordly is je dagelijkse taalworkout met warme, speelse woorden.',
-    footerWordlyCta: 'Speel Wordly',
+    footerWordleeText: 'Wordlee is je dagelijkse taalworkout met warme, speelse woorden.',
+    footerWordleeCta: 'Speel Wordlee',
     footerBuilt: 'Met zorg gebouwd in Limburg'
   }
 };
@@ -388,7 +388,7 @@ function DailyWordPage() {
               <p className="daily-footer-kicker">Brand</p>
               <h2>Jaymian-Lee Reinartz</h2>
               <p>{copy[language].subtitle}</p>
-              <p>{copy[language].footerWordlyText}</p>
+              <p>{copy[language].footerWordleeText}</p>
             </section>
 
             <nav className="daily-footer-column" aria-label={copy[language].footerQuickLinksTitle}>

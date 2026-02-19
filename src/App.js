@@ -268,11 +268,11 @@ const copy = {
     metricCText: 'Local collaboration with international delivery',
     ctaPrimary: 'Start a project',
     ctaSecondary: 'Jump to services',
-    ctaDaily: 'Wordly',
-    stickyDaily: 'Play Wordly',
-    popupWordlyTitle: 'Wordly is live',
-    popupWordlyText: 'Have you played Wordly today?',
-    popupWordlyCta: 'Play Wordly',
+    ctaDaily: 'Wordlee',
+    stickyDaily: 'Play Wordlee',
+    popupWordleeTitle: 'Wordlee is live',
+    popupWordleeText: 'Have you played Wordlee today?',
+    popupWordleeCta: 'Play Wordlee',
     popupDismiss: 'Later',
     quickLinksLabel: 'Quick links',
     storyKicker: 'Approach',
@@ -310,9 +310,9 @@ const copy = {
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
     footerConnectTitle: 'Connect',
-    footerWordlyTitle: 'Wordly',
-    footerWordlyText: 'Try the daily word challenge built for curious minds.',
-    footerWordlyCta: 'Play Wordly',
+    footerWordleeTitle: 'Wordlee',
+    footerWordleeText: 'Try the daily word challenge built for curious minds.',
+    footerWordleeCta: 'Play Wordlee',
     footerDomain: 'jaymian-lee.nl',
     footerBuilt: 'Built with care in Limburg'
   },
@@ -329,11 +329,11 @@ const copy = {
     metricCText: 'Lokaal samenwerken met internationale oplevering',
     ctaPrimary: 'Start een project',
     ctaSecondary: 'Ga naar services',
-    ctaDaily: 'Wordly',
-    stickyDaily: 'Speel Wordly',
-    popupWordlyTitle: 'Wordly staat klaar',
-    popupWordlyText: 'Heb je vandaag Wordly al gedaan?',
-    popupWordlyCta: 'Speel Wordly',
+    ctaDaily: 'Wordlee',
+    stickyDaily: 'Speel Wordlee',
+    popupWordleeTitle: 'Wordlee staat klaar',
+    popupWordleeText: 'Heb je vandaag Wordlee al gedaan?',
+    popupWordleeCta: 'Speel Wordlee',
     popupDismiss: 'Later',
     quickLinksLabel: 'Snelle links',
     storyKicker: 'Aanpak',
@@ -370,9 +370,9 @@ const copy = {
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
     footerConnectTitle: 'Connect',
-    footerWordlyTitle: 'Wordly',
-    footerWordlyText: 'Speel de dagelijkse woord challenge voor nieuwsgierige denkers.',
-    footerWordlyCta: 'Speel Wordly',
+    footerWordleeTitle: 'Wordlee',
+    footerWordleeText: 'Speel de dagelijkse woord challenge voor nieuwsgierige denkers.',
+    footerWordleeCta: 'Speel Wordlee',
     footerDomain: 'jaymian-lee.nl',
     footerBuilt: 'Met zorg gebouwd in Limburg'
   }
@@ -392,7 +392,7 @@ function App() {
   const [preloaderExiting, setPreloaderExiting] = useState(false);
   const [greetingIndex, setGreetingIndex] = useState(0);
   const [greetingVisible, setGreetingVisible] = useState(true);
-  const [showWordlyPopup, setShowWordlyPopup] = useState(false);
+  const [showWordleePopup, setShowWordleePopup] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const revealRefs = useRef([]);
@@ -503,14 +503,14 @@ function App() {
 
   useEffect(() => {
     if (showPreloader || !isMobile) {
-      setShowWordlyPopup(false);
+      setShowWordleePopup(false);
       return;
     }
 
     const today = new Date().toISOString().slice(0, 10);
     const key = `wordly-popup-seen:${today}`;
     if (!localStorage.getItem(key)) {
-      setShowWordlyPopup(true);
+      setShowWordleePopup(true);
       localStorage.setItem(key, '1');
     }
   }, [showPreloader, isMobile]);
@@ -749,7 +749,7 @@ function App() {
                   <a href="#case-studies">Case Studies</a>
                   <a href="#experience">Experience</a>
                   <a href="#contact">Contact</a>
-                  <Link to="/daily-word">Wordly</Link>
+                  <Link to="/daily-word">Wordlee</Link>
                 </nav>
 
                 <div className="hero-metrics" aria-label="Credibility highlights">
@@ -774,9 +774,6 @@ function App() {
                   <a href="#services" className="btn btn-ghost" aria-label="Read about services">
                     {t.ctaSecondary}
                   </a>
-                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Wordly game">
-                    {t.ctaDaily}
-                  </Link>
                   <a
                     href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
                     target="_blank"
@@ -786,6 +783,9 @@ function App() {
                   >
                     LinkedIn profile
                   </a>
+                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Wordlee game">
+                    {t.ctaDaily}
+                  </Link>
                 </div>
               </div>
             </div>
@@ -919,23 +919,17 @@ function App() {
         </div>
       </main>
 
-      {!isMobile && (
-        <Link to="/daily-word" className="floating-daily-cta" aria-label="Open Wordly game">
-          {t.stickyDaily}
-        </Link>
-      )}
-
-      {showWordlyPopup && isMobile && (
-        <div className="wordly-popup" role="dialog" aria-modal="false" aria-label={t.popupWordlyTitle}>
+      {showWordleePopup && isMobile && (
+        <div className="wordly-popup" role="dialog" aria-modal="false" aria-label={t.popupWordleeTitle}>
           <div className="wordly-popup-inner">
-            <p className="wordly-popup-title">{t.popupWordlyTitle}</p>
-            <p className="wordly-popup-text">{t.popupWordlyText}</p>
+            <p className="wordly-popup-title">{t.popupWordleeTitle}</p>
+            <p className="wordly-popup-text">{t.popupWordleeText}</p>
             <div className="wordly-popup-actions">
-              <button type="button" className="wordly-popup-dismiss" onClick={() => setShowWordlyPopup(false)}>
+              <button type="button" className="wordly-popup-dismiss" onClick={() => setShowWordleePopup(false)}>
                 {t.popupDismiss}
               </button>
-              <Link to="/daily-word" className="wordly-popup-cta" onClick={() => setShowWordlyPopup(false)}>
-                {t.popupWordlyCta}
+              <Link to="/daily-word" className="wordly-popup-cta" onClick={() => setShowWordleePopup(false)}>
+                {t.popupWordleeCta}
               </Link>
             </div>
           </div>
@@ -989,12 +983,12 @@ function App() {
               </ul>
             </section>
 
-            <section className="footer-wordly" aria-label="Wordly">
-              <p className="footer-kicker">{t.footerWordlyTitle}</p>
+            <section className="footer-wordly" aria-label="Wordlee">
+              <p className="footer-kicker">{t.footerWordleeTitle}</p>
               <h3>Daily challenge</h3>
-              <p>{t.footerWordlyText}</p>
+              <p>{t.footerWordleeText}</p>
               <Link to="/daily-word" className="footer-wordly-cta">
-                {t.footerWordlyCta}
+                {t.footerWordleeCta}
               </Link>
             </section>
           </div>
