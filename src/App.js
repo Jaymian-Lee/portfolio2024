@@ -232,11 +232,11 @@ const experience = {
 };
 
 const socialLinks = [
-  { label: 'LinkedIn profile', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
-  { label: 'GitHub repositories', url: 'https://github.com/Jaymian-Lee' },
-  { label: 'Twitch channel', url: 'https://twitch.tv/jaymianlee' },
-  { label: 'YouTube channel @JaymianLee', url: 'https://www.youtube.com/@JaymianLee' },
-  { label: 'Instagram professional', url: 'https://www.instagram.com/jaymianlee_/' }
+  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
+  { label: 'GitHub', url: 'https://github.com/Jaymian-Lee' },
+  { label: 'Twitch', url: 'https://twitch.tv/jaymianlee' },
+  { label: 'YouTube', url: 'https://www.youtube.com/@JaymianLee' },
+  { label: 'Instagram', url: 'https://www.instagram.com/jaymianlee_/' }
 ];
 
 
