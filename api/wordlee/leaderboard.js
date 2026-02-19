@@ -15,6 +15,10 @@ function normalizeLanguage(language) {
   return language === 'nl' ? 'nl' : 'en';
 }
 
+function nameMemberKey(name) {
+  return Buffer.from(String(name || '').toLowerCase(), 'utf8').toString('base64url');
+}
+
 function leaderboardKey(dateKey, language) {
   return `wordlee:lb:${dateKey}:${language}`;
 }
@@ -37,7 +41,8 @@ async function kvCommand(command) {
     throw new Error('KV_NOT_CONFIGURED');
   }
 
-  const response = await fetch(`${KV_REST_API_URL}/${command.join('/')}`, {
+  const encoded = command.map((part) => encodeURIComponent(String(part)));
+  const response = await fetch(`${KV_REST_API_URL}/${encoded.join('/')}`, {
     method: 'GET',
     headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
   });
@@ -132,18 +137,18 @@ module.exports = async (req, res) => {
       }
 
       const now = Date.now();
-      const nameKey = name.toLowerCase();
+      const memberKey = nameMemberKey(name);
       const key = leaderboardKey(dateKey, language);
       const namesKey = leaderboardNamesKey(dateKey, language);
 
-      const [existingScoreRaw] = await kvPipeline([['ZSCORE', key, nameKey]]);
+      const [existingScoreRaw] = await kvPipeline([['ZSCORE', key, memberKey]]);
       const existingAttempts = existingScoreRaw ? decodeAttempts(existingScoreRaw) : null;
 
       if (existingAttempts === null || attempts < existingAttempts) {
         const score = compositeScore(attempts, now);
         await kvPipeline([
-          ['ZADD', key, String(score), nameKey],
-          ['HSET', namesKey, nameKey, name]
+          ['ZADD', key, String(score), memberKey],
+          ['HSET', namesKey, memberKey, name]
         ]);
       }
 
@@ -157,6 +162,6 @@ module.exports = async (req, res) => {
     if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {
       return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
     }
-    return res.status(500).json({ error: 'Kon scorebord niet verwerken.' });
+    return res.status(500).json({ error: 'Kon scorebord niet verwerken.', detail: String(error.message || error) });
   }
 };
