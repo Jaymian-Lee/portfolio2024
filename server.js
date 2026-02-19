@@ -1,8 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
-const { DatabaseSync } = require('node:sqlite');
 const OpenAI = require('openai');
 
 const app = express();
@@ -12,7 +9,9 @@ app.use(cors());
 app.use(express.json());
 
 const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
-const dbPath = path.join(__dirname, 'data', 'wordlee.sqlite');
+const KV_REST_API_URL = process.env.KV_REST_API_URL;
+const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const SCORE_FACTOR = 10 ** 13;
 
 const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
@@ -49,29 +48,6 @@ Output constraints:
 - Do not disclose secrets or implementation internals unless asked.
 - Use English or Dutch to match user language.`;
 
-function ensureDataDir() {
-  const dir = path.dirname(dbPath);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
-
-ensureDataDir();
-const db = new DatabaseSync(dbPath);
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS wordlee_scores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date_key TEXT NOT NULL,
-    language TEXT NOT NULL,
-    name TEXT NOT NULL,
-    name_key TEXT NOT NULL,
-    attempts INTEGER NOT NULL,
-    submitted_at INTEGER NOT NULL,
-    UNIQUE(date_key, language, name_key)
-  );
-  CREATE INDEX IF NOT EXISTS idx_wordlee_scores_day_lang
-  ON wordlee_scores(date_key, language, attempts, submitted_at);
-`);
-
 function normalizeName(name) {
   return String(name || '').trim().slice(0, 24);
 }
@@ -85,22 +61,102 @@ function normalizeLanguage(language) {
   return language === 'nl' ? 'nl' : 'en';
 }
 
-function getTop3(dateKey, language) {
-  const statement = db.prepare(`
-    SELECT name, attempts, submitted_at AS submittedAt
-    FROM wordlee_scores
-    WHERE date_key = ? AND language = ?
-    ORDER BY attempts ASC, submitted_at ASC
-    LIMIT 3
-  `);
-  return statement.all(dateKey, language);
+function leaderboardKey(dateKey, language) {
+  return `wordlee:lb:${dateKey}:${language}`;
+}
+
+function leaderboardNamesKey(dateKey, language) {
+  return `wordlee:names:${dateKey}:${language}`;
+}
+
+function compositeScore(attempts, submittedAt) {
+  return attempts * SCORE_FACTOR + submittedAt;
+}
+
+function decodeAttempts(score) {
+  const n = Number(score || 0);
+  return Math.floor(n / SCORE_FACTOR);
+}
+
+async function kvCommand(command) {
+  if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
+    throw new Error('KV_NOT_CONFIGURED');
+  }
+
+  const response = await fetch(`${KV_REST_API_URL}/${command.join('/')}`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
+  });
+
+  const json = await response.json().catch(() => ({}));
+  if (!response.ok || json.error) {
+    throw new Error(json.error || `KV command failed: ${command[0]}`);
+  }
+
+  return json.result;
+}
+
+async function kvPipeline(commands) {
+  if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
+    throw new Error('KV_NOT_CONFIGURED');
+  }
+
+  const response = await fetch(`${KV_REST_API_URL}/pipeline`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${KV_REST_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(commands)
+  });
+
+  const json = await response.json().catch(() => ({}));
+  if (!response.ok || json.error || !Array.isArray(json.result)) {
+    throw new Error(json.error || 'KV pipeline failed');
+  }
+
+  return json.result.map((item) => {
+    if (item?.error) throw new Error(item.error);
+    return item?.result;
+  });
+}
+
+async function getTop3(dateKey, language) {
+  const key = leaderboardKey(dateKey, language);
+  const namesKey = leaderboardNamesKey(dateKey, language);
+
+  const zrangeResult = await kvCommand(['zrange', key, '0', '2', 'WITHSCORES']);
+  const pairs = Array.isArray(zrangeResult) ? zrangeResult : [];
+
+  if (pairs.length === 0) return [];
+
+  const members = [];
+  const scores = [];
+
+  for (let i = 0; i < pairs.length; i += 2) {
+    members.push(String(pairs[i]));
+    scores.push(Number(pairs[i + 1]));
+  }
+
+  const names = await kvCommand(['hmget', namesKey, ...members]);
+
+  return members.map((member, index) => ({
+    name: (Array.isArray(names) ? names[index] : null) || member,
+    attempts: decodeAttempts(scores[index]),
+    submittedAt: scores[index] % SCORE_FACTOR
+  }));
 }
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, model, hasApiKey: Boolean(process.env.OPENAI_API_KEY) });
+  res.json({
+    ok: true,
+    model,
+    hasApiKey: Boolean(process.env.OPENAI_API_KEY),
+    hasKv: Boolean(KV_REST_API_URL && KV_REST_API_TOKEN)
+  });
 });
 
-app.get('/api/wordlee/leaderboard', (req, res) => {
+app.get('/api/wordlee/leaderboard', async (req, res) => {
   try {
     const dateKey = normalizeDateKey(req.query.date);
     if (!dateKey) {
@@ -108,16 +164,19 @@ app.get('/api/wordlee/leaderboard', (req, res) => {
     }
 
     const language = normalizeLanguage(req.query.language);
-    const top3 = getTop3(dateKey, language);
+    const top3 = await getTop3(dateKey, language);
 
     return res.json({ dateKey, language, top3 });
   } catch (error) {
     console.error('Leaderboard GET error:', error);
+    if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {
+      return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
+    }
     return res.status(500).json({ error: 'Kon scorebord niet ophalen.' });
   }
 });
 
-app.post('/api/wordlee/leaderboard', (req, res) => {
+app.post('/api/wordlee/leaderboard', async (req, res) => {
   try {
     const name = normalizeName(req.body?.name);
     const dateKey = normalizeDateKey(req.body?.dateKey);
@@ -136,36 +195,32 @@ app.post('/api/wordlee/leaderboard', (req, res) => {
       return res.status(400).json({ error: 'Ongeldige score.' });
     }
 
-    const nameKey = name.toLowerCase();
     const now = Date.now();
+    const nameKey = name.toLowerCase();
+    const key = leaderboardKey(dateKey, language);
+    const namesKey = leaderboardNamesKey(dateKey, language);
 
-    const existing = db
-      .prepare(
-        `SELECT id, attempts
-         FROM wordlee_scores
-         WHERE date_key = ? AND language = ? AND name_key = ?`
-      )
-      .get(dateKey, language, nameKey);
+    const [existingScoreRaw] = await kvPipeline([
+      ['ZSCORE', key, nameKey]
+    ]);
 
-    if (existing) {
-      if (attempts < existing.attempts) {
-        db.prepare(
-          `UPDATE wordlee_scores
-           SET name = ?, attempts = ?, submitted_at = ?
-           WHERE id = ?`
-        ).run(name, attempts, now, existing.id);
-      }
-    } else {
-      db.prepare(
-        `INSERT INTO wordlee_scores (date_key, language, name, name_key, attempts, submitted_at)
-         VALUES (?, ?, ?, ?, ?, ?)`
-      ).run(dateKey, language, name, nameKey, attempts, now);
+    const existingAttempts = existingScoreRaw ? decodeAttempts(existingScoreRaw) : null;
+
+    if (existingAttempts === null || attempts < existingAttempts) {
+      const score = compositeScore(attempts, now);
+      await kvPipeline([
+        ['ZADD', key, String(score), nameKey],
+        ['HSET', namesKey, nameKey, name]
+      ]);
     }
 
-    const top3 = getTop3(dateKey, language);
+    const top3 = await getTop3(dateKey, language);
     return res.json({ ok: true, dateKey, language, top3 });
   } catch (error) {
     console.error('Leaderboard POST error:', error);
+    if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {
+      return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
+    }
     return res.status(500).json({ error: 'Kon score niet opslaan.' });
   }
 });
