@@ -55,31 +55,6 @@ async function kvCommand(command) {
   return json.result;
 }
 
-async function kvPipeline(commands) {
-  if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
-    throw new Error('KV_NOT_CONFIGURED');
-  }
-
-  const response = await fetch(`${KV_REST_API_URL}/pipeline`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${KV_REST_API_TOKEN}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(commands)
-  });
-
-  const json = await response.json().catch(() => ({}));
-  if (!response.ok || json.error || !Array.isArray(json.result)) {
-    throw new Error(json.error || 'KV pipeline failed');
-  }
-
-  return json.result.map((item) => {
-    if (item?.error) throw new Error(item.error);
-    return item?.result;
-  });
-}
-
 async function getTop3(dateKey, language) {
   const key = leaderboardKey(dateKey, language);
   const namesKey = leaderboardNamesKey(dateKey, language);
@@ -141,15 +116,13 @@ module.exports = async (req, res) => {
       const key = leaderboardKey(dateKey, language);
       const namesKey = leaderboardNamesKey(dateKey, language);
 
-      const [existingScoreRaw] = await kvPipeline([['ZSCORE', key, memberKey]]);
+      const existingScoreRaw = await kvCommand(['ZSCORE', key, memberKey]);
       const existingAttempts = existingScoreRaw ? decodeAttempts(existingScoreRaw) : null;
 
       if (existingAttempts === null || attempts < existingAttempts) {
         const score = compositeScore(attempts, now);
-        await kvPipeline([
-          ['ZADD', key, String(score), memberKey],
-          ['HSET', namesKey, memberKey, name]
-        ]);
+        await kvCommand(['ZADD', key, String(score), memberKey]);
+        await kvCommand(['HSET', namesKey, memberKey, name]);
       }
 
       const top3 = await getTop3(dateKey, language);
