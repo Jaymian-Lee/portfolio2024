@@ -68,6 +68,7 @@ const copy = {
     joinBoardCta: 'Join leaderboard',
     joinBoardTitle: 'Join today\'s leaderboard',
     joinBoardText: 'Want your name on the board? Enter it now.',
+    joinBoardCongrats: 'Congrats! Lock in your name and share the win.',
     myScoresTitle: 'Your scores',
     myScoresEmpty: 'No scores saved yet for this name.',
     myScoresPR: 'PR',
@@ -115,6 +116,7 @@ const copy = {
     joinBoardCta: 'Naar scorebord',
     joinBoardTitle: 'Op het scorebord van vandaag?',
     joinBoardText: 'Wil je op het scorebord? Vul dan nu je naam in.',
+    joinBoardCongrats: 'Gefeliciteerd! Zet je naam erbij en maak het officieel.',
     myScoresTitle: 'Jouw scores',
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
     myScoresPR: 'PR',
@@ -626,31 +628,13 @@ function DailyWordPage() {
 
       {showJoinPopup && game.status === 'won' && !scoreSubmitted && (
         <div className="join-popup" role="dialog" aria-modal="true" aria-label={copy[language].joinBoardTitle}>
-          <div className="join-popup-card">
+          <div className="join-popup-inner">
             <button type="button" className="join-popup-close" onClick={() => setShowJoinPopup(false)} aria-label="Close">✕</button>
-            <span className="join-popup-glow" aria-hidden="true"></span>
-            <div className="join-popup-content">
-              <div className="join-popup-header">
-                <p className="join-popup-kicker">Word-Lee</p>
-                <h3>{copy[language].joinBoardTitle}</h3>
-                <p className="join-popup-lead">{copy[language].joinBoardText}</p>
-              </div>
-              <div className="join-popup-board" aria-label={copy[language].leaderboardTitle}>
-                <p className="join-popup-board-title">{copy[language].leaderboardTitle}</p>
-                {leaderboard.length > 0 ? (
-                  <ol>
-                    {leaderboard.slice(0, 3).map((entry, index) => (
-                      <li key={`preview-${entry.name}-${entry.attempts}-${index}`}>
-                        <span className="preview-rank">{getRankBadge(index)}</span>
-                        <span className="preview-name">{entry.name}</span>
-                        <span className="preview-score">{entry.attempts} {copy[language].leaderboardAttempts}</span>
-                      </li>
-                    ))}
-                  </ol>
-                ) : (
-                  <p className="preview-note">{copy[language].leaderboardEmpty}</p>
-                )}
-              </div>
+            <div className="join-popup-body">
+              <p className="join-popup-kicker">Word-Lee</p>
+              <h3>{copy[language].joinBoardTitle}</h3>
+              <p className="join-popup-lead">{copy[language].joinBoardText}</p>
+              <p className="join-popup-congrats">{copy[language].joinBoardCongrats}</p>
               <form className="leaderboard-form" onSubmit={submitScore}>
                 <label htmlFor="leaderboard-name">{copy[language].leaderboardNameLabel}</label>
                 <div className="leaderboard-form-row">
