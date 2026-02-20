@@ -917,17 +917,28 @@ function App() {
       </main>
 
       {showWordleePopup && (
-        <div className="wordly-popup" role="dialog" aria-modal="false" aria-label={t.popupWordleeTitle}>
-          <div className="wordly-popup-inner">
-            <p className="wordly-popup-title">{t.popupWordleeTitle}</p>
-            <p className="wordly-popup-text">{t.popupWordleeText}</p>
-            <div className="wordly-popup-actions">
-              <button type="button" className="wordly-popup-dismiss" onClick={() => setShowWordleePopup(false)}>
-                {t.popupDismiss}
-              </button>
-              <Link to="/daily-word" className="wordly-popup-cta" onClick={() => setShowWordleePopup(false)}>
-                {t.popupWordleeCta}
-              </Link>
+        <div className="wordly-popup-overlay" role="dialog" aria-modal="true" aria-label={t.popupWordleeTitle}>
+          <div className="wordly-popup-card">
+            <button
+              type="button"
+              className="wordly-popup-close"
+              aria-label="Sluit Word-Lee popup"
+              onClick={() => setShowWordleePopup(false)}
+            >
+              ✕
+            </button>
+            <div className="wordly-popup-body">
+              <p className="wordly-popup-kicker">Daily ritual</p>
+              <h3>{t.popupWordleeTitle}</h3>
+              <p className="wordly-popup-text">{t.popupWordleeText}</p>
+              <div className="wordly-popup-actions">
+                <button type="button" className="wordly-popup-dismiss" onClick={() => setShowWordleePopup(false)}>
+                  {t.popupDismiss}
+                </button>
+                <Link to="/daily-word" className="wordly-popup-cta" onClick={() => setShowWordleePopup(false)}>
+                  {t.popupWordleeCta}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
