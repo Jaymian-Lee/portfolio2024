@@ -705,39 +705,71 @@ body {
   animation: floatBreathe 3.6s ease-in-out infinite;
 }
 
-.wordly-popup {
+.wordly-popup-overlay {
   position: fixed;
-  left: 0.8rem;
-  right: 0.8rem;
-  bottom: calc(5.2rem + env(safe-area-inset-bottom));
-  z-index: 72;
+  inset: 0;
   display: grid;
+  place-items: center;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1.5rem;
 }
 
-.wordly-popup-inner {
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-soft) 90%, rgba(255, 255, 255, 0.2));
-  backdrop-filter: blur(10px);
-  box-shadow: 0 16px 32px rgba(60, 38, 22, 0.2);
-  padding: 0.85rem 0.9rem;
-  animation: popupRise 0.42s ease;
+.wordly-popup-card {
+  width: min(520px, 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  box-shadow: 0 32px 56px rgba(16, 11, 5, 0.35);
+  position: relative;
 }
 
-.wordly-popup-title {
-  margin: 0;
+.wordly-popup-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);;
+  color: var(--text);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.95rem;
-  font-weight: 600;
+  cursor: pointer;
+}
+
+.wordly-popup-body {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.wordly-popup-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.wordly-popup-card h3 {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  line-height: 1.2;
 }
 
 .wordly-popup-text {
-  margin: 0.2rem 0 0;
-  color: var(--muted);
-  font-size: 0.86rem;
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  opacity: 0.85;
 }
 
 .wordly-popup-actions {
-  margin-top: 0.62rem;
+  margin-top: 1rem;
   display: flex;
   gap: 0.5rem;
 }
@@ -746,10 +778,12 @@ body {
 .wordly-popup-cta {
   min-height: 40px;
   border-radius: 999px;
-  padding: 0.46rem 0.8rem;
-  border: 1px solid var(--border);
+  padding: 0.55rem 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   text-decoration: none;
   font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
