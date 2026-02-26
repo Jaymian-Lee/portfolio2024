@@ -396,10 +396,8 @@ function DailyWordPage() {
 
   const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
   const filteredPlayerOptions = useMemo(() => {
-    const q = myScoresQuery.trim().toLowerCase();
-    const base = q ? playerOptions.filter((name) => name.toLowerCase().includes(q)) : playerOptions;
-    return base.slice(0, 12);
-  }, [myScoresQuery, playerOptions]);
+    return playerOptions;
+  }, [playerOptions]);
 
   const formatDuration = (durationMs) => {
     if (!Number.isInteger(durationMs) || durationMs < 0) return copy[language].durationNA;
