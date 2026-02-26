@@ -4,6 +4,8 @@ const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
 const SCORE_FACTOR = 10 ** 13;
+const DURATION_MULTIPLIER = 1000;
+const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
 
 const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
@@ -61,7 +63,20 @@ function getTodayKey() {
 }
 
 function decodeAttempts(score) {
-  return Math.floor(Number(score || 0) / SCORE_FACTOR);
+  const n = Number(score || 0);
+  return Math.floor(n / SCORE_FACTOR);
+}
+
+function decodeScoreMeta(score) {
+  const n = Number(score || 0);
+  const lower = n % SCORE_FACTOR;
+  if (lower > LEGACY_SUBMITTED_AT_THRESHOLD) {
+    return { durationMs: null, submittedAt: lower };
+  }
+  return {
+    durationMs: Math.floor(lower / DURATION_MULTIPLIER),
+    submittedAt: null
+  };
 }
 
 function leaderboardKey(dateKey, language) {
@@ -103,7 +118,8 @@ async function getTop3(dateKey, language) {
   return members.map((member, index) => ({
     rank: index + 1,
     name: (Array.isArray(names) ? names[index] : null) || member,
-    attempts: decodeAttempts(scores[index])
+    attempts: decodeAttempts(scores[index]),
+    ...decodeScoreMeta(scores[index])
   }));
 }
 

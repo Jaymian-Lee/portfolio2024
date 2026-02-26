@@ -55,7 +55,8 @@ function parseHistoryMap(result) {
         return {
           dateKey,
           attempts: Number(parsed?.attempts),
-          submittedAt: Number(parsed?.submittedAt)
+          submittedAt: Number(parsed?.submittedAt),
+          durationMs: parsed?.durationMs === null || parsed?.durationMs === undefined ? null : Number(parsed?.durationMs)
         };
       } catch {
         return null;

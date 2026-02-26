@@ -43,6 +43,7 @@ const copy = {
     enter: 'Enter',
     del: 'Delete',
     invalid: 'Use exactly 5 letters.',
+    invalidWord: 'That word does not exist in the Word-Lee list.',
     alreadyDone: 'You already finished this language today.',
     answer: 'Today\'s word',
     askMe: 'Questions?',
@@ -55,8 +56,8 @@ const copy = {
     askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Word-Lee.',
     leaderboardTitle: 'Daily top 3',
     leaderboardSubtitle: 'Today\'s fastest solves',
-    yesterdayWinnerTitle: 'Yesterday\'s winner',
-    yesterdayWinnerEmpty: 'No winner stored for yesterday yet.',
+    yesterdayWinnerTitle: 'Topper of the week',
+    yesterdayWinnerEmpty: 'No weekly topper yet.',
     leaderboardEmpty: 'No scores yet today. Be the first.',
     leaderboardNameLabel: 'Your name',
     leaderboardNamePlaceholder: 'Type your name',
@@ -70,7 +71,10 @@ const copy = {
     joinBoardText: 'Want your name on the board? Enter it now.',
     joinBoardCongrats: 'Congrats! Lock in your name and share the win.',
     myScoresTitle: 'Your scores',
+    myScoresSearchPlaceholder: 'Search person scores',
     myScoresEmpty: 'No scores saved yet for this name.',
+    durationLabel: 'time',
+    durationNA: 'N/A',
     myScoresPR: 'PR',
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
@@ -91,6 +95,7 @@ const copy = {
     enter: 'Enter',
     del: 'Wissen',
     invalid: 'Gebruik precies 5 letters.',
+    invalidWord: 'Dit woord staat niet in de Word-Lee woordenlijst.',
     alreadyDone: 'Je hebt deze taal vandaag al uitgespeeld.',
     answer: 'Woord van vandaag',
     askMe: 'Vragen?',
@@ -103,8 +108,8 @@ const copy = {
     askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Word-Lee.',
     leaderboardTitle: 'Top 3 van vandaag',
     leaderboardSubtitle: 'Snelste oplossingen van vandaag',
-    yesterdayWinnerTitle: 'Winnaar van gisteren',
-    yesterdayWinnerEmpty: 'Nog geen winnaar van gisteren beschikbaar.',
+    yesterdayWinnerTitle: 'De topper van de week',
+    yesterdayWinnerEmpty: 'Nog geen weektopper beschikbaar.',
     leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
     leaderboardNameLabel: 'Jouw naam',
     leaderboardNamePlaceholder: 'Vul je naam in',
@@ -118,7 +123,10 @@ const copy = {
     joinBoardText: 'Wil je op het scorebord? Vul dan nu je naam in.',
     joinBoardCongrats: 'Gefeliciteerd! Zet je naam erbij en maak het officieel.',
     myScoresTitle: 'Jouw scores',
+    myScoresSearchPlaceholder: 'Search person scores',
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
+    durationLabel: 'tijd',
+    durationNA: 'N/A',
     myScoresPR: 'PR',
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
@@ -132,16 +140,22 @@ const getInitialState = (language, dateKey) => {
   const key = buildStorageKey(language, dateKey);
   const saved = localStorage.getItem(key);
   if (!saved) {
-    return { guesses: [], evaluations: [], status: 'playing' };
+    return { guesses: [], evaluations: [], status: 'playing', startedAt: Date.now(), durationMs: null };
   }
 
   try {
     const parsed = JSON.parse(saved);
     if (Array.isArray(parsed.guesses) && Array.isArray(parsed.evaluations) && parsed.status) {
-      return parsed;
+      return {
+        guesses: parsed.guesses,
+        evaluations: parsed.evaluations,
+        status: parsed.status,
+        startedAt: Number.isInteger(parsed.startedAt) ? parsed.startedAt : Date.now(),
+        durationMs: Number.isInteger(parsed.durationMs) ? parsed.durationMs : null
+      };
     }
   } catch {
-    return { guesses: [], evaluations: [], status: 'playing' };
+    return { guesses: [], evaluations: [], status: 'playing', startedAt: Date.now(), durationMs: null };
   }
 
   return { guesses: [], evaluations: [], status: 'playing' };
@@ -195,7 +209,7 @@ function DailyWordPage() {
   const [chatError, setChatError] = useState('');
 
   const [leaderboard, setLeaderboard] = useState([]);
-  const [yesterdayWinner, setYesterdayWinner] = useState(null);
+  const [weeklyTopper, setWeeklyTopper] = useState(null);
   const [scoreName, setScoreName] = useState('');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
@@ -203,15 +217,19 @@ function DailyWordPage() {
   const [showJoinPopup, setShowJoinPopup] = useState(false);
   const [myScores, setMyScores] = useState([]);
   const [myScoresLoading, setMyScoresLoading] = useState(false);
+  const [myScoresQuery, setMyScoresQuery] = useState('');
 
   const dateKey = useMemo(() => getTodayKey(), []);
-  const yesterdayDateKey = useMemo(() => {
-    const d = new Date(`${dateKey}T00:00:00`);
-    d.setDate(d.getDate() - 1);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  const weekDateKeys = useMemo(() => {
+    const base = new Date(`${dateKey}T00:00:00`);
+    return Array.from({ length: 7 }).map((_, index) => {
+      const d = new Date(base);
+      d.setDate(base.getDate() - index);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    });
   }, [dateKey]);
   const answer = useMemo(() => getDailyWord(language, DAILY_WORDS, dateKey), [language, dateKey]);
   const [game, setGame] = useState(() => getInitialState(language, dateKey));
@@ -238,7 +256,9 @@ function DailyWordPage() {
     setError('');
     localStorage.setItem('portfolio-language', language);
 
-    setScoreName(localStorage.getItem(getScoreNameKey(language, dateKey)) || '');
+    const rememberedName = localStorage.getItem(getScoreNameKey(language, dateKey)) || '';
+    setScoreName(rememberedName);
+    setMyScoresQuery(rememberedName);
     setScoreSubmitted(localStorage.getItem(getScoreSubmittedKey(language, dateKey)) === '1');
   }, [language, dateKey]);
 
@@ -281,19 +301,30 @@ function DailyWordPage() {
       setLeaderboardLoading(true);
       setLeaderboardError('');
       try {
-        const [todayResponse, yesterdayResponse] = await Promise.all([
-          fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}`),
-          fetch(`/api/wordlee/leaderboard?date=${yesterdayDateKey}&language=${language}`)
-        ]);
-
+        const todayResponse = await fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}`);
         const todayData = await safeJson(todayResponse);
-        const yesterdayData = await safeJson(yesterdayResponse);
-
         if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
-        if (!yesterdayResponse.ok) throw new Error(yesterdayData?.error || copy[language].leaderboardError);
-
         setLeaderboard(Array.isArray(todayData.top3) ? todayData.top3 : []);
-        setYesterdayWinner(Array.isArray(yesterdayData.top3) && yesterdayData.top3.length > 0 ? yesterdayData.top3[0] : null);
+
+        const weeklyResponses = await Promise.all(weekDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`)));
+        const weeklyData = await Promise.all(weeklyResponses.map((response) => safeJson(response)));
+
+        const weeklyCandidates = [];
+        weeklyResponses.forEach((response, index) => {
+          if (!response.ok) return;
+          const top = Array.isArray(weeklyData[index]?.top3) ? weeklyData[index].top3[0] : null;
+          if (top) weeklyCandidates.push({ ...top, dateKey: weekDateKeys[index] });
+        });
+
+        weeklyCandidates.sort((a, b) => {
+          if (a.attempts !== b.attempts) return a.attempts - b.attempts;
+          const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
+          const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
+          if (aDuration !== bDuration) return aDuration - bDuration;
+          return String(a.dateKey).localeCompare(String(b.dateKey));
+        });
+
+        setWeeklyTopper(weeklyCandidates[0] || null);
       } catch (err) {
         setLeaderboardError(err.message || copy[language].leaderboardError);
       } finally {
@@ -302,12 +333,12 @@ function DailyWordPage() {
     };
 
     loadLeaderboard();
-  }, [language, dateKey, yesterdayDateKey]);
+  }, [language, dateKey, weekDateKeys]);
 
 
   useEffect(() => {
     const loadMyScores = async () => {
-      const name = scoreName.trim();
+      const name = myScoresQuery.trim();
       if (name.length < 2) {
         setMyScores([]);
         return;
@@ -327,7 +358,7 @@ function DailyWordPage() {
     };
 
     loadMyScores();
-  }, [language, scoreName]);
+  }, [language, myScoresQuery]);
 
 
   const getRankBadge = (index) => {
@@ -335,6 +366,19 @@ function DailyWordPage() {
     if (index === 1) return '🥈 #2';
     if (index === 2) return '🥉 #3';
     return `#${index + 1}`;
+  };
+
+  const validWordSet = useMemo(() => {
+    const words = DAILY_WORDS?.[language] || [];
+    return new Set(words.map((word) => String(word).toLowerCase()));
+  }, [language]);
+
+  const formatDuration = (durationMs) => {
+    if (!Number.isInteger(durationMs) || durationMs < 0) return copy[language].durationNA;
+    const totalSeconds = Math.floor(durationMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
   };
 
   const usedKeys = useMemo(() => {
@@ -360,6 +404,13 @@ function DailyWordPage() {
       return;
     }
 
+    if (!validWordSet.has(currentGuess)) {
+      setError(copy[language].invalidWord);
+      setShakeRow(game.guesses.length);
+      setTimeout(() => setShakeRow(-1), 380);
+      return;
+    }
+
     const nextEvaluation = evaluateGuess(currentGuess, answer);
     const nextGuesses = [...game.guesses, currentGuess];
     const nextEvaluations = [...game.evaluations, nextEvaluation];
@@ -368,7 +419,10 @@ function DailyWordPage() {
     if (currentGuess === answer) status = 'won';
     if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && currentGuess !== answer) status = 'lost';
 
-    setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status });
+    const startedAt = Number.isInteger(game.startedAt) ? game.startedAt : Date.now();
+    const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);
+
+    setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status, startedAt, durationMs });
     setPopRow(nextGuesses.length - 1);
     setTimeout(() => setPopRow(-1), 460);
     setCurrentGuess('');
@@ -410,7 +464,8 @@ function DailyWordPage() {
           name: safeName,
           dateKey,
           language,
-          attempts: game.guesses.length
+          attempts: game.guesses.length,
+          durationMs: Number.isInteger(game.durationMs) ? game.durationMs : null
         })
       });
 
@@ -558,11 +613,11 @@ function DailyWordPage() {
 
           <div className="yesterday-winner" aria-label={copy[language].yesterdayWinnerTitle}>
             <p className="yesterday-winner-title">{copy[language].yesterdayWinnerTitle}</p>
-            {yesterdayWinner ? (
+            {weeklyTopper ? (
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">👑</span>
-                <span className="yesterday-winner-name">{yesterdayWinner.name}</span>
-                <span className="yesterday-winner-score">{yesterdayWinner.attempts} {copy[language].leaderboardAttempts}</span>
+                <span className="yesterday-winner-name">{weeklyTopper.name}</span>
+                <span className="yesterday-winner-score">{weeklyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(weeklyTopper.durationMs)}</span>
               </div>
             ) : (
               <p className="daily-tip">{copy[language].yesterdayWinnerEmpty}</p>
@@ -580,7 +635,7 @@ function DailyWordPage() {
                 <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
                   <span className={`leaderboard-rank`}>{getRankBadge(index)}</span>
                   <span className="leaderboard-name">{entry.name}</span>
-                  <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts}</span>
+                  <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
                 </li>
               ))}
             </ol>
@@ -602,6 +657,13 @@ function DailyWordPage() {
 
           <div className="my-scores" aria-label={copy[language].myScoresTitle}>
             <h3>{copy[language].myScoresTitle}</h3>
+            <input
+              type="text"
+              value={myScoresQuery}
+              onChange={(e) => setMyScoresQuery(e.target.value.slice(0, 24))}
+              placeholder={copy[language].myScoresSearchPlaceholder}
+              className="my-scores-search"
+            />
             {myScoresLoading && <p className="daily-tip">Loading...</p>}
             {!myScoresLoading && myScores.length === 0 && (
               <p className="daily-tip">{copy[language].myScoresEmpty}</p>
@@ -611,7 +673,7 @@ function DailyWordPage() {
                 {myScores.map((record) => (
                   <li key={`${record.dateKey}-${record.submittedAt || 0}`}>
                     <span className="my-scores-date">{formatDateTime(record)}</span>
-                    <span className="my-scores-attempts">{record.attempts} {copy[language].leaderboardAttempts}</span>
+                    <span className="my-scores-attempts">{record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}</span>
                     {record.isPR && <span className="my-scores-pr">🏆 {copy[language].myScoresPR}</span>}
                   </li>
                 ))}

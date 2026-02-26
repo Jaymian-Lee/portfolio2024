@@ -1,6 +1,8 @@
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
 const SCORE_FACTOR = 10 ** 13;
+const DURATION_MULTIPLIER = 1000;
+const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
 
 function normalizeName(name) {
   return String(name || '').trim().slice(0, 24);
@@ -31,13 +33,29 @@ function userHistoryKey(memberKey, language) {
   return `wordlee:user:${language}:${memberKey}`;
 }
 
-function compositeScore(attempts, submittedAt) {
-  return attempts * SCORE_FACTOR + submittedAt;
+function compositeScore(attempts, durationMs, submittedAt) {
+  const safeDuration = Number.isInteger(durationMs) && durationMs >= 0
+    ? Math.min(durationMs, Math.floor((SCORE_FACTOR - 1) / DURATION_MULTIPLIER))
+    : Math.floor((SCORE_FACTOR - 1) / DURATION_MULTIPLIER);
+  const tieBreaker = Number.isInteger(submittedAt) ? Math.max(0, submittedAt % DURATION_MULTIPLIER) : 0;
+  return attempts * SCORE_FACTOR + safeDuration * DURATION_MULTIPLIER + tieBreaker;
 }
 
 function decodeAttempts(score) {
   const n = Number(score || 0);
   return Math.floor(n / SCORE_FACTOR);
+}
+
+function decodeScoreMeta(score) {
+  const n = Number(score || 0);
+  const lower = n % SCORE_FACTOR;
+  if (lower > LEGACY_SUBMITTED_AT_THRESHOLD) {
+    return { durationMs: null, submittedAt: lower };
+  }
+  return {
+    durationMs: Math.floor(lower / DURATION_MULTIPLIER),
+    submittedAt: null
+  };
 }
 
 async function kvCommand(command) {
@@ -79,7 +97,7 @@ async function getTop3(dateKey, language) {
   return members.map((member, index) => ({
     name: (Array.isArray(names) ? names[index] : null) || member,
     attempts: decodeAttempts(scores[index]),
-    submittedAt: scores[index] % SCORE_FACTOR
+    ...decodeScoreMeta(scores[index])
   }));
 }
 
@@ -102,6 +120,7 @@ module.exports = async (req, res) => {
       const dateKey = normalizeDateKey(body?.dateKey);
       const language = normalizeLanguage(body?.language);
       const attempts = Number(body?.attempts);
+      const durationMs = body?.durationMs === null || body?.durationMs === undefined ? null : Number(body?.durationMs);
 
       if (!name || name.length < 2) {
         return res.status(400).json({ error: 'Vul een geldige naam in (minimaal 2 tekens).' });
@@ -115,6 +134,10 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Ongeldige score.' });
       }
 
+      if (durationMs !== null && (!Number.isInteger(durationMs) || durationMs < 0 || durationMs > 86400000)) {
+        return res.status(400).json({ error: 'Ongeldige tijd.' });
+      }
+
       const now = Date.now();
       const memberKey = nameMemberKey(name);
       const key = leaderboardKey(dateKey, language);
@@ -122,9 +145,15 @@ module.exports = async (req, res) => {
 
       const existingScoreRaw = await kvCommand(['ZSCORE', key, memberKey]);
       const existingAttempts = existingScoreRaw ? decodeAttempts(existingScoreRaw) : null;
+      const existingMeta = existingScoreRaw ? decodeScoreMeta(existingScoreRaw) : { durationMs: null };
 
-      if (existingAttempts === null || attempts < existingAttempts) {
-        const score = compositeScore(attempts, now);
+      if (
+        existingAttempts === null ||
+        attempts < existingAttempts ||
+        (attempts === existingAttempts &&
+          (existingMeta.durationMs === null || (durationMs !== null && durationMs < existingMeta.durationMs)))
+      ) {
+        const score = compositeScore(attempts, durationMs, now);
         await kvCommand(['ZADD', key, String(score), memberKey]);
         await kvCommand(['HSET', namesKey, memberKey, name]);
       }
@@ -148,7 +177,7 @@ module.exports = async (req, res) => {
         'HSET',
         historyKey,
         dateKey,
-        JSON.stringify({ dateKey, language, attempts: historyAttempts, submittedAt: now })
+        JSON.stringify({ dateKey, language, attempts: historyAttempts, durationMs, submittedAt: now })
       ]);
 
       const top3 = await getTop3(dateKey, language);
