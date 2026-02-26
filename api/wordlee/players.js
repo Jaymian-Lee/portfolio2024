@@ -47,9 +47,13 @@ async function collectPlayerNames(language) {
           }, [])
         : Object.entries(rawMap || {});
 
-      for (const [, value] of entries) {
+      for (const [memberKey, value] of entries) {
         const name = String(value || '').trim();
         if (!name) continue;
+
+        const historyCount = Number(await kvCommand(['HLEN', `wordlee:user:${language}:${memberKey}`]));
+        if (!Number.isFinite(historyCount) || historyCount < 1) continue;
+
         const normalized = name.toLowerCase();
         if (!namesMap.has(normalized)) namesMap.set(normalized, name);
       }
