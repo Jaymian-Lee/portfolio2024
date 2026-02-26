@@ -165,6 +165,42 @@ async function getTop3(dateKey, language) {
   }));
 }
 
+async function getPlayers(language, query = '') {
+  const namesMap = new Map();
+  let cursor = '0';
+  let loops = 0;
+
+  do {
+    const scanResult = await kvCommand(['SCAN', cursor, 'MATCH', `wordlee:names:*:${language}`, 'COUNT', '200']);
+    const nextCursor = Array.isArray(scanResult) ? String(scanResult[0] || '0') : '0';
+    const keys = Array.isArray(scanResult?.[1]) ? scanResult[1] : [];
+
+    for (const key of keys) {
+      const rawMap = await kvCommand(['HGETALL', key]);
+      const entries = Array.isArray(rawMap)
+        ? rawMap.reduce((acc, value, index) => {
+            if (index % 2 === 0) acc.push([value, rawMap[index + 1]]);
+            return acc;
+          }, [])
+        : Object.entries(rawMap || {});
+
+      for (const [, value] of entries) {
+        const name = String(value || '').trim();
+        if (!name) continue;
+        const normalized = name.toLowerCase();
+        if (!namesMap.has(normalized)) namesMap.set(normalized, name);
+      }
+    }
+
+    cursor = nextCursor;
+    loops += 1;
+  } while (cursor !== '0' && loops < 25);
+
+  const all = Array.from(namesMap.values()).sort((a, b) => a.localeCompare(b, 'nl'));
+  if (!query) return all.slice(0, 200);
+  return all.filter((name) => name.toLowerCase().includes(query)).slice(0, 200);
+}
+
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
@@ -191,6 +227,21 @@ app.get('/api/wordlee/leaderboard', async (req, res) => {
       return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
     }
     return res.status(500).json({ error: 'Kon scorebord niet ophalen.' });
+  }
+});
+
+app.get('/api/wordlee/players', async (req, res) => {
+  try {
+    const language = normalizeLanguage(req.query.language);
+    const query = String(req.query.q || '').trim().toLowerCase().slice(0, 24);
+    const players = await getPlayers(language, query);
+    return res.json({ language, players });
+  } catch (error) {
+    console.error('Players GET error:', error);
+    if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {
+      return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
+    }
+    return res.status(500).json({ error: 'Kon spelerslijst niet ophalen.' });
   }
 });
 

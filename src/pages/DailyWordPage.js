@@ -71,7 +71,7 @@ const copy = {
     joinBoardText: 'Want your name on the board? Enter it now.',
     joinBoardCongrats: 'Congrats! Lock in your name and share the win.',
     myScoresTitle: 'Your scores',
-    myScoresSearchPlaceholder: 'Search person scores',
+    myScoresSearchPlaceholder: 'Search or pick a player',
     myScoresEmpty: 'No scores saved yet for this name.',
     durationLabel: 'time',
     durationNA: 'N/A',
@@ -123,7 +123,7 @@ const copy = {
     joinBoardText: 'Wil je op het scorebord? Vul dan nu je naam in.',
     joinBoardCongrats: 'Gefeliciteerd! Zet je naam erbij en maak het officieel.',
     myScoresTitle: 'Jouw scores',
-    myScoresSearchPlaceholder: 'Search person scores',
+    myScoresSearchPlaceholder: 'Zoek of kies een speler',
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
     durationLabel: 'tijd',
     durationNA: 'N/A',
@@ -218,6 +218,7 @@ function DailyWordPage() {
   const [myScores, setMyScores] = useState([]);
   const [myScoresLoading, setMyScoresLoading] = useState(false);
   const [myScoresQuery, setMyScoresQuery] = useState('');
+  const [playerOptions, setPlayerOptions] = useState([]);
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const weekDateKeys = useMemo(() => {
@@ -335,6 +336,21 @@ function DailyWordPage() {
     loadLeaderboard();
   }, [language, dateKey, weekDateKeys]);
 
+
+  useEffect(() => {
+    const loadPlayers = async () => {
+      try {
+        const response = await fetch(`/api/wordlee/players?language=${language}`);
+        const data = await safeJson(response);
+        if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
+        setPlayerOptions(Array.isArray(data.players) ? data.players : []);
+      } catch {
+        setPlayerOptions([]);
+      }
+    };
+
+    loadPlayers();
+  }, [language]);
 
   useEffect(() => {
     const loadMyScores = async () => {
@@ -663,7 +679,13 @@ function DailyWordPage() {
               onChange={(e) => setMyScoresQuery(e.target.value.slice(0, 24))}
               placeholder={copy[language].myScoresSearchPlaceholder}
               className="my-scores-search"
+              list="wordlee-player-options"
             />
+            <datalist id="wordlee-player-options">
+              {playerOptions.map((name) => (
+                <option key={name} value={name} />
+              ))}
+            </datalist>
             {myScoresLoading && <p className="daily-tip">Loading...</p>}
             {!myScoresLoading && myScores.length === 0 && (
               <p className="daily-tip">{copy[language].myScoresEmpty}</p>
