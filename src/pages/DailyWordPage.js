@@ -57,6 +57,7 @@ const copy = {
     leaderboardTitle: 'Daily top 3',
     leaderboardSubtitle: 'Today\'s fastest solves',
     yesterdayWinnerTitle: 'Topper of the week',
+    dailyTopperTitle: 'Topper of the day',
     yesterdayWinnerEmpty: 'No weekly topper yet.',
     leaderboardEmpty: 'No scores yet today. Be the first.',
     leaderboardNameLabel: 'Your name',
@@ -75,6 +76,7 @@ const copy = {
     myScoresEmpty: 'No scores saved yet for this name.',
     durationLabel: 'time',
     durationNA: 'N/A',
+    worldRecord: 'WR',
     myScoresPR: 'PR',
     footerQuickLinksTitle: 'Quick links',
     footerProjectsTitle: 'Projects',
@@ -109,6 +111,7 @@ const copy = {
     leaderboardTitle: 'Top 3 van vandaag',
     leaderboardSubtitle: 'Snelste oplossingen van vandaag',
     yesterdayWinnerTitle: 'De topper van de week',
+    dailyTopperTitle: 'Topper van de dag',
     yesterdayWinnerEmpty: 'Nog geen weektopper beschikbaar.',
     leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
     leaderboardNameLabel: 'Jouw naam',
@@ -127,6 +130,7 @@ const copy = {
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
     durationLabel: 'tijd',
     durationNA: 'N/A',
+    worldRecord: 'WR',
     myScoresPR: 'PR',
     footerQuickLinksTitle: 'Snelle links',
     footerProjectsTitle: 'Projecten',
@@ -389,6 +393,8 @@ function DailyWordPage() {
     return new Set(words.map((word) => String(word).toLowerCase()));
   }, [language]);
 
+  const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
+
   const formatDuration = (durationMs) => {
     if (!Number.isInteger(durationMs) || durationMs < 0) return copy[language].durationNA;
     const totalSeconds = Math.floor(durationMs / 1000);
@@ -640,6 +646,19 @@ function DailyWordPage() {
             )}
           </div>
 
+          <div className="yesterday-winner" aria-label={copy[language].dailyTopperTitle}>
+            <p className="yesterday-winner-title">{copy[language].dailyTopperTitle}</p>
+            {dailyTopper ? (
+              <div className="yesterday-winner-card">
+                <span className="winner-crown" aria-hidden="true">🏆</span>
+                <span className="yesterday-winner-name">{dailyTopper.name}</span>
+                <span className="yesterday-winner-score">{dailyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(dailyTopper.durationMs)} <strong>({copy[language].worldRecord})</strong></span>
+              </div>
+            ) : (
+              <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
+            )}
+          </div>
+
           {leaderboardLoading && <p className="daily-tip">Loading...</p>}
           {!leaderboardLoading && leaderboard.length === 0 && (
             <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
@@ -650,7 +669,7 @@ function DailyWordPage() {
               {leaderboard.map((entry, index) => (
                 <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
                   <span className={`leaderboard-rank`}>{getRankBadge(index)}</span>
-                  <span className="leaderboard-name">{entry.name}</span>
+                  <span className="leaderboard-name">{entry.name} {index === 0 ? <strong>({copy[language].worldRecord})</strong> : null}</span>
                   <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
                 </li>
               ))}
