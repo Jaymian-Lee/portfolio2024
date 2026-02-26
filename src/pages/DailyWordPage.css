@@ -767,14 +767,63 @@
   font-size: 0.95rem;
 }
 
+.my-scores-search-wrap {
+  position: relative;
+  margin-bottom: 0.55rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
 .my-scores-search {
   width: 100%;
-  margin-bottom: 0.55rem;
   border: 1px solid var(--border);
   background: var(--panel-alt);
   color: var(--text);
   border-radius: 10px;
   padding: 0.55rem 0.65rem;
+}
+
+.my-scores-dropdown-btn {
+  width: 42px;
+  min-width: 42px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.my-scores-dropdown {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  max-height: 220px;
+  overflow: auto;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.my-scores-dropdown-item {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: 0.55rem 0.65rem;
+  cursor: pointer;
+}
+
+.my-scores-dropdown-item:last-child {
+  border-bottom: 0;
+}
+
+.my-scores-dropdown-item:hover {
+  background: var(--panel-alt);
 }
 
 .my-scores-list {

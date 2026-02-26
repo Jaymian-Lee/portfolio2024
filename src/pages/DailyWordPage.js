@@ -223,6 +223,7 @@ function DailyWordPage() {
   const [myScoresLoading, setMyScoresLoading] = useState(false);
   const [myScoresQuery, setMyScoresQuery] = useState('');
   const [playerOptions, setPlayerOptions] = useState([]);
+  const [showPlayerDropdown, setShowPlayerDropdown] = useState(false);
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const weekDateKeys = useMemo(() => {
@@ -394,6 +395,11 @@ function DailyWordPage() {
   }, [language]);
 
   const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
+  const filteredPlayerOptions = useMemo(() => {
+    const q = myScoresQuery.trim().toLowerCase();
+    const base = q ? playerOptions.filter((name) => name.toLowerCase().includes(q)) : playerOptions;
+    return base.slice(0, 12);
+  }, [myScoresQuery, playerOptions]);
 
   const formatDuration = (durationMs) => {
     if (!Number.isInteger(durationMs) || durationMs < 0) return copy[language].durationNA;
@@ -692,19 +698,44 @@ function DailyWordPage() {
 
           <div className="my-scores" aria-label={copy[language].myScoresTitle}>
             <h3>{copy[language].myScoresTitle}</h3>
-            <input
-              type="text"
-              value={myScoresQuery}
-              onChange={(e) => setMyScoresQuery(e.target.value.slice(0, 24))}
-              placeholder={copy[language].myScoresSearchPlaceholder}
-              className="my-scores-search"
-              list="wordlee-player-options"
-            />
-            <datalist id="wordlee-player-options">
-              {playerOptions.map((name) => (
-                <option key={name} value={name} />
-              ))}
-            </datalist>
+            <div className="my-scores-search-wrap">
+              <input
+                type="text"
+                value={myScoresQuery}
+                onChange={(e) => {
+                  setMyScoresQuery(e.target.value.slice(0, 24));
+                  setShowPlayerDropdown(true);
+                }}
+                onFocus={() => setShowPlayerDropdown(true)}
+                placeholder={copy[language].myScoresSearchPlaceholder}
+                className="my-scores-search"
+              />
+              <button
+                type="button"
+                className="my-scores-dropdown-btn"
+                aria-label="Toggle player list"
+                onClick={() => setShowPlayerDropdown((prev) => !prev)}
+              >
+                ▾
+              </button>
+              {showPlayerDropdown && filteredPlayerOptions.length > 0 && (
+                <div className="my-scores-dropdown">
+                  {filteredPlayerOptions.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      className="my-scores-dropdown-item"
+                      onClick={() => {
+                        setMyScoresQuery(name);
+                        setShowPlayerDropdown(false);
+                      }}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             {myScoresLoading && <p className="daily-tip">Loading...</p>}
             {!myScoresLoading && myScores.length === 0 && (
               <p className="daily-tip">{copy[language].myScoresEmpty}</p>
