@@ -800,31 +800,40 @@
   left: 0;
   right: 0;
   z-index: 999;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--panel);
-  max-height: 220px;
+  border: 1px solid color-mix(in srgb, var(--border) 72%, #ffffff 28%);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--panel) 76%, #ffffff 24%);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  max-height: 240px;
   overflow: auto;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
+  padding: 0.35rem;
 }
 
 .my-scores-dropdown-item {
   width: 100%;
   text-align: left;
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--panel-alt) 88%, #fff 12%);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, #ffffff 30%);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--panel-alt) 78%, #ffffff 22%);
   color: var(--text);
-  padding: 0.55rem 0.65rem;
+  padding: 0.56rem 0.68rem;
   cursor: pointer;
+  transition: transform 140ms ease, background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
 }
 
-.my-scores-dropdown-item:last-child {
-  border-bottom: 0;
+.my-scores-dropdown-item + .my-scores-dropdown-item {
+  margin-top: 0.3rem;
 }
 
-.my-scores-dropdown-item:hover {
-  background: var(--panel-alt);
+.my-scores-dropdown-item:hover,
+.my-scores-dropdown-item:focus-visible {
+  background: color-mix(in srgb, var(--panel-alt) 58%, var(--accent) 42%);
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--border) 42%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  outline: none;
 }
 
 .my-scores-list {
