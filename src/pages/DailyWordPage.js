@@ -147,7 +147,7 @@ const getInitialState = (language, dateKey) => {
   const key = buildStorageKey(language, dateKey);
   const saved = localStorage.getItem(key);
   if (!saved) {
-    return { guesses: [], evaluations: [], status: 'playing', startedAt: Date.now(), durationMs: null };
+    return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null };
   }
 
   try {
@@ -157,15 +157,15 @@ const getInitialState = (language, dateKey) => {
         guesses: parsed.guesses,
         evaluations: parsed.evaluations,
         status: parsed.status,
-        startedAt: Number.isInteger(parsed.startedAt) ? parsed.startedAt : Date.now(),
+        startedAt: Number.isInteger(parsed.startedAt) ? parsed.startedAt : null,
         durationMs: Number.isInteger(parsed.durationMs) ? parsed.durationMs : null
       };
     }
   } catch {
-    return { guesses: [], evaluations: [], status: 'playing', startedAt: Date.now(), durationMs: null };
+    return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null };
   }
 
-  return { guesses: [], evaluations: [], status: 'playing' };
+  return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null };
 };
 
 
@@ -227,6 +227,7 @@ function DailyWordPage() {
   const [myScoresQuery, setMyScoresQuery] = useState('');
   const [playerOptions, setPlayerOptions] = useState([]);
   const [showPlayerDropdown, setShowPlayerDropdown] = useState(false);
+  const [clockNow, setClockNow] = useState(() => Date.now());
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const weekDateKeys = useMemo(() => {
@@ -274,6 +275,16 @@ function DailyWordPage() {
   useEffect(() => {
     localStorage.setItem(buildStorageKey(language, dateKey), JSON.stringify(game));
   }, [language, dateKey, game]);
+
+  useEffect(() => {
+    if (game.status !== 'playing' || !Number.isInteger(game.startedAt)) return undefined;
+    const timerId = window.setInterval(() => setClockNow(Date.now()), 1000);
+    return () => window.clearInterval(timerId);
+  }, [game.status, game.startedAt]);
+
+  useEffect(() => {
+    setClockNow(Date.now());
+  }, [language, dateKey, game.status]);
 
 
   useEffect(() => {
@@ -406,6 +417,14 @@ function DailyWordPage() {
     const seconds = totalSeconds % 60;
     return `${minutes}:${String(seconds).padStart(2, '0')}`;
   };
+
+  const liveDurationMs = useMemo(() => {
+    if (Number.isInteger(game.durationMs)) return game.durationMs;
+    if (game.status === 'playing' && Number.isInteger(game.startedAt)) {
+      return Math.max(0, clockNow - game.startedAt);
+    }
+    return 0;
+  }, [clockNow, game.durationMs, game.startedAt, game.status]);
 
   const usedKeys = useMemo(() => {
     const score = {};
@@ -561,7 +580,10 @@ function DailyWordPage() {
           <p>{copy[language].subtitle}</p>
           <p className="daily-help">{copy[language].howTo}</p>
           <p className="daily-help strong-rule">{copy[language].oneRoundRule}</p>
-          <p className="daily-meta">{dateKey} · {copy[language].next}</p>
+          <div className="daily-meta-row">
+            <p className="daily-meta">{dateKey} · {copy[language].next}</p>
+            <p className="daily-timer">{copy[language].durationLabel}: {formatDuration(liveDurationMs)}</p>
+          </div>
         </section>
 
 

@@ -80,6 +80,29 @@
   font-size: 0.9rem;
 }
 
+.daily-meta-row {
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.daily-meta-row .daily-meta {
+  margin: 0 !important;
+}
+
+.daily-timer {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+}
+
 .daily-grid {
   margin-top: 1.4rem;
   display: grid;
