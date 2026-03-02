@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
-import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey } from '../utils/dailyWord';
+import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import './DailyWordPage.css';
 
 const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+const LETTER_INPUT_REGEX = /^\p{L}$/u;
+
+const normalizeGuessChar = (value) => normalizeWord(value);
 
 const footerQuickLinks = [
   { label: 'Services', href: '/#services' },
@@ -293,8 +296,10 @@ function DailyWordPage() {
         return;
       }
 
-      if (/^[a-zA-Z]$/.test(event.key) && currentGuess.length < WORD_RULES.WORD_LENGTH) {
-        setCurrentGuess((prev) => `${prev}${event.key.toLowerCase()}`);
+      if (LETTER_INPUT_REGEX.test(event.key) && currentGuess.length < WORD_RULES.WORD_LENGTH) {
+        const nextChar = normalizeGuessChar(event.key);
+        if (nextChar.length !== 1 || !/^[a-z]$/.test(nextChar)) return;
+        setCurrentGuess((prev) => `${prev}${nextChar}`);
       }
     };
 
@@ -389,11 +394,6 @@ function DailyWordPage() {
     return `#${index + 1}`;
   };
 
-  const validWordSet = useMemo(() => {
-    const words = DAILY_WORDS?.[language] || [];
-    return new Set(words.map((word) => String(word).toLowerCase()));
-  }, [language]);
-
   const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
   const filteredPlayerOptions = useMemo(() => {
     return playerOptions;
@@ -423,27 +423,22 @@ function DailyWordPage() {
   }, [game]);
 
   const submitGuess = () => {
-    if (currentGuess.length !== WORD_RULES.WORD_LENGTH) {
+    const normalizedGuess = normalizeWord(currentGuess);
+
+    if (normalizedGuess.length !== WORD_RULES.WORD_LENGTH) {
       setError(copy[language].invalid);
       setShakeRow(game.guesses.length);
       setTimeout(() => setShakeRow(-1), 380);
       return;
     }
 
-    if (!validWordSet.has(currentGuess)) {
-      setError(copy[language].invalidWord);
-      setShakeRow(game.guesses.length);
-      setTimeout(() => setShakeRow(-1), 380);
-      return;
-    }
-
-    const nextEvaluation = evaluateGuess(currentGuess, answer);
-    const nextGuesses = [...game.guesses, currentGuess];
+    const nextEvaluation = evaluateGuess(normalizedGuess, answer);
+    const nextGuesses = [...game.guesses, normalizedGuess];
     const nextEvaluations = [...game.evaluations, nextEvaluation];
 
     let status = 'playing';
-    if (currentGuess === answer) status = 'won';
-    if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && currentGuess !== answer) status = 'lost';
+    if (normalizedGuess === answer) status = 'won';
+    if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && normalizedGuess !== answer) status = 'lost';
 
     const startedAt = Number.isInteger(game.startedAt) ? game.startedAt : Date.now();
     const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);

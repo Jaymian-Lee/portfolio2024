@@ -1,4 +1,10 @@
 const WORD_LENGTH = 5;
+const COMBINING_MARKS_REGEX = /[\u0300-\u036f]/g;
+
+export const normalizeWord = (value) => String(value || '')
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(COMBINING_MARKS_REGEX, '');
 
 export const getTodayKey = () => {
   const now = new Date();
@@ -21,13 +27,13 @@ export const getDailyWord = (language, words, dateKey = getTodayKey()) => {
   const pool = words?.[language] || [];
   if (!pool.length) return '';
   const index = hashString(`${dateKey}:${language}`) % pool.length;
-  return pool[index].toLowerCase();
+  return normalizeWord(pool[index]);
 };
 
 export const evaluateGuess = (guess, answer) => {
   const result = new Array(WORD_LENGTH).fill('absent');
-  const answerChars = answer.split('');
-  const guessChars = guess.split('');
+  const answerChars = normalizeWord(answer).split('');
+  const guessChars = normalizeWord(guess).split('');
 
   guessChars.forEach((char, index) => {
     if (char === answerChars[index]) {
