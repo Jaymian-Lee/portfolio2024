@@ -142,6 +142,8 @@ module.exports = async (req, res) => {
       const memberKey = nameMemberKey(name);
       const key = leaderboardKey(dateKey, language);
       const namesKey = leaderboardNamesKey(dateKey, language);
+      const existingStoredName = await kvCommand(['HGET', namesKey, memberKey]);
+      const canonicalName = normalizeName(existingStoredName) || name;
 
       const existingScoreRaw = await kvCommand(['ZSCORE', key, memberKey]);
       const existingAttempts = existingScoreRaw ? decodeAttempts(existingScoreRaw) : null;
@@ -155,7 +157,7 @@ module.exports = async (req, res) => {
       ) {
         const score = compositeScore(attempts, durationMs, now);
         await kvCommand(['ZADD', key, String(score), memberKey]);
-        await kvCommand(['HSET', namesKey, memberKey, name]);
+        await kvCommand(['HSET', namesKey, memberKey, canonicalName]);
       }
 
       const historyKey = userHistoryKey(memberKey, language);

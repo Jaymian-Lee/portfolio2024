@@ -7,8 +7,34 @@ import './DailyWordPage.css';
 
 const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 const LETTER_INPUT_REGEX = /^\p{L}$/u;
+const NAME_COMPARABLE_REGEX = /[^a-z0-9]/g;
 
 const normalizeGuessChar = (value) => normalizeWord(value);
+const normalizeComparableName = (value) => normalizeWord(value).replace(NAME_COMPARABLE_REGEX, '');
+
+const levenshteinDistance = (a, b) => {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+
+  const previous = new Array(b.length + 1).fill(0).map((_, i) => i);
+  const current = new Array(b.length + 1).fill(0);
+
+  for (let i = 1; i <= a.length; i += 1) {
+    current[0] = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      current[j] = Math.min(
+        current[j - 1] + 1,
+        previous[j] + 1,
+        previous[j - 1] + cost
+      );
+    }
+    for (let j = 0; j <= b.length; j += 1) previous[j] = current[j];
+  }
+
+  return previous[b.length];
+};
 
 const footerQuickLinks = [
   { label: 'Services', href: '/#services' },
@@ -65,7 +91,16 @@ const copy = {
     leaderboardEmpty: 'No scores yet today. Be the first.',
     leaderboardNameLabel: 'Your name',
     leaderboardNamePlaceholder: 'Type your name',
+    leaderboardNameExists: 'That name already exists as',
+    leaderboardNameSuggestion: 'Did you mean',
+    leaderboardNameDecision: 'Use the existing name to keep scores together, or create a new one.',
+    leaderboardNameUseExisting: 'Use existing',
+    leaderboardNameCreateNew: 'Create new',
+    leaderboardNameEdit: 'Edit name',
+    leaderboardNameCreatedNew: 'A new name will be created.',
+    leaderboardNameRequired: 'Choose first: use the existing name or create a new one.',
     leaderboardSubmit: 'Submit score',
+    leaderboardSubmitLoading: 'Saving...',
     leaderboardSubmitted: 'Score submitted',
     leaderboardHint: 'Only available after solving.',
     leaderboardAttempts: 'tries',
@@ -119,7 +154,16 @@ const copy = {
     leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
     leaderboardNameLabel: 'Jouw naam',
     leaderboardNamePlaceholder: 'Vul je naam in',
+    leaderboardNameExists: 'Die naam bestaat al als',
+    leaderboardNameSuggestion: 'Bedoel je soms',
+    leaderboardNameDecision: 'Gebruik de bestaande naam om scores samen te houden, of maak een nieuwe naam.',
+    leaderboardNameUseExisting: 'Gebruik bestaande',
+    leaderboardNameCreateNew: 'Maak nieuwe',
+    leaderboardNameEdit: 'Pas naam aan',
+    leaderboardNameCreatedNew: 'Er wordt een nieuwe naam aangemaakt.',
+    leaderboardNameRequired: 'Kies eerst: bestaande naam gebruiken of nieuwe naam maken.',
     leaderboardSubmit: 'Score opslaan',
+    leaderboardSubmitLoading: 'Opslaan...',
     leaderboardSubmitted: 'Score opgeslagen',
     leaderboardHint: 'Pas beschikbaar nadat je hebt gewonnen.',
     leaderboardAttempts: 'pogingen',
@@ -228,6 +272,7 @@ function DailyWordPage() {
   const [playerOptions, setPlayerOptions] = useState([]);
   const [showPlayerDropdown, setShowPlayerDropdown] = useState(false);
   const [clockNow, setClockNow] = useState(() => Date.now());
+  const [nameChoice, setNameChoice] = useState('');
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const weekDateKeys = useMemo(() => {
@@ -268,6 +313,7 @@ function DailyWordPage() {
 
     const rememberedName = localStorage.getItem(getScoreNameKey(language, dateKey)) || '';
     setScoreName(rememberedName);
+    setNameChoice('');
     setMyScoresQuery(rememberedName);
     setScoreSubmitted(localStorage.getItem(getScoreSubmittedKey(language, dateKey)) === '1');
   }, [language, dateKey]);
@@ -409,6 +455,40 @@ function DailyWordPage() {
   const filteredPlayerOptions = useMemo(() => {
     return playerOptions;
   }, [playerOptions]);
+  const nameResolution = useMemo(() => {
+    const typedName = scoreName.trim();
+    const typedComparable = normalizeComparableName(typedName);
+    if (typedName.length < 2 || !typedComparable) return null;
+
+    const candidates = Array.from(new Set(playerOptions.map((name) => String(name || '').trim()).filter(Boolean)));
+    if (!candidates.length) return null;
+
+    const exactExisting = candidates.find((candidate) => normalizeComparableName(candidate) === typedComparable);
+    if (exactExisting && exactExisting !== typedName) {
+      return { kind: 'exact', suggestedName: exactExisting };
+    }
+
+    if (exactExisting) return null;
+
+    let best = null;
+    for (const candidate of candidates) {
+      const candidateComparable = normalizeComparableName(candidate);
+      if (!candidateComparable) continue;
+      const distance = levenshteinDistance(typedComparable, candidateComparable);
+      const ratio = distance / Math.max(typedComparable.length, candidateComparable.length);
+      if (!best || distance < best.distance || (distance === best.distance && ratio < best.ratio)) {
+        best = { candidate, distance, ratio, candidateComparable };
+      }
+    }
+
+    if (!best) return null;
+    if (Math.min(typedComparable.length, best.candidateComparable.length) < 4) return null;
+    if (best.distance <= 2 || best.ratio <= 0.24) {
+      return { kind: 'suggestion', suggestedName: best.candidate };
+    }
+
+    return null;
+  }, [playerOptions, scoreName]);
 
   const formatDuration = (durationMs) => {
     if (!Number.isInteger(durationMs) || durationMs < 0) return copy[language].durationNA;
@@ -487,7 +567,16 @@ function DailyWordPage() {
     event.preventDefault();
     if (game.status !== 'won' || scoreSubmitted) return;
 
-    const safeName = scoreName.trim();
+    const typedName = scoreName.trim();
+    if (nameResolution && !nameChoice) {
+      setLeaderboardError(copy[language].leaderboardNameRequired);
+      return;
+    }
+
+    const safeName = nameResolution && nameChoice === 'use-existing'
+      ? nameResolution.suggestedName
+      : typedName;
+
     if (safeName.length < 2) {
       setLeaderboardError(copy[language].leaderboardError);
       return;
@@ -517,11 +606,24 @@ function DailyWordPage() {
       setShowJoinPopup(false);
       localStorage.setItem(getScoreSubmittedKey(language, dateKey), '1');
       localStorage.setItem(getScoreNameKey(language, dateKey), safeName);
+      setNameChoice('');
     } catch (err) {
       setLeaderboardError(err.message || copy[language].leaderboardError);
     } finally {
       setLeaderboardLoading(false);
     }
+  };
+
+  const applyExistingName = () => {
+    if (!nameResolution) return;
+    setScoreName(nameResolution.suggestedName);
+    setNameChoice('use-existing');
+    setLeaderboardError('');
+  };
+
+  const chooseCreateNewName = () => {
+    setNameChoice('create-new');
+    setLeaderboardError('');
   };
 
   const formatDateTime = (record) => {
@@ -778,26 +880,65 @@ function DailyWordPage() {
       {showJoinPopup && game.status === 'won' && !scoreSubmitted && (
         <div className="join-popup" role="dialog" aria-modal="true" aria-label={copy[language].joinBoardTitle}>
           <div className="join-popup-inner">
-            <button type="button" className="join-popup-close" onClick={() => setShowJoinPopup(false)} aria-label="Close">✕</button>
+            <button type="button" className="join-popup-close" onClick={() => setShowJoinPopup(false)} aria-label="Close" disabled={leaderboardLoading}>✕</button>
             <div className="join-popup-body">
               <p className="join-popup-kicker">Word-Lee</p>
               <h3>{copy[language].joinBoardTitle}</h3>
               <p className="join-popup-lead">{copy[language].joinBoardText}</p>
               <p className="join-popup-congrats">{copy[language].joinBoardCongrats}</p>
-              <form className="leaderboard-form" onSubmit={submitScore}>
+              <form className={`leaderboard-form ${leaderboardLoading ? 'is-loading' : ''}`} onSubmit={submitScore} aria-busy={leaderboardLoading}>
                 <label htmlFor="leaderboard-name">{copy[language].leaderboardNameLabel}</label>
                 <div className="leaderboard-form-row">
                   <input
                     id="leaderboard-name"
                     type="text"
                     value={scoreName}
-                    onChange={(e) => setScoreName(e.target.value.slice(0, 24))}
+                    disabled={leaderboardLoading}
+                    onChange={(e) => {
+                      setScoreName(e.target.value.slice(0, 24));
+                      setNameChoice('');
+                      setLeaderboardError('');
+                    }}
                     placeholder={copy[language].leaderboardNamePlaceholder}
                   />
                   <button type="submit" disabled={leaderboardLoading}>
-                    {copy[language].leaderboardSubmit}
+                    {leaderboardLoading ? copy[language].leaderboardSubmitLoading : copy[language].leaderboardSubmit}
                   </button>
                 </div>
+                {nameResolution && (
+                  <div className="name-resolution-box" role="status" aria-live="polite">
+                    {nameResolution.kind === 'exact' ? (
+                      <p className="name-resolution-text">
+                        {copy[language].leaderboardNameExists}: <strong>{nameResolution.suggestedName}</strong>
+                      </p>
+                    ) : (
+                      <p className="name-resolution-text">
+                        {copy[language].leaderboardNameSuggestion}: <strong>{nameResolution.suggestedName}</strong>?
+                      </p>
+                    )}
+                    <p className="name-resolution-help">{copy[language].leaderboardNameDecision}</p>
+                    <div className="name-resolution-actions">
+                      <button type="button" className="name-choice-btn" onClick={applyExistingName} disabled={leaderboardLoading}>
+                        {copy[language].leaderboardNameUseExisting}
+                      </button>
+                      <button type="button" className="name-choice-btn ghost" onClick={chooseCreateNewName} disabled={leaderboardLoading}>
+                        {copy[language].leaderboardNameCreateNew}
+                      </button>
+                      <button type="button" className="name-choice-btn ghost" onClick={() => document.getElementById('leaderboard-name')?.focus()} disabled={leaderboardLoading}>
+                        {copy[language].leaderboardNameEdit}
+                      </button>
+                    </div>
+                    {nameChoice === 'create-new' && (
+                      <p className="name-resolution-note">{copy[language].leaderboardNameCreatedNew}</p>
+                    )}
+                  </div>
+                )}
+                {leaderboardLoading && (
+                  <div className="leaderboard-submit-skeleton" aria-hidden="true">
+                    <span />
+                    <span />
+                  </div>
+                )}
               </form>
             </div>
           </div>
