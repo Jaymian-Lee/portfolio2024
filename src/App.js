@@ -21,55 +21,87 @@ const detectBrowserTheme = () => {
 
 const projectLinks = [
   {
-    name: 'Corthex',
-    url: 'https://corthex.app',
-    category: { en: 'AI Automation Product Studio', nl: 'AI Automation Product Studio' },
+    name: 'Botforger',
+    url: 'https://botforger.com',
+    image: '/projects/botforger-com.jpg',
+    category: { en: 'AI Chatbot Builder', nl: 'AI Chatbot Builder' },
     summary: {
-      en: 'Designing practical AI automation systems that save teams measurable time in daily work.',
-      nl: 'Praktische AI automation systemen die teams dagelijks aantoonbaar tijd besparen.'
+      en: 'Built as a no-code chatbot platform for creating and embedding AI chatbots with practical automation features.',
+      nl: 'Gebouwd als no-code chatbot platform om AI chatbots te maken en te embedden met praktische automation features.'
     },
     impact: {
-      en: 'From strategy and product engineering to live workflows',
-      nl: 'Van strategie en product engineering naar live workflows'
+      en: 'Laid the product and architecture foundation later expanded in Corthex.',
+      nl: 'Legde de product- en architectuurbasis die later verder is uitgebouwd in Corthex.'
     }
   },
   {
-    name: 'Botforger',
-    url: 'https://botforger.com',
-    category: { en: 'Chatbot Automation', nl: 'Chatbot Automation' },
+    name: 'Corthex',
+    url: 'https://corthex.app',
+    image: '/projects/corthex-app.jpg',
+    category: { en: 'AI Knowledge Platform', nl: 'AI Knowledge Platform' },
     summary: {
-      en: 'A strong base for chatbot automation, conversation flow design, and maintainable implementation. Later merged into Corthex.',
-      nl: 'Een sterke basis voor chatbot automation, conversatieflow design en onderhoudbare implementatie. Later samengevoegd in Corthex.'
+      en: 'Developed an AI platform where teams can deploy assistants and collaborative workspaces grounded in their own knowledge.',
+      nl: 'Ontwikkeld als AI platform waarmee teams assistants en collaboratieve workspaces op hun eigen kennis kunnen uitrollen.'
     },
     impact: {
-      en: 'Reliable architecture that is now part of Corthex',
-      nl: 'Betrouwbare architectuur die nu onderdeel is van Corthex'
+      en: 'From quick deployment to grounded multi-agent workflows on proprietary data.',
+      nl: 'Van snelle deployment naar grounded multi-agent workflows op proprietary data.'
     }
   },
   {
     name: 'Vizualy',
     url: 'https://vizualy.nl',
-    category: { en: 'Brand and Product Communication', nl: 'Brand en Product Communicatie' },
+    image: '/projects/vizualy-nl.jpg',
+    category: { en: 'Renovation Visualizer', nl: 'Renovatie Visualizer' },
     summary: {
-      en: 'Visual storytelling for brands that need clear communication and stronger digital presence.',
-      nl: 'Visual storytelling voor merken die heldere communicatie en een sterkere digitale presence zoeken.'
+      en: 'Created an AI renovation dashboard for facade scans, before/after comparisons, and direct product placement previews.',
+      nl: 'Een AI renovatie-dashboard gemaakt voor gevelopnames, voor/na vergelijkingen en directe productplaatsing previews.'
     },
     impact: {
-      en: 'Clarity focused design that supports growth',
-      nl: 'Design met focus op helderheid en groei'
+      en: 'Helps customers make faster home-improvement decisions with visual clarity.',
+      nl: 'Helpt klanten sneller beslissen over woningverbetering met visuele duidelijkheid.'
     }
   },
   {
-    name: 'Refacthor',
-    url: 'https://refacthor.nl',
-    category: { en: 'Full Stack Development', nl: 'Full Stack Development' },
+    name: 'Twigsie',
+    url: 'https://twigsie.com',
+    image: '/projects/twigsie-com.jpg',
+    category: { en: 'Plant Ecommerce', nl: 'Planten Ecommerce' },
     summary: {
-      en: 'Full stack development focused on maintainable code, speed, and clean architecture over time.',
-      nl: 'Full stack development met focus op onderhoudbare code, snelheid en schone architectuur op de lange termijn.'
+      en: 'Delivered an ecommerce storefront for plant cuttings and accessories, including care guidance and beginner-focused FAQs.',
+      nl: 'Een ecommerce storefront opgeleverd voor plantenstekjes en accessoires, inclusief verzorgingshulp en beginnergerichte FAQ.'
     },
     impact: {
-      en: 'Lower technical debt and smoother release cycles',
-      nl: 'Minder technische schuld en soepelere releasecycli'
+      en: 'Made product discovery and post-purchase plant care easier for new customers.',
+      nl: 'Maakte productontdekking en nazorg voor planten eenvoudiger voor nieuwe klanten.'
+    }
+  },
+  {
+    name: 'Vizualy Prints',
+    url: 'https://vizualyprints.com',
+    image: '/projects/vizualyprints-com.jpg',
+    category: { en: 'Poster Ecommerce', nl: 'Poster Ecommerce' },
+    summary: {
+      en: 'Built and optimized a poster and wall decor webshop with structured categories and conversion-focused content sections.',
+      nl: 'Een poster- en wanddecoratie webshop gebouwd en geoptimaliseerd met duidelijke categorieën en conversiegerichte contentsecties.'
+    },
+    impact: {
+      en: 'Improved browsing flow from inspiration to checkout-ready product choices.',
+      nl: 'Verbeterde de browse-flow van inspiratie naar checkout-klare productkeuzes.'
+    }
+  },
+  {
+    name: 'MartijnKozijn.nl',
+    url: 'https://martijnkozijn.nl',
+    image: '/projects/martijnkozijn-nl.jpg',
+    category: { en: 'PrestaShop Refactor', nl: 'PrestaShop Refactor' },
+    summary: {
+      en: 'Completed a full website refactor to PrestaShop for a high-volume kozijnen en deuren webshop, focused on speed and maintainability.',
+      nl: 'Een volledige website-refactor naar PrestaShop afgerond voor een high-volume kozijnen en deuren webshop, met focus op snelheid en onderhoudbaarheid.'
+    },
+    impact: {
+      en: 'More stable ecommerce operations with cleaner structure for long-term growth.',
+      nl: 'Stabielere ecommerce-operatie met een schonere structuur voor groei op lange termijn.'
     }
   }
 ];
@@ -249,10 +281,12 @@ const footerQuickLinks = [
 ];
 
 const footerProjects = [
-  { label: 'Corthex', href: 'https://corthex.app' },
   { label: 'Botforger', href: 'https://botforger.com' },
+  { label: 'Corthex', href: 'https://corthex.app' },
   { label: 'Vizualy', href: 'https://vizualy.nl' },
-  { label: 'Refacthor', href: 'https://refacthor.nl' }
+  { label: 'Twigsie', href: 'https://twigsie.com' },
+  { label: 'Vizualy Prints', href: 'https://vizualyprints.com' },
+  { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' }
 ];
 
 const footerConnect = [
@@ -866,6 +900,13 @@ function App() {
             <div className="work-grid">
               {projectLinks.map((project) => (
                 <article className="work-card" key={project.name}>
+                  <img
+                    src={project.image}
+                    alt={`${project.name} project screenshot`}
+                    className="work-image"
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <div className="work-top">
                     <p className="work-category">{project.category[language]}</p>
                     <a href={project.url} target="_blank" rel="noreferrer" className="work-link" aria-label={`Visit ${project.name} project`}>
