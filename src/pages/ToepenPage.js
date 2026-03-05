@@ -318,6 +318,14 @@ function ToepenPage() {
                   {player.eliminated && (
                     <div className="toepen-taunt-overlay" aria-live="polite">
                       <span>{player.name}, jammer joh. Ben je nu zo slecht??</span>
+                      <button
+                        type="button"
+                        className="toepen-overlay-undo"
+                        disabled={game.finished}
+                        onClick={() => decrementScore(player.id)}
+                      >
+                        -1
+                      </button>
                     </div>
                   )}
                 </li>
