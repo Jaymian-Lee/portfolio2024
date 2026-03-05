@@ -21,43 +21,123 @@ const createInitialState = () => ({
   game: null
 });
 
-const TAUNTS = [
-  '{name}, jammer joh. Ben je nu zo slecht??',
-  '{name}, deze ronde was echt premium drama.',
-  '{name}, kaartjes waren tegen je vandaag.',
-  '{name}, dit was meer vallen dan spelen.',
-  '{name}, respect dat je het toch probeerde.',
-  '{name}, je ging all-in op pech blijkbaar.',
-  '{name}, dit was een masterclass net-niet.',
-  '{name}, volgende pot misschien met geluk erbij?',
-  '{name}, de kaarten fluisterden: nee.',
-  '{name}, tactiek was goed, uitvoering... minder.',
-  '{name}, je score zei: tijd om te rusten.',
-  '{name}, dit was speedrun naar uitschakeling.',
-  '{name}, je had wel karakter, geen punten.',
-  '{name}, de tafel heeft je vandaag verslagen.',
-  '{name}, oei. Dit was een harde landing.',
-  '{name}, je ging van hoop naar doei.',
-  '{name}, de comeback patch komt later.',
-  '{name}, dit was strategisch chaos.',
-  '{name}, je kaarten deden niet mee.',
-  '{name}, je bent officieel in de pech-liga.',
-  '{name}, iedereen zag het aankomen behalve jij.',
-  '{name}, knap geprobeerd, pijnlijk resultaat.',
-  '{name}, deze ronde was anti-{name}.',
-  '{name}, volgende keer eerst warmdraaien.',
-  '{name}, dit was geen nederlaag, dit was content.'
-];
+const TAUNTS = {
+  nl: [
+    '{name}, jammer joh. Ben je nu zo slecht??',
+    '{name}, deze ronde was echt premium drama.',
+    '{name}, kaartjes waren tegen je vandaag.',
+    '{name}, dit was meer vallen dan spelen.',
+    '{name}, respect dat je het toch probeerde.',
+    '{name}, je ging all-in op pech blijkbaar.',
+    '{name}, dit was een masterclass net-niet.',
+    '{name}, volgende pot misschien met geluk erbij?',
+    '{name}, de kaarten fluisterden: nee.',
+    '{name}, tactiek was goed, uitvoering... minder.',
+    '{name}, je score zei: tijd om te rusten.',
+    '{name}, dit was speedrun naar uitschakeling.',
+    '{name}, je had wel karakter, geen punten.',
+    '{name}, de tafel heeft je vandaag verslagen.',
+    '{name}, oei. Dit was een harde landing.',
+    '{name}, je ging van hoop naar doei.',
+    '{name}, de comeback patch komt later.',
+    '{name}, dit was strategisch chaos.',
+    '{name}, je kaarten deden niet mee.',
+    '{name}, je bent officieel in de pech-liga.',
+    '{name}, iedereen zag het aankomen behalve jij.',
+    '{name}, knap geprobeerd, pijnlijk resultaat.',
+    '{name}, deze ronde was anti-{name}.',
+    '{name}, volgende keer eerst warmdraaien.',
+    '{name}, dit was geen nederlaag, dit was content.',
+    '{name}, hahaha. Die deed pijn.'
+  ],
+  en: [
+    '{name}, rough one. Are you really this bad??',
+    '{name}, that round was premium chaos.',
+    '{name}, the cards were against you today.',
+    '{name}, more falling than playing, honestly.',
+    '{name}, respect for trying anyway.',
+    '{name}, you went all-in on bad luck.',
+    '{name}, this was a masterclass in almost.',
+    '{name}, maybe next game with extra luck?',
+    '{name}, the cards whispered: nope.',
+    '{name}, good tactic, questionable execution.',
+    '{name}, your score said: time to rest.',
+    '{name}, speedrun to elimination achieved.',
+    '{name}, lots of character, not many points.',
+    '{name}, the table defeated you today.',
+    '{name}, oof. That was a hard landing.',
+    '{name}, from hope to goodbye in one round.',
+    '{name}, comeback patch coming soon.',
+    '{name}, this was strategic chaos.',
+    '{name}, your cards did not cooperate.',
+    '{name}, welcome to the unlucky league.',
+    '{name}, everyone saw it coming except you.',
+    '{name}, nice try, painful result.',
+    '{name}, this round was anti-{name}.',
+    '{name}, warm up first next time.',
+    '{name}, not a loss, this is content.'
+  ]
+};
 
-const getTauntForPlayer = (name, score) => {
+const copy = {
+  nl: {
+    back: '← Terug naar portfolio',
+    title: 'Toepen scorebord',
+    subtitle: 'LocalStorage only, zonder database.',
+    setup: 'Setup',
+    targetScore: 'Eindscore (bij deze score lig je eruit)',
+    addName: 'Naam toevoegen',
+    namePlaceholder: 'Bijv. Jay',
+    add: 'Toevoegen',
+    remove: 'Verwijder',
+    startGame: 'Start spel',
+    resetAll: 'Alles resetten',
+    runningGame: 'Lopend spel',
+    endScore: 'Eindscore',
+    winner: 'Winnaar',
+    active: 'Actief',
+    score: 'Score',
+    eliminated: 'Uitgeschakeld',
+    place: 'plaats',
+    newGame: 'Nieuw spel opzetten',
+    history: 'Historie (laatste 25)',
+    noHistory: 'Nog geen afgeronde spellen.'
+  },
+  en: {
+    back: '← Back to portfolio',
+    title: 'Toepen scoreboard',
+    subtitle: 'LocalStorage only, no database.',
+    setup: 'Setup',
+    targetScore: 'End score (at this score you are out)',
+    addName: 'Add name',
+    namePlaceholder: 'e.g. Jay',
+    add: 'Add',
+    remove: 'Remove',
+    startGame: 'Start game',
+    resetAll: 'Reset all',
+    runningGame: 'Current game',
+    endScore: 'End score',
+    winner: 'Winner',
+    active: 'Active',
+    score: 'Score',
+    eliminated: 'Eliminated',
+    place: 'place',
+    newGame: 'Set up new game',
+    history: 'History (last 25)',
+    noHistory: 'No finished games yet.'
+  }
+};
+
+const getTauntForPlayer = (name, score, language) => {
   const seed = `${name}-${score}`;
   let hash = 0;
   for (let i = 0; i < seed.length; i += 1) {
     hash = (hash << 5) - hash + seed.charCodeAt(i);
     hash |= 0;
   }
-  const index = Math.abs(hash) % TAUNTS.length;
-  return TAUNTS[index].replaceAll('{name}', name);
+  const set = TAUNTS[language] || TAUNTS.en;
+  const index = Math.abs(hash) % set.length;
+  return set[index].replaceAll('{name}', name);
 };
 
 const detectBrowserLanguage = () => {
@@ -231,7 +311,7 @@ function ToepenPage() {
 
   const decrementScore = (playerId) => {
     setState((prev) => {
-      if (!prev.game || prev.game.finished) return prev;
+      if (!prev.game) return prev;
 
       const currentGame = prev.game;
       const nextPlayers = currentGame.players.map((p) => {
@@ -249,7 +329,26 @@ function ToepenPage() {
         };
       });
 
-      return { ...prev, game: { ...currentGame, players: nextPlayers } };
+      const remaining = nextPlayers.filter((p) => !p.eliminated);
+      const isFinished = remaining.length === 1;
+      const winnerId = isFinished ? remaining[0].id : null;
+
+      const normalizedPlayers = nextPlayers.map((p) => {
+        if (winnerId && p.id === winnerId) return { ...p, place: 1 };
+        if (!p.eliminated) return { ...p, place: null };
+        return p;
+      });
+
+      return {
+        ...prev,
+        game: {
+          ...currentGame,
+          players: normalizedPlayers,
+          finished: isFinished,
+          winnerId,
+          finishedAt: isFinished ? currentGame.finishedAt || new Date().toISOString() : null
+        }
+      };
     });
   };
 
@@ -267,19 +366,20 @@ function ToepenPage() {
   const winnerName = game?.finished ? game.players.find((p) => p.id === game.winnerId)?.name : null;
 
   const askLabel = language === 'nl' ? 'Vragen?' : 'Questions?';
+  const t = copy[language] || copy.en;
 
   return (
     <main className="toepen-page">
       <div className="toepen-wrap">
         <header className="toepen-header">
-          <Link to="/" className="toepen-back">← Terug naar portfolio</Link>
-          <h1>Toepen scorebord</h1>
-          <p>LocalStorage only, zonder database.</p>
+          <Link to="/" className="toepen-back">{t.back}</Link>
+          <h1>{t.title}</h1>
+          <p>{t.subtitle}</p>
         </header>
 
         <section className="toepen-card">
-          <h2>Setup</h2>
-          <label className="toepen-label" htmlFor="target-score">Eindscore (bij deze score lig je eruit)</label>
+          <h2>{t.setup}</h2>
+          <label className="toepen-label" htmlFor="target-score">{t.targetScore}</label>
           <input
             id="target-score"
             type="number"
@@ -288,54 +388,54 @@ function ToepenPage() {
             onChange={(e) => setState((prev) => ({ ...prev, targetScore: Math.max(1, Number(e.target.value) || 1) }))}
           />
 
-          <label className="toepen-label" htmlFor="name-input">Naam toevoegen</label>
+          <label className="toepen-label" htmlFor="name-input">{t.addName}</label>
           <div className="toepen-row">
             <input
               id="name-input"
               type="text"
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              placeholder="Bijv. Jay"
+              placeholder={t.namePlaceholder}
             />
-            <button type="button" onClick={addSetupName}>Toevoegen</button>
+            <button type="button" onClick={addSetupName}>{t.add}</button>
           </div>
 
           <ul className="toepen-names">
             {setupPlayers.map((name) => (
               <li key={name}>
                 <span>{name}</span>
-                <button type="button" onClick={() => removeSetupName(name)}>Verwijder</button>
+                <button type="button" onClick={() => removeSetupName(name)}>{t.remove}</button>
               </li>
             ))}
           </ul>
 
           <div className="toepen-row">
-            <button type="button" onClick={startGame} disabled={setupPlayers.length < 2}>Start spel</button>
-            <button type="button" className="ghost" onClick={clearAll}>Alles resetten</button>
+            <button type="button" onClick={startGame} disabled={setupPlayers.length < 2}>{t.startGame}</button>
+            <button type="button" className="ghost" onClick={clearAll}>{t.resetAll}</button>
           </div>
         </section>
 
         {game && (
           <section className="toepen-card">
-            <h2>Lopend spel</h2>
-            <p>Eindscore: <strong>{game.targetScore}</strong></p>
+            <h2>{t.runningGame}</h2>
+            <p>{t.endScore}: <strong>{game.targetScore}</strong></p>
             {game.finished ? (
-              <p className="winner">Winnaar: <strong>{winnerName}</strong></p>
+              <p className="winner">{t.winner}: <strong>{winnerName}</strong></p>
             ) : (
-              <p>Actief: {activePlayers.map((p) => p.name).join(', ')}</p>
+              <p>{t.active}: {activePlayers.map((p) => p.name).join(', ')}</p>
             )}
 
             <ul className="toepen-scores">
               {orderedPlayers.map((player) => (
                 <li key={player.id} className={player.eliminated ? 'out' : ''}>
-                  <div className="toepen-score-badge" aria-label={`Score ${player.score}`}>
+                  <div className="toepen-score-badge" aria-label={`${t.score} ${player.score}`}>
                     {player.score}
                   </div>
                   <div className="toepen-player-main">
                     <strong>{player.name}</strong>
                     <p>
-                      Score
-                      {player.eliminated ? ` · Uitgeschakeld (plaats ${player.place})` : ''}
+                      {t.score}
+                      {player.eliminated ? ` · ${t.eliminated} (${t.place} ${player.place})` : ''}
                     </p>
                   </div>
                   <div className="toepen-score-actions">
@@ -356,11 +456,10 @@ function ToepenPage() {
                   </div>
                   {player.eliminated && (
                     <div className="toepen-taunt-overlay" aria-live="polite">
-                      <span>{getTauntForPlayer(player.name, player.score)}</span>
+                      <span>{getTauntForPlayer(player.name, player.score, language)}</span>
                       <button
                         type="button"
                         className="toepen-overlay-undo"
-                        disabled={game.finished}
                         onClick={() => decrementScore(player.id)}
                       >
                         -1
@@ -371,19 +470,19 @@ function ToepenPage() {
               ))}
             </ul>
 
-            <button type="button" className="ghost" onClick={resetCurrentGame}>Nieuw spel opzetten</button>
+            <button type="button" className="ghost" onClick={resetCurrentGame}>{t.newGame}</button>
           </section>
         )}
 
         <section className="toepen-card">
-          <h2>Historie (laatste 25)</h2>
+          <h2>{t.history}</h2>
           {history.length === 0 ? (
-            <p>Nog geen afgeronde spellen.</p>
+            <p>{t.noHistory}</p>
           ) : (
             <div className="history-list">
               {history.map((item) => (
                 <article key={item.id}>
-                  <p><strong>{new Date(item.finishedAt).toLocaleString('nl-NL')}</strong> · Eindscore {item.targetScore}</p>
+                  <p><strong>{new Date(item.finishedAt).toLocaleString(language === 'nl' ? 'nl-NL' : 'en-US')}</strong> · {t.endScore} {item.targetScore}</p>
                   <ol>
                     {item.results.map((row) => (
                       <li key={`${item.id}-${row.name}-${row.place}`}>
