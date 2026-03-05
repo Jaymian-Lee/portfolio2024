@@ -649,6 +649,47 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    let rafId = 0;
+
+    const updateStackProgress = () => {
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      const cards = document.querySelectorAll('.stack-card');
+
+      if (!isMobile || !cards.length) {
+        cards.forEach((card) => card.style.setProperty('--stack-progress', '0'));
+        return;
+      }
+
+      const stackTop = 12;
+      const distance = window.innerHeight * 0.65;
+
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const raw = (stackTop - rect.top) / distance;
+        const progress = Math.max(0, Math.min(1, raw));
+        card.style.setProperty('--stack-progress', progress.toFixed(4));
+      });
+    };
+
+    const onScrollOrResize = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateStackProgress);
+    };
+
+    updateStackProgress();
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+    };
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
     if (isChatOpen) {
       messageEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }

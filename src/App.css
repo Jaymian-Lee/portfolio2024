@@ -1236,6 +1236,7 @@ body {
   }
 
   .stack-card {
+    --stack-progress: 0;
     min-height: 136svh;
     margin: 0;
     padding: 0;
@@ -1253,7 +1254,9 @@ body {
   .stack-panel {
     position: sticky;
     top: var(--stack-top);
-    transform: translateY(calc(var(--stack-index, 0) * var(--stack-step)));
+    transform: translateY(calc(var(--stack-index, 0) * var(--stack-step))) scale(calc(1 - (var(--stack-progress, 0) * 0.06)));
+    transform-origin: center top;
+    opacity: calc(1 - (var(--stack-progress, 0) * 0.28));
     z-index: var(--stack-layer, 1);
     padding: 1.05rem;
     border: 1px solid color-mix(in srgb, var(--border) 96%, transparent);
@@ -1261,6 +1264,7 @@ body {
     background: color-mix(in srgb, var(--bg-soft) 86%, rgba(255, 255, 255, 0.3));
     box-shadow: 0 18px 42px rgba(49, 31, 17, 0.12);
     backdrop-filter: blur(10px) saturate(1.05);
+    will-change: transform, opacity;
   }
 
   .hero {
