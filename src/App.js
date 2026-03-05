@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
 import FloatingUtilityBar from './components/FloatingUtilityBar';
+import { buildAiContext } from './utils/aiContext';
 import './App.css';
 
 const SITE_URL = 'https://jaymian-lee.nl';
@@ -716,7 +717,10 @@ function App() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...apiMessages, userMessage] })
+        body: JSON.stringify({
+          messages: [...apiMessages, userMessage],
+          context: buildAiContext({ page: 'home', language })
+        })
       });
 
       const raw = await response.text();

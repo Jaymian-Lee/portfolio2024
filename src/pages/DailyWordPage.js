@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
 import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import { buildAiContext } from '../utils/aiContext';
 import './DailyWordPage.css';
 
 const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
@@ -654,7 +655,10 @@ function DailyWordPage() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: nextMessages.slice(-12) })
+        body: JSON.stringify({
+          messages: nextMessages.slice(-12),
+          context: buildAiContext({ page: 'daily-word', language })
+        })
       });
 
       const data = await safeJson(response);

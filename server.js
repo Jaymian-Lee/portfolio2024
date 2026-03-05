@@ -311,7 +311,7 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const { messages } = req.body || {};
+    const { messages, context } = req.body || {};
 
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
@@ -333,10 +333,25 @@ app.post('/api/chat', async (req, res) => {
 
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+    const safeContext = context && typeof context === 'object'
+      ? JSON.stringify(context).slice(0, 14000)
+      : null;
+
+    const systemInput = [{ role: 'system', content: knowledgeBase }];
+
+    if (safeContext) {
+      systemInput.push({
+        role: 'system',
+        content:
+          `Website runtime context (from browser localStorage/state, use when relevant):\n${safeContext}\n` +
+          'Use this context to answer questions about recent scores, game state, and personal site details. '
+      });
+    }
+
     const response = await client.responses.create({
       model,
       input: [
-        { role: 'system', content: knowledgeBase },
+        ...systemInput,
         ...safeMessages.map((m) => ({ role: m.role, content: m.content }))
       ],
       temperature: 0.5
