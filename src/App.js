@@ -277,7 +277,8 @@ const footerQuickLinks = [
   { label: 'Services', href: '#services' },
   { label: 'Case studies', href: '#case-studies' },
   { label: 'Experience', href: '#experience' },
-  { label: 'Contact', href: '#contact' }
+  { label: 'Contact', href: '#contact' },
+  { label: 'Toepen', href: '/toepen' }
 ];
 
 const footerProjects = [
