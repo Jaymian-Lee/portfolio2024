@@ -48,7 +48,12 @@ const TAUNTS = {
     '{name}, deze ronde was anti-{name}.',
     '{name}, volgende keer eerst warmdraaien.',
     '{name}, dit was geen nederlaag, dit was content.',
-    '{name}, hahaha. Die deed pijn.'
+    '{name}, hahaha. Die deed pijn.',
+    '{name}, stop maar gewoon.',
+    '{name}, speelde je wel serieus???',
+    '{name}, een blinde legt nog betere kaarten dan jij 💀',
+    '{name}, pffffff.',
+    '{name}, 💀'
   ],
   en: [
     '{name}, rough one. Are you really this bad??',
