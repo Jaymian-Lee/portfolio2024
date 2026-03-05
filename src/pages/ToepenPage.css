@@ -1,0 +1,137 @@
+.toepen-page {
+  min-height: 100vh;
+  padding: 1rem;
+  background: radial-gradient(circle at 10% -5%, rgba(219, 171, 118, 0.16), transparent 45%), var(--bg);
+  color: var(--text);
+}
+
+.toepen-wrap {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.toepen-header h1 {
+  margin: 0.8rem 0 0.25rem;
+}
+
+.toepen-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.toepen-back {
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.5rem 0.9rem;
+}
+
+.toepen-card {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  padding: 0.9rem;
+}
+
+.toepen-label {
+  display: block;
+  margin: 0.65rem 0 0.3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.toepen-row {
+  display: flex;
+  gap: 0.45rem;
+  margin-top: 0.45rem;
+}
+
+.toepen-row input,
+.toepen-card input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.56rem 0.6rem;
+  font-size: 16px;
+}
+
+.toepen-card button {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--button);
+  color: var(--button-text);
+  padding: 0.56rem 0.8rem;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.toepen-card button.ghost {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.toepen-card button:disabled {
+  opacity: 0.45;
+}
+
+.toepen-names,
+.toepen-scores {
+  list-style: none;
+  padding: 0;
+  margin: 0.7rem 0 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.toepen-names li,
+.toepen-scores li {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.toepen-scores li p {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.toepen-scores li.out {
+  opacity: 0.7;
+}
+
+.winner {
+  color: #3e8d4d;
+  font-weight: 600;
+}
+
+.history-list article {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.6rem;
+}
+
+.history-list article + article {
+  margin-top: 0.55rem;
+}
+
+.history-list p {
+  margin: 0;
+}
+
+.history-list ol {
+  margin: 0.45rem 0 0;
+  padding-left: 1rem;
+}

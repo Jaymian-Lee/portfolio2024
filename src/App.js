@@ -822,6 +822,7 @@ function App() {
                   <a href="#experience">Experience</a>
                   <a href="#contact">Contact</a>
                   <Link to="/daily-word">Word-Lee</Link>
+                  <Link to="/toepen">Toepen</Link>
                 </nav>
 
                 <div className="hero-metrics" aria-label="Credibility highlights">
