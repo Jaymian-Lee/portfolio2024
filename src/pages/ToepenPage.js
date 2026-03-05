@@ -298,6 +298,14 @@ function ToepenPage() {
                       Score
                       {player.eliminated ? ` · Uitgeschakeld (plaats ${player.place})` : ''}
                     </p>
+                    <p className="toepen-check-line">
+                      Ligt {player.name} eruit? <strong>{player.eliminated ? 'Ja' : 'Nee'}</strong>
+                    </p>
+                    {player.eliminated && (
+                      <p className="toepen-taunt" aria-live="polite">
+                        {player.name}, jammer joh. Ben je nu zo slecht??
+                      </p>
+                    )}
                   </div>
                   <div className="toepen-score-actions">
                     <button
