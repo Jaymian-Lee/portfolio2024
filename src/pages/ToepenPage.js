@@ -84,13 +84,9 @@ function ToepenPage() {
     return game.players.filter((p) => !p.eliminated);
   }, [game]);
 
-  const sortedPlayers = useMemo(() => {
+  const orderedPlayers = useMemo(() => {
     if (!game) return [];
-    return [...game.players].sort((a, b) => {
-      if (a.eliminated !== b.eliminated) return a.eliminated ? 1 : -1;
-      if (!a.eliminated && !b.eliminated) return b.score - a.score;
-      return (a.place ?? 99) - (b.place ?? 99);
-    });
+    return game.players;
   }, [game]);
 
   const addSetupName = () => {
@@ -194,6 +190,30 @@ function ToepenPage() {
     });
   };
 
+  const decrementScore = (playerId) => {
+    setState((prev) => {
+      if (!prev.game || prev.game.finished) return prev;
+
+      const currentGame = prev.game;
+      const nextPlayers = currentGame.players.map((p) => {
+        if (p.id !== playerId) return p;
+
+        const nextScore = Math.max(0, p.score - 1);
+        const shouldRevive = p.eliminated && nextScore < currentGame.targetScore;
+
+        return {
+          ...p,
+          score: nextScore,
+          eliminated: shouldRevive ? false : p.eliminated,
+          eliminatedAt: shouldRevive ? null : p.eliminatedAt,
+          place: shouldRevive ? null : p.place
+        };
+      });
+
+      return { ...prev, game: { ...currentGame, players: nextPlayers } };
+    });
+  };
+
   const resetCurrentGame = () => {
     setState((prev) => ({ ...prev, game: null }));
   };
@@ -267,7 +287,7 @@ function ToepenPage() {
             )}
 
             <ul className="toepen-scores">
-              {sortedPlayers.map((player) => (
+              {orderedPlayers.map((player) => (
                 <li key={player.id} className={player.eliminated ? 'out' : ''}>
                   <div>
                     <strong>{player.name}</strong>
@@ -276,13 +296,22 @@ function ToepenPage() {
                       {player.eliminated ? ` · Uitgeschakeld (plaats ${player.place})` : ''}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    disabled={game.finished || player.eliminated}
-                    onClick={() => incrementScore(player.id)}
-                  >
-                    +1
-                  </button>
+                  <div className="toepen-score-actions">
+                    <button
+                      type="button"
+                      disabled={game.finished}
+                      onClick={() => decrementScore(player.id)}
+                    >
+                      -1
+                    </button>
+                    <button
+                      type="button"
+                      disabled={game.finished || player.eliminated}
+                      onClick={() => incrementScore(player.id)}
+                    >
+                      +1
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
