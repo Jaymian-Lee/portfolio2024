@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import './ToepenPage.css';
 
 const STORAGE_STATE_KEY = 'toepen-state-v1';
@@ -20,10 +21,30 @@ const createInitialState = () => ({
   game: null
 });
 
+const detectBrowserLanguage = () => {
+  const lang = (navigator.language || '').toLowerCase();
+  return lang.startsWith('nl') ? 'nl' : 'en';
+};
+
+const detectBrowserTheme = () => {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
+};
+
 function ToepenPage() {
   const [nameInput, setNameInput] = useState('');
   const [state, setState] = useState(createInitialState);
   const [history, setHistory] = useState([]);
+  const [language, setLanguage] = useState(() => {
+    const saved = localStorage.getItem('portfolio-language');
+    if (saved === 'en' || saved === 'nl') return saved;
+    return detectBrowserLanguage();
+  });
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('portfolio-theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return detectBrowserTheme();
+  });
 
   useEffect(() => {
     try {
@@ -44,6 +65,16 @@ function ToepenPage() {
   useEffect(() => {
     localStorage.setItem(STORAGE_HISTORY_KEY, JSON.stringify(history));
   }, [history]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('portfolio-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('lang', language);
+    localStorage.setItem('portfolio-language', language);
+  }, [language]);
 
   const setupPlayers = state.setupNames || [];
   const game = state.game;
@@ -176,6 +207,8 @@ function ToepenPage() {
 
   const winnerName = game?.finished ? game.players.find((p) => p.id === game.winnerId)?.name : null;
 
+  const askLabel = language === 'nl' ? 'Vragen?' : 'Questions?';
+
   return (
     <main className="toepen-page">
       <div className="toepen-wrap">
@@ -280,6 +313,16 @@ function ToepenPage() {
           )}
         </section>
       </div>
+
+      <FloatingUtilityBar
+        language={language}
+        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        theme={theme}
+        onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+        askLabel={askLabel}
+        onAsk={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        askAriaLabel={askLabel}
+      />
     </main>
   );
 }
