@@ -78,6 +78,10 @@
   color: var(--text);
 }
 
+.toepen-card > button.ghost {
+  margin-top: 0.9rem;
+}
+
 .toepen-card button:disabled {
   opacity: 0.45;
 }

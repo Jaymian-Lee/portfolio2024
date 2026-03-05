@@ -21,6 +21,45 @@ const createInitialState = () => ({
   game: null
 });
 
+const TAUNTS = [
+  '{name}, jammer joh. Ben je nu zo slecht??',
+  '{name}, deze ronde was echt premium drama.',
+  '{name}, kaartjes waren tegen je vandaag.',
+  '{name}, dit was meer vallen dan spelen.',
+  '{name}, respect dat je het toch probeerde.',
+  '{name}, je ging all-in op pech blijkbaar.',
+  '{name}, dit was een masterclass net-niet.',
+  '{name}, volgende pot misschien met geluk erbij?',
+  '{name}, de kaarten fluisterden: nee.',
+  '{name}, tactiek was goed, uitvoering... minder.',
+  '{name}, je score zei: tijd om te rusten.',
+  '{name}, dit was speedrun naar uitschakeling.',
+  '{name}, je had wel karakter, geen punten.',
+  '{name}, de tafel heeft je vandaag verslagen.',
+  '{name}, oei. Dit was een harde landing.',
+  '{name}, je ging van hoop naar doei.',
+  '{name}, de comeback patch komt later.',
+  '{name}, dit was strategisch chaos.',
+  '{name}, je kaarten deden niet mee.',
+  '{name}, je bent officieel in de pech-liga.',
+  '{name}, iedereen zag het aankomen behalve jij.',
+  '{name}, knap geprobeerd, pijnlijk resultaat.',
+  '{name}, deze ronde was anti-{name}.',
+  '{name}, volgende keer eerst warmdraaien.',
+  '{name}, dit was geen nederlaag, dit was content.'
+];
+
+const getTauntForPlayer = (name, score) => {
+  const seed = `${name}-${score}`;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  const index = Math.abs(hash) % TAUNTS.length;
+  return TAUNTS[index].replaceAll('{name}', name);
+};
+
 const detectBrowserLanguage = () => {
   const lang = (navigator.language || '').toLowerCase();
   return lang.startsWith('nl') ? 'nl' : 'en';
@@ -317,7 +356,7 @@ function ToepenPage() {
                   </div>
                   {player.eliminated && (
                     <div className="toepen-taunt-overlay" aria-live="polite">
-                      <span>{player.name}, jammer joh. Ben je nu zo slecht??</span>
+                      <span>{getTauntForPlayer(player.name, player.score)}</span>
                       <button
                         type="button"
                         className="toepen-overlay-undo"
