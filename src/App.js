@@ -286,7 +286,8 @@ const footerProjects = [
   { label: 'Vizualy', href: 'https://vizualy.nl' },
   { label: 'Twigsie', href: 'https://twigsie.com' },
   { label: 'Vizualy Prints', href: 'https://vizualyprints.com' },
-  { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' }
+  { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
+  { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' }
 ];
 
 const footerConnect = [

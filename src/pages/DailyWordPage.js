@@ -47,7 +47,8 @@ const footerProjects = [
   { label: 'Corthex', href: 'https://corthex.app' },
   { label: 'Botforger', href: 'https://botforger.com' },
   { label: 'Vizualy', href: 'https://vizualy.nl' },
-  { label: 'Refacthor', href: 'https://refacthor.nl' }
+  { label: 'Refacthor', href: 'https://refacthor.nl' },
+  { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' }
 ];
 
 const footerConnect = [
