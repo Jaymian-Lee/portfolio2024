@@ -102,6 +102,25 @@
   gap: 0.5rem;
 }
 
+.toepen-player-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.toepen-score-badge {
+  min-width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: color-mix(in srgb, var(--surface) 72%, var(--accent) 28%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
 .toepen-scores li p {
   margin: 0.2rem 0 0;
   color: var(--muted);
