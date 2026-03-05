@@ -289,15 +289,15 @@ function ToepenPage() {
             <ul className="toepen-scores">
               {orderedPlayers.map((player) => (
                 <li key={player.id} className={player.eliminated ? 'out' : ''}>
+                  <div className="toepen-score-badge" aria-label={`Score ${player.score}`}>
+                    {player.score}
+                  </div>
                   <div className="toepen-player-main">
                     <strong>{player.name}</strong>
                     <p>
                       Score
                       {player.eliminated ? ` · Uitgeschakeld (plaats ${player.place})` : ''}
                     </p>
-                  </div>
-                  <div className="toepen-score-badge" aria-label={`Score ${player.score}`}>
-                    {player.score}
                   </div>
                   <div className="toepen-score-actions">
                     <button
