@@ -570,8 +570,14 @@ function App() {
 
     const checkLiveStatus = async () => {
       try {
-        const response = await fetch('/api/stream/twitch/live');
-        const data = await response.json();
+        let response = await fetch('/api/stream/twitch/live');
+        if (!response.ok && response.status === 404) {
+          response = await fetch('/api/stream-twitch-live');
+        }
+
+        const raw = await response.text();
+        let data = {};
+        try { data = raw ? JSON.parse(raw) : {}; } catch { data = {}; }
         if (!response.ok) return;
 
         const isLiveNow = Boolean(data?.live);

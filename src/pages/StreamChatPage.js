@@ -49,6 +49,21 @@ function UserHoverCard({ message }) {
   );
 }
 
+async function fetchJsonWithFallback(urls) {
+  let lastStatus = 0;
+  for (const url of urls) {
+    try {
+      const response = await fetch(url);
+      lastStatus = response.status;
+      const raw = await response.text();
+      let data = {};
+      try { data = raw ? JSON.parse(raw) : {}; } catch { data = {}; }
+      if (response.ok) return { ok: true, data, status: response.status };
+    } catch {}
+  }
+  return { ok: false, status: lastStatus || 0 };
+}
+
 export default function StreamChatPage() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [messages, setMessages] = useState([]);
@@ -65,10 +80,8 @@ export default function StreamChatPage() {
 
     const loadConfig = async () => {
       try {
-        const response = await fetch('/api/stream/chat/config');
-        const data = await response.json();
-        if (!response.ok) return;
-        if (!stop) setConfig(data);
+        const result = await fetchJsonWithFallback(['/api/stream/chat/config', '/api/stream-chat-config']);
+        if (result.ok && !stop) setConfig(result.data);
       } catch {
         // noop
       }
@@ -91,25 +104,21 @@ export default function StreamChatPage() {
           platforms: activePlatforms.join(','),
           limit: '200'
         });
-        const response = await fetch(`/api/stream/chat/messages?${params.toString()}`);
-        const raw = await response.text();
-        let data = {};
+        const query = params.toString();
+        const result = await fetchJsonWithFallback([
+          `/api/stream/chat/messages?${query}`,
+          `/api/stream-chat-messages?${query}`
+        ]);
 
-        try {
-          data = raw ? JSON.parse(raw) : {};
-        } catch {
-          data = {};
-        }
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Chat API route ontbreekt op de live server. Backend moet opnieuw gedeployed worden.');
+        if (!result.ok) {
+          if (result.status === 404) {
+            throw new Error('Chat API route ontbreekt op de live server.');
           }
-          throw new Error(data?.error || 'Kon chatberichten niet laden.');
+          throw new Error('Kon chatberichten niet laden.');
         }
 
         if (!stop) {
-          setMessages(Array.isArray(data.messages) ? data.messages : []);
+          setMessages(Array.isArray(result.data.messages) ? result.data.messages : []);
           setLastError('');
         }
       } catch (err) {
