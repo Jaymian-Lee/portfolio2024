@@ -324,6 +324,11 @@ const copy = {
     popupWordleeText: 'Have you played Word-Lee today?',
     popupWordleeCta: 'Play Word-Lee',
     popupDismiss: 'Later',
+    twitchLiveTitle: 'Jaymian-Lee is live on Twitch',
+    twitchLiveText: 'He is live now. Watch the stream.',
+    twitchLiveCta: 'Watch now',
+    twitchOfflineLabel: 'Twitch currently offline',
+    twitchLiveLabel: 'Twitch live now',
     quickLinksLabel: 'Quick links',
     storyKicker: 'Approach',
     storyTitle: 'Simple where it should be, strong where it matters.',
@@ -385,6 +390,11 @@ const copy = {
     popupWordleeText: 'Heb je vandaag Word-Lee al gedaan?',
     popupWordleeCta: 'Speel Word-Lee',
     popupDismiss: 'Later',
+    twitchLiveTitle: 'Jaymian-Lee is live op Twitch',
+    twitchLiveText: 'Hij is nu live. Kijk direct mee.',
+    twitchLiveCta: 'Nu kijken',
+    twitchOfflineLabel: 'Twitch nu offline',
+    twitchLiveLabel: 'Twitch nu live',
     quickLinksLabel: 'Snelle links',
     storyKicker: 'Aanpak',
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
@@ -443,6 +453,8 @@ function App() {
   const [greetingIndex, setGreetingIndex] = useState(0);
   const [greetingVisible, setGreetingVisible] = useState(true);
   const [showWordleePopup, setShowWordleePopup] = useState(false);
+  const [showTwitchLivePopup, setShowTwitchLivePopup] = useState(false);
+  const [twitchLive, setTwitchLive] = useState(false);
 
   const revealRefs = useRef([]);
   const messageEndRef = useRef(null);
@@ -549,6 +561,44 @@ function App() {
       setShowWordleePopup(true);
       localStorage.setItem(key, '1');
     }
+  }, [showPreloader]);
+
+  useEffect(() => {
+    if (showPreloader) return;
+
+    let cancelled = false;
+
+    const checkLiveStatus = async () => {
+      try {
+        const response = await fetch('/api/stream/twitch/live');
+        const data = await response.json();
+        if (!response.ok) return;
+
+        const isLiveNow = Boolean(data?.live);
+        if (cancelled) return;
+
+        setTwitchLive(isLiveNow);
+
+        if (isLiveNow) {
+          const fingerprint = String(data?.uptime || data?.checkedAt || Date.now());
+          const popupKey = `twitch-live-popup-v1:${fingerprint}`;
+          if (!sessionStorage.getItem(popupKey)) {
+            setShowTwitchLivePopup(true);
+            sessionStorage.setItem(popupKey, '1');
+          }
+        }
+      } catch {
+        if (!cancelled) setTwitchLive(false);
+      }
+    };
+
+    checkLiveStatus();
+    const interval = setInterval(checkLiveStatus, 120000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [showPreloader]);
 
   useEffect(() => {
@@ -1011,6 +1061,40 @@ function App() {
         </div>
       </main>
 
+      {showTwitchLivePopup && (
+        <div className="wordly-popup-overlay" role="dialog" aria-modal="true" aria-label={t.twitchLiveTitle}>
+          <div className="wordly-popup-card twitch-live-popup-card">
+            <button
+              type="button"
+              className="wordly-popup-close"
+              aria-label="Sluit Twitch live popup"
+              onClick={() => setShowTwitchLivePopup(false)}
+            >
+              ✕
+            </button>
+            <div className="wordly-popup-body">
+              <p className="wordly-popup-kicker">Live now</p>
+              <h3>{t.twitchLiveTitle}</h3>
+              <p className="wordly-popup-text">{t.twitchLiveText}</p>
+              <div className="wordly-popup-actions">
+                <button type="button" className="wordly-popup-dismiss" onClick={() => setShowTwitchLivePopup(false)}>
+                  {t.popupDismiss}
+                </button>
+                <a
+                  href="https://twitch.tv/jaymianlee"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="wordly-popup-cta"
+                  onClick={() => setShowTwitchLivePopup(false)}
+                >
+                  {t.twitchLiveCta}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showWordleePopup && (
         <div className="wordly-popup-overlay" role="dialog" aria-modal="true" aria-label={t.popupWordleeTitle}>
           <div className="wordly-popup-card">
@@ -1100,6 +1184,15 @@ function App() {
             <p>© {currentYear} Jaymian-Lee Reinartz</p>
             <p>{t.footerDomain}</p>
             <p>{t.footerBuilt}</p>
+            <a
+              href="https://twitch.tv/jaymianlee"
+              target="_blank"
+              rel="noreferrer"
+              className={`twitch-live-indicator ${twitchLive ? 'is-live' : 'is-offline'}`}
+            >
+              <span className="dot" />
+              {twitchLive ? t.twitchLiveLabel : t.twitchOfflineLabel}
+            </a>
           </div>
         </div>
       </footer>

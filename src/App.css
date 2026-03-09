@@ -740,6 +740,11 @@ body {
   backdrop-filter: blur(18px);
 }
 
+.twitch-live-popup-card {
+  border-color: color-mix(in srgb, #7b5cff 45%, var(--border));
+  box-shadow: 0 32px 56px rgba(42, 26, 96, 0.45);
+}
+
 .wordly-popup-close {
   position: absolute;
   top: 1rem;
@@ -974,6 +979,36 @@ body {
 .footer-bottomline p {
   margin: 0;
   font-size: 0.82rem;
+}
+
+.twitch-live-indicator {
+  width: fit-content;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+  border-radius: 999px;
+  padding: 0.28rem 0.62rem;
+}
+
+.twitch-live-indicator .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #8e8e8e;
+}
+
+.twitch-live-indicator.is-live .dot {
+  background: #25c466;
+  box-shadow: 0 0 0 0 rgba(37, 196, 102, 0.55);
+  animation: softPulse 1.5s ease-in-out infinite;
+}
+
+.twitch-live-indicator.is-offline .dot {
+  background: #8e8e8e;
 }
 
 .ask-widget {

@@ -276,6 +276,28 @@ app.get('/api/stream/chat/config', (req, res) => {
   });
 });
 
+app.get('/api/stream/twitch/live', async (req, res) => {
+  try {
+    const response = await fetch(`https://decapi.me/twitch/uptime/${STREAM_DEFAULT_CHANNEL}`);
+    const text = String(await response.text()).trim();
+    const lowered = text.toLowerCase();
+    const isLive = Boolean(text) && !lowered.includes('not live') && !lowered.includes('offline');
+
+    return res.json({
+      channel: STREAM_DEFAULT_CHANNEL,
+      live: isLive,
+      uptime: text,
+      checkedAt: Date.now()
+    });
+  } catch (error) {
+    return res.status(502).json({
+      channel: STREAM_DEFAULT_CHANNEL,
+      live: null,
+      error: 'Kon Twitch live status niet ophalen.'
+    });
+  }
+});
+
 app.get('/api/stream/chat/messages', (req, res) => {
   const rawPlatforms = String(req.query.platforms || '')
     .split(',')
