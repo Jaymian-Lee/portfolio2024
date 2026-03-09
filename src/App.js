@@ -290,6 +290,7 @@ const footerProjects = [
   { label: 'Twigsie', href: 'https://twigsie.com' },
   { label: 'Vizualy Prints', href: 'https://vizualyprints.com' },
   { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
+  { label: 'Stream Dashboard', href: 'https://jaymian-lee.nl/stream' },
   { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' }
 ];
 
@@ -866,6 +867,9 @@ function App() {
                   </a>
                   <Link to="/daily-word" className="btn btn-daily" aria-label="Open Word-Lee game">
                     {t.ctaDaily}
+                  </Link>
+                  <Link to="/stream" className="btn btn-ghost" aria-label="Open Stream dashboard">
+                    Stream dashboard
                   </Link>
                 </div>
               </div>
