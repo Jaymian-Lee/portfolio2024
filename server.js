@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
+const fs = require('node:fs');
+const tmi = require('tmi.js');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -18,6 +20,64 @@ const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
 const STREAM_DEFAULT_CHANNEL = String(process.env.STREAM_CHANNEL || 'jaymianlee').toLowerCase();
 const STREAM_PLATFORM_KEYS = ['twitch', 'tiktok', 'youtube'];
 const streamMessages = [];
+
+const TWITCH_BOT_TOKEN_PATH = '/home/jay/.openclaw/credentials/twitch.bot_token.json';
+const TWITCH_BOT_USERNAME = process.env.TWITCH_BOT_USERNAME || 'JaymianLeeBot';
+let twitchBridgeState = { connected: false, error: null, startedAt: null };
+
+function startTwitchChatBridge() {
+  try {
+    if (!fs.existsSync(TWITCH_BOT_TOKEN_PATH)) {
+      twitchBridgeState = { connected: false, error: 'token-missing', startedAt: Date.now() };
+      return;
+    }
+
+    const token = JSON.parse(fs.readFileSync(TWITCH_BOT_TOKEN_PATH, 'utf8'))?.access_token;
+    if (!token) {
+      twitchBridgeState = { connected: false, error: 'token-invalid', startedAt: Date.now() };
+      return;
+    }
+
+    const client = new tmi.Client({
+      options: { debug: false },
+      identity: {
+        username: TWITCH_BOT_USERNAME,
+        password: `oauth:${token}`
+      },
+      channels: [`#${STREAM_DEFAULT_CHANNEL}`]
+    });
+
+    client.on('connected', () => {
+      twitchBridgeState = { connected: true, error: null, startedAt: Date.now() };
+      pushStreamMessage({
+        platform: 'twitch',
+        author: 'StreamBot',
+        text: `Verbonden met Twitch chat: ${STREAM_DEFAULT_CHANNEL}`,
+        timestamp: Date.now()
+      });
+    });
+
+    client.on('disconnected', (reason) => {
+      twitchBridgeState = { connected: false, error: String(reason || 'disconnected'), startedAt: Date.now() };
+    });
+
+    client.on('message', (channel, tags, message, self) => {
+      if (self) return;
+      pushStreamMessage({
+        platform: 'twitch',
+        author: tags?.['display-name'] || tags?.username || 'viewer',
+        text: String(message || ''),
+        timestamp: Date.now()
+      });
+    });
+
+    client.connect().catch((error) => {
+      twitchBridgeState = { connected: false, error: String(error?.message || error), startedAt: Date.now() };
+    });
+  } catch (error) {
+    twitchBridgeState = { connected: false, error: String(error?.message || error), startedAt: Date.now() };
+  }
+}
 
 function pushStreamMessage({ platform, author, text, timestamp = Date.now() }) {
   const safePlatform = STREAM_PLATFORM_KEYS.includes(platform) ? platform : 'twitch';
@@ -65,6 +125,7 @@ function seedStreamMessages() {
 }
 
 seedStreamMessages();
+startTwitchChatBridge();
 
 const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
@@ -269,7 +330,12 @@ app.get('/api/stream/chat/config', (req, res) => {
   res.json({
     channel: STREAM_DEFAULT_CHANNEL,
     platforms: {
-      twitch: { enabled: true, mode: 'ready' },
+      twitch: {
+        enabled: true,
+        mode: twitchBridgeState.connected ? 'connected' : 'ready',
+        connected: twitchBridgeState.connected,
+        error: twitchBridgeState.error
+      },
       tiktok: { enabled: true, mode: 'ready' },
       youtube: { enabled: true, mode: 'ready' }
     }
