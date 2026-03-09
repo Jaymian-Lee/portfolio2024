@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import SiteChrome from '../components/SiteChrome';
 import './StreamPages.css';
 
 export default function StreamDashboardPage() {
   return (
+    <SiteChrome>
     <main className="stream-shell">
       <section className="stream-card">
         <p className="stream-kicker">Stream Dashboard</p>
@@ -40,5 +42,6 @@ export default function StreamDashboardPage() {
         </div>
       </section>
     </main>
+    </SiteChrome>
   );
 }

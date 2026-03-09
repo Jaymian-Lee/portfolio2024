@@ -1,17 +1,34 @@
 .stream-shell {
   min-height: 100vh;
-  background: #0f1116;
-  color: #f5f7ff;
+  color: var(--text);
   padding: 2rem 1rem;
+}
+
+.stream-top-nav {
+  width: min(1080px, 92vw);
+  margin: 1rem auto 0;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.stream-top-nav a {
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  background: var(--surface);
 }
 
 .stream-card {
   max-width: 920px;
   margin: 0 auto;
-  background: #161a24;
-  border: 1px solid #2a3144;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1.2rem;
+  box-shadow: var(--shadow-soft);
 }
 
 .stream-kicker {
@@ -19,7 +36,7 @@
   font-size: 0.8rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #8fa7ff;
+  color: var(--muted);
 }
 
 .stream-grid {
@@ -30,8 +47,8 @@
 }
 
 .stream-panel {
-  background: #101522;
-  border: 1px solid #283149;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1rem;
 }
@@ -40,18 +57,19 @@
 .stream-link {
   display: inline-block;
   margin-top: 0.8rem;
-  color: #0f1116;
-  background: #8fa7ff;
+  color: var(--button-text);
+  background: var(--button);
   padding: 0.5rem 0.8rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
+  border: 1px solid transparent;
 }
 
 .stream-link {
   background: transparent;
-  color: #8fa7ff;
-  border: 1px solid #44517a;
+  color: var(--text);
+  border-color: var(--border);
 }
 
 .stream-actions {
@@ -73,7 +91,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.4rem 0.6rem;
-  border: 1px solid #33415f;
+  border: 1px solid var(--border);
   border-radius: 999px;
 }
 
@@ -86,10 +104,10 @@
 }
 
 .stream-message {
-  border: 1px solid #2c3550;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.7rem;
-  background: #0d1320;
+  background: color-mix(in srgb, var(--surface) 90%, var(--bg-soft));
 }
 
 .stream-message header {
@@ -106,22 +124,27 @@
   letter-spacing: 0.06em;
   border-radius: 999px;
   padding: 0.2rem 0.45rem;
-  background: #25314f;
+  background: #7d5b3a;
+  color: #fff;
 }
 
-.platform-twitch .platform-pill { background: #5c44c8; }
-.platform-youtube .platform-pill { background: #b11f2b; }
-.platform-tiktok .platform-pill { background: #1f9fb1; }
+.platform-twitch .platform-pill { background: #7a57de; }
+.platform-youtube .platform-pill { background: #bf3a44; }
+.platform-tiktok .platform-pill { background: #1f9f98; }
 
 .stream-message p {
   margin: 0.45rem 0 0;
 }
 
 .stream-muted {
-  color: #a5b0cf;
+  color: var(--muted);
 }
 
 .stream-error {
-  color: #ff8997;
+  color: #d24f62;
   margin-top: 1rem;
+}
+
+.stream-site-footer {
+  padding-top: 0.4rem;
 }
