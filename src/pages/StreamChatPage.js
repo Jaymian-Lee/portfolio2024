@@ -5,7 +5,7 @@ import './StreamPages.css';
 
 const DEFAULT_FILTERS = {
   twitch: true,
-  tiktok: true,
+  tiktok: false,
   youtube: true
 };
 
@@ -35,9 +35,19 @@ export default function StreamChatPage() {
           limit: '120'
         });
         const response = await fetch(`/api/stream/chat/messages?${params.toString()}`);
-        const data = await response.json();
+        const raw = await response.text();
+        let data = {};
+
+        try {
+          data = raw ? JSON.parse(raw) : {};
+        } catch {
+          data = {};
+        }
 
         if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Chat API route ontbreekt op de live server. Backend moet opnieuw gedeployed worden.');
+          }
           throw new Error(data?.error || 'Kon chatberichten niet laden.');
         }
 
