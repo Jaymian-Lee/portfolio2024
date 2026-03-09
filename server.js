@@ -3,6 +3,7 @@ const cors = require('cors');
 const OpenAI = require('openai');
 const fs = require('node:fs');
 const tmi = require('tmi.js');
+const crypto = require('node:crypto');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -24,6 +25,20 @@ const streamMessages = [];
 const TWITCH_BOT_TOKEN_PATH = '/home/jay/.openclaw/credentials/twitch.bot_token.json';
 const TWITCH_BOT_USERNAME = process.env.TWITCH_BOT_USERNAME || 'JaymianLeeBot';
 let twitchBridgeState = { connected: false, error: null, startedAt: null };
+
+const YT_CLIENT_ID_PATH = '/home/jay/.openclaw/credentials/youtube.client_id';
+const YT_CLIENT_SECRET_PATH = '/home/jay/.openclaw/credentials/youtube.client_secret';
+const YT_TOKEN_PATH = '/home/jay/.openclaw/credentials/youtube.user_token.json';
+const YT_STATE_PATH = '/home/jay/.openclaw/credentials/youtube.oauth_state';
+const YT_REDIRECT_URI = process.env.YT_REDIRECT_URI || 'https://jaymian-lee.nl/api/stream/youtube/callback';
+
+function loadYoutubeClientCreds() {
+  if (!fs.existsSync(YT_CLIENT_ID_PATH) || !fs.existsSync(YT_CLIENT_SECRET_PATH)) return null;
+  return {
+    clientId: String(fs.readFileSync(YT_CLIENT_ID_PATH, 'utf8')).trim(),
+    clientSecret: String(fs.readFileSync(YT_CLIENT_SECRET_PATH, 'utf8')).trim()
+  };
+}
 
 function startTwitchChatBridge() {
   try {
@@ -326,6 +341,75 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.get('/api/stream/youtube/auth/url', (req, res) => {
+  const creds = loadYoutubeClientCreds();
+  if (!creds?.clientId) {
+    return res.status(500).json({ error: 'YouTube client credentials ontbreken.' });
+  }
+
+  const state = crypto.randomBytes(16).toString('hex');
+  fs.writeFileSync(YT_STATE_PATH, state);
+
+  const params = new URLSearchParams({
+    client_id: creds.clientId,
+    redirect_uri: YT_REDIRECT_URI,
+    response_type: 'code',
+    access_type: 'offline',
+    include_granted_scopes: 'true',
+    prompt: 'consent',
+    scope: 'https://www.googleapis.com/auth/youtube.readonly',
+    state
+  });
+
+  return res.json({
+    url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+    redirectUri: YT_REDIRECT_URI
+  });
+});
+
+app.get('/api/stream/youtube/callback', async (req, res) => {
+  try {
+    const code = String(req.query.code || '');
+    const state = String(req.query.state || '');
+    const expectedState = fs.existsSync(YT_STATE_PATH) ? String(fs.readFileSync(YT_STATE_PATH, 'utf8')).trim() : '';
+
+    if (!code || !state || state !== expectedState) {
+      return res.status(400).send('Ongeldige YouTube OAuth callback (state/code).');
+    }
+
+    const creds = loadYoutubeClientCreds();
+    if (!creds?.clientId || !creds?.clientSecret) {
+      return res.status(500).send('YouTube client credentials ontbreken.');
+    }
+
+    const tokenBody = new URLSearchParams({
+      code,
+      client_id: creds.clientId,
+      client_secret: creds.clientSecret,
+      redirect_uri: YT_REDIRECT_URI,
+      grant_type: 'authorization_code'
+    });
+
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: tokenBody.toString()
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data?.access_token) {
+      return res.status(500).send(`Token exchange failed: ${JSON.stringify(data).slice(0, 240)}`);
+    }
+
+    fs.writeFileSync(YT_TOKEN_PATH, JSON.stringify({ ...data, obtained_at: Date.now() }, null, 2));
+    try { fs.chmodSync(YT_TOKEN_PATH, 0o600); } catch {}
+
+    return res.status(200).send('YouTube is gekoppeld. Je kunt dit venster sluiten.');
+  } catch (error) {
+    return res.status(500).send(`YouTube callback error: ${String(error?.message || error)}`);
+  }
+});
+
 app.get('/api/stream/chat/config', (req, res) => {
   res.json({
     channel: STREAM_DEFAULT_CHANNEL,
@@ -337,7 +421,11 @@ app.get('/api/stream/chat/config', (req, res) => {
         error: twitchBridgeState.error
       },
       tiktok: { enabled: true, mode: 'ready' },
-      youtube: { enabled: true, mode: 'ready' }
+      youtube: {
+        enabled: true,
+        mode: fs.existsSync(YT_TOKEN_PATH) ? 'connected' : 'ready',
+        connected: fs.existsSync(YT_TOKEN_PATH)
+      }
     }
   });
 });
