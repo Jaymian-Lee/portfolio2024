@@ -32,12 +32,31 @@ const YT_TOKEN_PATH = '/home/jay/.openclaw/credentials/youtube.user_token.json';
 const YT_STATE_PATH = '/home/jay/.openclaw/credentials/youtube.oauth_state';
 const YT_REDIRECT_URI = process.env.YT_REDIRECT_URI || 'https://jaymian-lee.nl/api/stream/youtube/callback';
 
+let youtubeBridgeState = {
+  connected: false,
+  error: null,
+  startedAt: null,
+  liveChatId: null,
+  nextPageToken: null,
+  pollIntervalMs: 5000
+};
+
 function loadYoutubeClientCreds() {
   if (!fs.existsSync(YT_CLIENT_ID_PATH) || !fs.existsSync(YT_CLIENT_SECRET_PATH)) return null;
   return {
     clientId: String(fs.readFileSync(YT_CLIENT_ID_PATH, 'utf8')).trim(),
     clientSecret: String(fs.readFileSync(YT_CLIENT_SECRET_PATH, 'utf8')).trim()
   };
+}
+
+function normalizeTwitchBadges(badgesObj = {}) {
+  const out = [];
+  if (badgesObj.broadcaster) out.push({ key: 'broadcaster', label: 'Broadcaster' });
+  if (badgesObj.moderator) out.push({ key: 'moderator', label: 'Mod' });
+  if (badgesObj.vip) out.push({ key: 'vip', label: 'VIP' });
+  if (badgesObj.subscriber) out.push({ key: 'subscriber', label: 'Sub' });
+  if (badgesObj.founder) out.push({ key: 'founder', label: 'Founder' });
+  return out;
 }
 
 function startTwitchChatBridge() {
@@ -81,8 +100,17 @@ function startTwitchChatBridge() {
       pushStreamMessage({
         platform: 'twitch',
         author: tags?.['display-name'] || tags?.username || 'viewer',
+        username: tags?.username || null,
         text: String(message || ''),
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        metadata: {
+          color: tags?.color || null,
+          badges: normalizeTwitchBadges(tags?.badges || {}),
+          isSubscriber: Boolean(tags?.subscriber),
+          isMod: Boolean(tags?.mod),
+          isVip: Boolean(tags?.badges?.vip),
+          userType: tags?.['user-type'] || null
+        }
       });
     });
 
@@ -94,9 +122,10 @@ function startTwitchChatBridge() {
   }
 }
 
-function pushStreamMessage({ platform, author, text, timestamp = Date.now() }) {
+function pushStreamMessage({ platform, author, username = null, text, timestamp = Date.now(), metadata = {} }) {
   const safePlatform = STREAM_PLATFORM_KEYS.includes(platform) ? platform : 'twitch';
   const safeAuthor = String(author || 'viewer').slice(0, 40);
+  const safeUsername = username ? String(username).slice(0, 40) : null;
   const safeText = String(text || '').slice(0, 500);
   const safeTimestamp = Number.isFinite(timestamp) ? timestamp : Date.now();
 
@@ -106,13 +135,155 @@ function pushStreamMessage({ platform, author, text, timestamp = Date.now() }) {
     id: `${safePlatform}-${safeTimestamp}-${Math.random().toString(36).slice(2, 8)}`,
     platform: safePlatform,
     author: safeAuthor,
+    username: safeUsername,
     text: safeText,
-    timestamp: safeTimestamp
+    timestamp: safeTimestamp,
+    metadata: metadata && typeof metadata === 'object' ? metadata : {}
   });
 
   if (streamMessages.length > 500) {
     streamMessages.splice(0, streamMessages.length - 500);
   }
+}
+
+async function refreshYoutubeAccessTokenIfNeeded() {
+  if (!fs.existsSync(YT_TOKEN_PATH)) return null;
+  const token = JSON.parse(fs.readFileSync(YT_TOKEN_PATH, 'utf8'));
+  const now = Date.now();
+  const expiresAt = Number(token.obtained_at || 0) + (Number(token.expires_in || 0) * 1000);
+
+  if (token.access_token && expiresAt > now + 60000) {
+    return token;
+  }
+
+  if (!token.refresh_token) return token;
+
+  const creds = loadYoutubeClientCreds();
+  if (!creds?.clientId || !creds?.clientSecret) return token;
+
+  const tokenBody = new URLSearchParams({
+    client_id: creds.clientId,
+    client_secret: creds.clientSecret,
+    refresh_token: token.refresh_token,
+    grant_type: 'refresh_token'
+  });
+
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: tokenBody.toString()
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data?.access_token) {
+    throw new Error(`youtube-refresh-failed:${response.status}`);
+  }
+
+  const next = {
+    ...token,
+    access_token: data.access_token,
+    expires_in: data.expires_in,
+    scope: data.scope || token.scope,
+    token_type: data.token_type || token.token_type,
+    obtained_at: Date.now()
+  };
+  fs.writeFileSync(YT_TOKEN_PATH, JSON.stringify(next, null, 2));
+  try { fs.chmodSync(YT_TOKEN_PATH, 0o600); } catch {}
+  return next;
+}
+
+async function youtubeApi(path, accessToken) {
+  const response = await fetch(`https://www.googleapis.com/youtube/v3/${path}`, {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(`youtube-api-${response.status}:${JSON.stringify(data).slice(0, 180)}`);
+  }
+  return data;
+}
+
+async function resolveYoutubeLiveChat(accessToken) {
+  const data = await youtubeApi('liveBroadcasts?part=snippet,status&broadcastStatus=active&broadcastType=all&mine=true&maxResults=5', accessToken);
+  const active = Array.isArray(data?.items) ? data.items.find((item) => item?.snippet?.liveChatId) : null;
+  return active?.snippet?.liveChatId || null;
+}
+
+async function pollYoutubeChatOnce() {
+  if (!fs.existsSync(YT_TOKEN_PATH)) {
+    youtubeBridgeState = { ...youtubeBridgeState, connected: false, error: 'token-missing' };
+    return;
+  }
+
+  const token = await refreshYoutubeAccessTokenIfNeeded();
+  if (!token?.access_token) {
+    youtubeBridgeState = { ...youtubeBridgeState, connected: false, error: 'token-invalid' };
+    return;
+  }
+
+  if (!youtubeBridgeState.liveChatId) {
+    youtubeBridgeState.liveChatId = await resolveYoutubeLiveChat(token.access_token);
+  }
+
+  if (!youtubeBridgeState.liveChatId) {
+    youtubeBridgeState = { ...youtubeBridgeState, connected: false, error: 'youtube-not-live' };
+    return;
+  }
+
+  const base = `liveChat/messages?part=snippet,authorDetails&liveChatId=${encodeURIComponent(youtubeBridgeState.liveChatId)}&maxResults=200`;
+  const path = youtubeBridgeState.nextPageToken ? `${base}&pageToken=${encodeURIComponent(youtubeBridgeState.nextPageToken)}` : base;
+  const data = await youtubeApi(path, token.access_token);
+
+  const items = Array.isArray(data?.items) ? data.items : [];
+  for (const item of items) {
+    const author = item?.authorDetails?.displayName || 'YouTube viewer';
+    const text = item?.snippet?.displayMessage || '';
+    const publishedAt = item?.snippet?.publishedAt ? new Date(item.snippet.publishedAt).getTime() : Date.now();
+    pushStreamMessage({
+      platform: 'youtube',
+      author,
+      username: item?.authorDetails?.channelId || null,
+      text,
+      timestamp: publishedAt,
+      metadata: {
+        channelId: item?.authorDetails?.channelId || null,
+        profileImageUrl: item?.authorDetails?.profileImageUrl || null,
+        isChatOwner: Boolean(item?.authorDetails?.isChatOwner),
+        isChatModerator: Boolean(item?.authorDetails?.isChatModerator),
+        isChatSponsor: Boolean(item?.authorDetails?.isChatSponsor)
+      }
+    });
+  }
+
+  youtubeBridgeState = {
+    ...youtubeBridgeState,
+    connected: true,
+    error: null,
+    startedAt: youtubeBridgeState.startedAt || Date.now(),
+    nextPageToken: data?.nextPageToken || youtubeBridgeState.nextPageToken,
+    pollIntervalMs: Number(data?.pollingIntervalMillis) || 5000
+  };
+}
+
+function startYoutubeChatBridge() {
+  youtubeBridgeState.startedAt = Date.now();
+
+  const loop = async () => {
+    try {
+      await pollYoutubeChatOnce();
+    } catch (error) {
+      const msg = String(error?.message || error);
+      if (msg.includes('liveChatEnded') || msg.includes('youtube-api-403')) {
+        youtubeBridgeState.liveChatId = null;
+        youtubeBridgeState.nextPageToken = null;
+      }
+      youtubeBridgeState = { ...youtubeBridgeState, connected: false, error: msg };
+    } finally {
+      setTimeout(loop, Math.max(3000, youtubeBridgeState.pollIntervalMs || 5000));
+    }
+  };
+
+  loop();
 }
 
 function seedStreamMessages() {
@@ -141,6 +312,7 @@ function seedStreamMessages() {
 
 seedStreamMessages();
 startTwitchChatBridge();
+startYoutubeChatBridge();
 
 const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
@@ -423,8 +595,10 @@ app.get('/api/stream/chat/config', (req, res) => {
       tiktok: { enabled: true, mode: 'ready' },
       youtube: {
         enabled: true,
-        mode: fs.existsSync(YT_TOKEN_PATH) ? 'connected' : 'ready',
-        connected: fs.existsSync(YT_TOKEN_PATH)
+        mode: youtubeBridgeState.connected ? 'connected' : 'ready',
+        connected: youtubeBridgeState.connected,
+        error: youtubeBridgeState.error,
+        liveChatId: youtubeBridgeState.liveChatId
       }
     }
   });

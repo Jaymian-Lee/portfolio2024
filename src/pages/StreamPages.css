@@ -79,6 +79,32 @@
   flex-wrap: wrap;
 }
 
+.stream-status-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+
+.stream-status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  padding: 0.2rem 0.55rem;
+}
+
+.stream-status-pill.ok {
+  border-color: #2d9f63;
+  color: #2d9f63;
+}
+
+.stream-status-pill.warn {
+  border-color: #b28933;
+  color: #b28933;
+}
+
 .stream-filters {
   margin-top: 1rem;
   display: flex;
@@ -116,6 +142,37 @@
   align-items: center;
   font-size: 0.85rem;
   opacity: 0.95;
+}
+
+.stream-author-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.stream-user-hover-card {
+  display: none;
+  position: absolute;
+  top: 120%;
+  left: 0;
+  z-index: 4;
+  min-width: 180px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-soft);
+  padding: 0.5rem 0.6rem;
+  color: var(--text);
+}
+
+.stream-user-hover-card p {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.stream-author-wrap:hover .stream-user-hover-card {
+  display: block;
 }
 
 .platform-pill {
