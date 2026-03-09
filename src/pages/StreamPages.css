@@ -1,0 +1,127 @@
+.stream-shell {
+  min-height: 100vh;
+  background: #0f1116;
+  color: #f5f7ff;
+  padding: 2rem 1rem;
+}
+
+.stream-card {
+  max-width: 920px;
+  margin: 0 auto;
+  background: #161a24;
+  border: 1px solid #2a3144;
+  border-radius: 14px;
+  padding: 1.2rem;
+}
+
+.stream-kicker {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8fa7ff;
+}
+
+.stream-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 1rem;
+}
+
+.stream-panel {
+  background: #101522;
+  border: 1px solid #283149;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.stream-btn,
+.stream-link {
+  display: inline-block;
+  margin-top: 0.8rem;
+  color: #0f1116;
+  background: #8fa7ff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.stream-link {
+  background: transparent;
+  color: #8fa7ff;
+  border: 1px solid #44517a;
+}
+
+.stream-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.stream-filters {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.stream-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #33415f;
+  border-radius: 999px;
+}
+
+.stream-chat-feed {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.6rem;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.stream-message {
+  border: 1px solid #2c3550;
+  border-radius: 10px;
+  padding: 0.7rem;
+  background: #0d1320;
+}
+
+.stream-message header {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.85rem;
+  opacity: 0.95;
+}
+
+.platform-pill {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
+  background: #25314f;
+}
+
+.platform-twitch .platform-pill { background: #5c44c8; }
+.platform-youtube .platform-pill { background: #b11f2b; }
+.platform-tiktok .platform-pill { background: #1f9fb1; }
+
+.stream-message p {
+  margin: 0.45rem 0 0;
+}
+
+.stream-muted {
+  color: #a5b0cf;
+}
+
+.stream-error {
+  color: #ff8997;
+  margin-top: 1rem;
+}

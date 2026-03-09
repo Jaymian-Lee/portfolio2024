@@ -15,6 +15,57 @@ const SCORE_FACTOR = 10 ** 13;
 const DURATION_MULTIPLIER = 1000;
 const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
 
+const STREAM_DEFAULT_CHANNEL = String(process.env.STREAM_CHANNEL || 'jaymianlee').toLowerCase();
+const STREAM_PLATFORM_KEYS = ['twitch', 'tiktok', 'youtube'];
+const streamMessages = [];
+
+function pushStreamMessage({ platform, author, text, timestamp = Date.now() }) {
+  const safePlatform = STREAM_PLATFORM_KEYS.includes(platform) ? platform : 'twitch';
+  const safeAuthor = String(author || 'viewer').slice(0, 40);
+  const safeText = String(text || '').slice(0, 500);
+  const safeTimestamp = Number.isFinite(timestamp) ? timestamp : Date.now();
+
+  if (!safeText.trim()) return;
+
+  streamMessages.push({
+    id: `${safePlatform}-${safeTimestamp}-${Math.random().toString(36).slice(2, 8)}`,
+    platform: safePlatform,
+    author: safeAuthor,
+    text: safeText,
+    timestamp: safeTimestamp
+  });
+
+  if (streamMessages.length > 500) {
+    streamMessages.splice(0, streamMessages.length - 500);
+  }
+}
+
+function seedStreamMessages() {
+  if (streamMessages.length > 0) return;
+
+  const now = Date.now();
+  pushStreamMessage({
+    platform: 'twitch',
+    author: 'StreamBot',
+    text: `Chat gekoppeld voor ${STREAM_DEFAULT_CHANNEL}.`,
+    timestamp: now - 25000
+  });
+  pushStreamMessage({
+    platform: 'youtube',
+    author: 'Info',
+    text: 'YouTube bron staat klaar voor API-koppeling.',
+    timestamp: now - 16000
+  });
+  pushStreamMessage({
+    platform: 'tiktok',
+    author: 'Info',
+    text: 'TikTok bron staat klaar voor API-koppeling.',
+    timestamp: now - 11000
+  });
+}
+
+seedStreamMessages();
+
 const knowledgeBase = `You are Jaymian-Lee's portfolio assistant.
 
 Core behavior:
@@ -212,6 +263,54 @@ app.get('/api/health', (req, res) => {
     hasApiKey: Boolean(process.env.OPENAI_API_KEY),
     hasKv: Boolean(KV_REST_API_URL && KV_REST_API_TOKEN)
   });
+});
+
+app.get('/api/stream/chat/config', (req, res) => {
+  res.json({
+    channel: STREAM_DEFAULT_CHANNEL,
+    platforms: {
+      twitch: { enabled: true, mode: 'ready' },
+      tiktok: { enabled: true, mode: 'ready' },
+      youtube: { enabled: true, mode: 'ready' }
+    }
+  });
+});
+
+app.get('/api/stream/chat/messages', (req, res) => {
+  const rawPlatforms = String(req.query.platforms || '')
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+
+  const requestedPlatforms = rawPlatforms.length
+    ? rawPlatforms.filter((value) => STREAM_PLATFORM_KEYS.includes(value))
+    : STREAM_PLATFORM_KEYS;
+
+  const limit = Math.min(300, Math.max(1, Number(req.query.limit) || 100));
+
+  const filtered = streamMessages
+    .filter((message) => requestedPlatforms.includes(message.platform))
+    .sort((a, b) => a.timestamp - b.timestamp)
+    .slice(-limit);
+
+  return res.json({
+    channel: STREAM_DEFAULT_CHANNEL,
+    platforms: requestedPlatforms,
+    messages: filtered
+  });
+});
+
+app.post('/api/stream/chat/mock', (req, res) => {
+  const platform = String(req.body?.platform || 'twitch').toLowerCase();
+  const author = String(req.body?.author || 'viewer');
+  const text = String(req.body?.text || '').trim();
+
+  if (!text) {
+    return res.status(400).json({ error: 'Berichttekst ontbreekt.' });
+  }
+
+  pushStreamMessage({ platform, author, text, timestamp: Date.now() });
+  return res.json({ ok: true });
 });
 
 app.get('/api/wordlee/leaderboard', async (req, res) => {

@@ -279,6 +279,7 @@ const footerQuickLinks = [
   { label: 'Case studies', href: '#case-studies' },
   { label: 'Experience', href: '#experience' },
   { label: 'Contact', href: '#contact' },
+  { label: 'Stream', href: '/stream' },
   { label: 'Toepen', href: '/toepen' }
 ];
 
@@ -828,6 +829,7 @@ function App() {
                   <a href="#experience">Experience</a>
                   <a href="#contact">Contact</a>
                   <Link to="/daily-word">Word-Lee</Link>
+                  <Link to="/stream">Stream</Link>
                   <Link to="/toepen">Toepen</Link>
                 </nav>
 
