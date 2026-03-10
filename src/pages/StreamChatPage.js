@@ -16,9 +16,9 @@ const platformLabel = {
 };
 
 const platformIcon = {
-  twitch: '🟣',
-  tiktok: '🎵',
-  youtube: '🔴'
+  twitch: '🎮',
+  tiktok: '🎬',
+  youtube: '📺'
 };
 
 function UserHoverCard({ message }) {
@@ -151,9 +151,15 @@ export default function StreamChatPage() {
 
           <div className="stream-status-row">
             <span className={`stream-status-pill ${(config?.platforms?.twitch?.connected) ? 'ok' : 'warn'}`}>
+              <span className="platform-symbol">🎮</span>
               Twitch {config?.platforms?.twitch?.connected ? 'connected' : 'niet verbonden'}
             </span>
+            <span className={`stream-status-pill ${(config?.platforms?.tiktok?.connected) ? 'ok' : 'warn'}`}>
+              <span className="platform-symbol">🎬</span>
+              TikTok {config?.platforms?.tiktok?.connected ? 'connected' : 'niet verbonden'}
+            </span>
             <span className={`stream-status-pill ${(config?.platforms?.youtube?.connected) ? 'ok' : 'warn'}`}>
+              <span className="platform-symbol">📺</span>
               YouTube {config?.platforms?.youtube?.connected ? 'connected' : 'niet verbonden'}
             </span>
           </div>
@@ -162,7 +168,7 @@ export default function StreamChatPage() {
             {Object.keys(DEFAULT_FILTERS).map((platform) => (
               <label key={platform} className="stream-filter">
                 <input type="checkbox" checked={filters[platform]} onChange={() => toggle(platform)} />
-                <span>{platformIcon[platform]} {platformLabel[platform]}</span>
+                <span><span className="platform-symbol">{platformIcon[platform]}</span> {platformLabel[platform]}</span>
               </label>
             ))}
           </div>
@@ -173,7 +179,7 @@ export default function StreamChatPage() {
             {messages.map((message) => (
               <article key={message.id} className={`stream-message platform-${message.platform}`}>
                 <header>
-                  <span className="platform-pill">{platformIcon[message.platform]} {platformLabel[message.platform] || message.platform}</span>
+                  <span className="platform-pill"><span className="platform-symbol">{platformIcon[message.platform] || '💬'}</span> {platformLabel[message.platform] || message.platform}</span>
                   <div className="stream-author-wrap" style={{ color: message?.metadata?.color || 'inherit' }}>
                     <strong>{message.author}</strong>
                     <UserHoverCard message={message} />

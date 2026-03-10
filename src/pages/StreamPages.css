@@ -89,10 +89,19 @@
 .stream-status-pill {
   display: inline-flex;
   align-items: center;
+  gap: 0.35rem;
   border-radius: 999px;
   border: 1px solid var(--border);
   font-size: 0.78rem;
   padding: 0.2rem 0.55rem;
+}
+
+.platform-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .stream-status-pill.ok {
@@ -202,6 +211,3 @@
   margin-top: 1rem;
 }
 
-.stream-site-footer {
-  padding-top: 0.4rem;
-}

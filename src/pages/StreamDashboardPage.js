@@ -28,9 +28,9 @@ export default function StreamDashboardPage() {
           <article className="stream-panel">
             <h2>Status</h2>
             <ul>
-              <li>Twitch: voorbereid</li>
-              <li>TikTok: voorbereid</li>
-              <li>YouTube: voorbereid</li>
+              <li>🎮 Twitch: voorbereid</li>
+              <li>🎬 TikTok: voorbereid</li>
+              <li>📺 YouTube: voorbereid</li>
             </ul>
           </article>
         </div>
