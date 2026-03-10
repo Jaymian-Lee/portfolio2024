@@ -109,6 +109,10 @@
 .toepen-player-main {
   min-width: 0;
   flex: 1;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .toepen-score-badge {
