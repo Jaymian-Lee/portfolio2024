@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SiteChrome from '../components/SiteChrome';
+import PlatformIcon from '../components/PlatformIcon';
 import './StreamPages.css';
 
 const DEFAULT_FILTERS = {
@@ -15,11 +16,6 @@ const platformLabel = {
   youtube: 'YouTube'
 };
 
-const platformIcon = {
-  twitch: '🎮',
-  tiktok: '🎬',
-  youtube: '📺'
-};
 
 function UserHoverCard({ message }) {
   const meta = message?.metadata || {};
@@ -151,15 +147,15 @@ export default function StreamChatPage() {
 
           <div className="stream-status-row">
             <span className={`stream-status-pill ${(config?.platforms?.twitch?.connected) ? 'ok' : 'warn'}`}>
-              <span className="platform-symbol">🎮</span>
+              <span className="platform-symbol"><PlatformIcon platform="twitch" /></span>
               Twitch {config?.platforms?.twitch?.connected ? 'connected' : 'niet verbonden'}
             </span>
             <span className={`stream-status-pill ${(config?.platforms?.tiktok?.connected) ? 'ok' : 'warn'}`}>
-              <span className="platform-symbol">🎬</span>
+              <span className="platform-symbol"><PlatformIcon platform="tiktok" /></span>
               TikTok {config?.platforms?.tiktok?.connected ? 'connected' : 'niet verbonden'}
             </span>
             <span className={`stream-status-pill ${(config?.platforms?.youtube?.connected) ? 'ok' : 'warn'}`}>
-              <span className="platform-symbol">📺</span>
+              <span className="platform-symbol"><PlatformIcon platform="youtube" /></span>
               YouTube {config?.platforms?.youtube?.connected ? 'connected' : 'niet verbonden'}
             </span>
           </div>
@@ -168,7 +164,7 @@ export default function StreamChatPage() {
             {Object.keys(DEFAULT_FILTERS).map((platform) => (
               <label key={platform} className="stream-filter">
                 <input type="checkbox" checked={filters[platform]} onChange={() => toggle(platform)} />
-                <span><span className="platform-symbol">{platformIcon[platform]}</span> {platformLabel[platform]}</span>
+                <span><span className="platform-symbol"><PlatformIcon platform={platform} /></span> {platformLabel[platform]}</span>
               </label>
             ))}
           </div>
@@ -179,7 +175,7 @@ export default function StreamChatPage() {
             {messages.map((message) => (
               <article key={message.id} className={`stream-message platform-${message.platform}`}>
                 <header>
-                  <span className="platform-pill"><span className="platform-symbol">{platformIcon[message.platform] || '💬'}</span> {platformLabel[message.platform] || message.platform}</span>
+                  <span className="platform-pill"><span className="platform-symbol"><PlatformIcon platform={message.platform} /></span> {platformLabel[message.platform] || message.platform}</span>
                   <div className="stream-author-wrap" style={{ color: message?.metadata?.color || 'inherit' }}>
                     <strong>{message.author}</strong>
                     <UserHoverCard message={message} />

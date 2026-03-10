@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SiteChrome from '../components/SiteChrome';
+import PlatformIcon from '../components/PlatformIcon';
 import './StreamPages.css';
 
 export default function StreamDashboardPage() {
@@ -28,9 +29,9 @@ export default function StreamDashboardPage() {
           <article className="stream-panel">
             <h2>Status</h2>
             <ul>
-              <li>🎮 Twitch: voorbereid</li>
-              <li>🎬 TikTok: voorbereid</li>
-              <li>📺 YouTube: voorbereid</li>
+              <li><span className="platform-symbol"><PlatformIcon platform="twitch" /></span> Twitch: voorbereid</li>
+              <li><span className="platform-symbol"><PlatformIcon platform="tiktok" /></span> TikTok: voorbereid</li>
+              <li><span className="platform-symbol"><PlatformIcon platform="youtube" /></span> YouTube: voorbereid</li>
             </ul>
           </article>
         </div>
