@@ -5,11 +5,13 @@ module.exports = async function handler(req, res) {
 
   let youtubeConnected = false;
   let twitchConnected = false;
+
   try {
     const marker = await kvCommand(['get', 'stream:youtube:connected']);
     youtubeConnected = String(marker || '') === '1';
   } catch {}
 
+  // 1) Probeer recente Twitch chatactiviteit uit KV
   try {
     const rows = await kvCommand(['lrange', STREAM_MESSAGES_KEY, '0', '80']);
     const now = Date.now();
@@ -22,6 +24,16 @@ module.exports = async function handler(req, res) {
       }
     });
   } catch {}
+
+  // 2) Fallback: als er geen recente chat is, check of Twitch live is
+  if (!twitchConnected) {
+    try {
+      const response = await fetch(`https://decapi.me/twitch/uptime/${STREAM_CHANNEL}`);
+      const text = String(await response.text()).trim().toLowerCase();
+      const live = Boolean(text) && !text.includes('not live') && !text.includes('offline');
+      if (live) twitchConnected = true;
+    } catch {}
+  }
 
   return json(res, 200, {
     channel: STREAM_CHANNEL,
