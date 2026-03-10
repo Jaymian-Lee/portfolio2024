@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import MainFooter from '../components/MainFooter';
 import './ToepenPage.css';
 
 const STORAGE_STATE_KEY = 'toepen-state-v1';
@@ -438,10 +439,7 @@ function ToepenPage() {
                   </div>
                   <div className="toepen-player-main">
                     <strong>{player.name}</strong>
-                    <p>
-                      {t.score}
-                      {player.eliminated ? ` · ${t.eliminated} (${t.place} ${player.place})` : ''}
-                    </p>
+                    {player.eliminated ? <p>{t.eliminated} ({t.place} {player.place})</p> : null}
                   </div>
                   <div className="toepen-score-actions">
                     <button
@@ -511,6 +509,8 @@ function ToepenPage() {
         onAsk={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         askAriaLabel={askLabel}
       />
+
+      <MainFooter language={language} />
     </main>
   );
 }

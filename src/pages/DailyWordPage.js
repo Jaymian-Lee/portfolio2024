@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
 import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import MainFooter from '../components/MainFooter';
 import { buildAiContext } from '../utils/aiContext';
 import './DailyWordPage.css';
 
@@ -36,29 +37,6 @@ const levenshteinDistance = (a, b) => {
 
   return previous[b.length];
 };
-
-const footerQuickLinks = [
-  { label: 'Services', href: '/#services' },
-  { label: 'Case studies', href: '/#case-studies' },
-  { label: 'Experience', href: '/#experience' },
-  { label: 'Contact', href: '/#contact' }
-];
-
-const footerProjects = [
-  { label: 'Corthex', href: 'https://corthex.app' },
-  { label: 'Botforger', href: 'https://botforger.com' },
-  { label: 'Vizualy', href: 'https://vizualy.nl' },
-  { label: 'Refacthor', href: 'https://refacthor.nl' },
-  { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' }
-];
-
-const footerConnect = [
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
-  { label: 'GitHub', href: 'https://github.com/Jaymian-Lee' },
-  { label: 'Twitch', href: 'https://twitch.tv/jaymianlee' },
-  { label: 'YouTube', href: 'https://www.youtube.com/@JaymianLee' },
-  { label: 'Instagram', href: 'https://www.instagram.com/jaymianlee_/' }
-];
 
 const copy = {
   en: {
@@ -995,57 +973,7 @@ function DailyWordPage() {
         askAriaLabel={copy[language].askTitle}
       />
 
-      <footer className="daily-site-footer" aria-label="Footer">
-        <div className="daily-footer-shell">
-          <div className="daily-footer-grid">
-            <section className="daily-footer-brand" aria-label="Brand">
-              <p className="daily-footer-kicker">Brand</p>
-              <h2>Jaymian-Lee Reinartz</h2>
-              <p>{copy[language].subtitle}</p>
-              <p>{copy[language].footerWordleeText}</p>
-            </section>
-
-            <nav className="daily-footer-column" aria-label={copy[language].footerQuickLinksTitle}>
-              <p className="daily-footer-kicker">{copy[language].footerQuickLinksTitle}</p>
-              <ul>
-                {footerQuickLinks.map((item) => (
-                  <li key={`quick-${item.label}`}>
-                    <a href={item.href}>{item.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <section className="daily-footer-column" aria-label={copy[language].footerProjectsTitle}>
-              <p className="daily-footer-kicker">{copy[language].footerProjectsTitle}</p>
-              <ul>
-                {footerProjects.map((item) => (
-                  <li key={`project-${item.label}`}>
-                    <a href={item.href} target="_blank" rel="noreferrer">{item.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="daily-footer-column" aria-label={copy[language].footerConnectTitle}>
-              <p className="daily-footer-kicker">{copy[language].footerConnectTitle}</p>
-              <ul>
-                {footerConnect.map((item) => (
-                  <li key={`connect-${item.label}`}>
-                    <a href={item.href} target="_blank" rel="noreferrer">{item.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </div>
-
-          <div className="daily-footer-bottomline" aria-label="Copyright">
-            <p>© {new Date().getFullYear()} Jaymian-Lee Reinartz</p>
-            <p>jaymian-lee.nl</p>
-            <p>{copy[language].footerBuilt}</p>
-          </div>
-        </div>
-      </footer>
+      <MainFooter language={language} />
 
     </main>
   );
