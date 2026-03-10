@@ -49,7 +49,8 @@ async function fetchJsonWithFallback(urls) {
   let lastStatus = 0;
   for (const url of urls) {
     try {
-      const response = await fetch(url);
+      const noCacheUrl = `${url}${url.includes('?') ? '&' : '?'}_ts=${Date.now()}`;
+      const response = await fetch(noCacheUrl, { cache: 'no-store' });
       lastStatus = response.status;
       const raw = await response.text();
       let data = {};
@@ -84,7 +85,7 @@ export default function StreamChatPage() {
     };
 
     loadConfig();
-    const interval = setInterval(loadConfig, 6000);
+    const interval = setInterval(loadConfig, 2000);
     return () => {
       stop = true;
       clearInterval(interval);
@@ -124,7 +125,7 @@ export default function StreamChatPage() {
     };
 
     loadMessages();
-    const interval = setInterval(loadMessages, 2500);
+    const interval = setInterval(loadMessages, 1000);
 
     return () => {
       stop = true;

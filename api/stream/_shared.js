@@ -6,6 +6,9 @@ const STREAM_PLATFORM_KEYS = ['twitch', 'tiktok', 'youtube'];
 const STREAM_MESSAGES_KEY = 'stream:messages:v1';
 
 function json(res, status, body) {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(status).json(body);
 }
 

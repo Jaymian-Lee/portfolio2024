@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
     twitchConnected = (Array.isArray(rows) ? rows : []).some((row) => {
       try {
         const msg = JSON.parse(row);
-        return msg?.platform === 'twitch' && Number(msg?.timestamp || 0) > now - 180000;
+        return msg?.platform === 'twitch' && Number(msg?.timestamp || 0) > now - 900000;
       } catch {
         return false;
       }
