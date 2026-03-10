@@ -83,15 +83,34 @@ module.exports = async (req, res) => {
     const mapResult = await kvCommand(['HGETALL', key]);
     const history = parseHistoryMap(mapResult);
 
-    const asc = history.slice().sort((a, b) => a.dateKey.localeCompare(b.dateKey));
-    let best = Infinity;
-    const withPr = asc.map((entry) => {
-      const isPR = entry.attempts <= best;
-      if (entry.attempts < best) best = entry.attempts;
-      return { ...entry, isPR };
-    });
+    const isBetterRecord = (a, b) => {
+      if (!b) return true;
+      if (a.attempts !== b.attempts) return a.attempts < b.attempts;
 
-    const records = withPr.sort((a, b) => b.dateKey.localeCompare(a.dateKey)).slice(0, 30);
+      const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
+      const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
+      if (aDuration !== bDuration) return aDuration < bDuration;
+
+      const aSubmittedAt = Number.isInteger(a.submittedAt) ? a.submittedAt : 0;
+      const bSubmittedAt = Number.isInteger(b.submittedAt) ? b.submittedAt : 0;
+      return aSubmittedAt > bSubmittedAt;
+    };
+
+    let bestRecord = null;
+    for (const entry of history) {
+      if (isBetterRecord(entry, bestRecord)) bestRecord = entry;
+    }
+
+    const records = history
+      .map((entry) => ({
+        ...entry,
+        isPR: !!bestRecord
+          && entry.dateKey === bestRecord.dateKey
+          && Number(entry.attempts) === Number(bestRecord.attempts)
+          && Number(entry.submittedAt || 0) === Number(bestRecord.submittedAt || 0)
+      }))
+      .sort((a, b) => b.dateKey.localeCompare(a.dateKey))
+      .slice(0, 30);
     return res.status(200).json({ name, language, records });
   } catch (error) {
     console.error('Wordlee history error:', error);

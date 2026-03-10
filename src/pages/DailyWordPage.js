@@ -87,9 +87,9 @@ const copy = {
     askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Word-Lee.',
     leaderboardTitle: 'Daily top 3',
     leaderboardSubtitle: 'Today\'s fastest solves',
-    yesterdayWinnerTitle: 'Topper of the week',
+    yesterdayWinnerTitle: 'World record of this month',
     dailyTopperTitle: 'Topper of the day',
-    yesterdayWinnerEmpty: 'No weekly topper yet.',
+    yesterdayWinnerEmpty: 'No world record yet this month.',
     leaderboardEmpty: 'No scores yet today. Be the first.',
     leaderboardNameLabel: 'Your name',
     leaderboardNamePlaceholder: 'Type your name',
@@ -150,9 +150,9 @@ const copy = {
     askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Word-Lee.',
     leaderboardTitle: 'Top 3 van vandaag',
     leaderboardSubtitle: 'Snelste oplossingen van vandaag',
-    yesterdayWinnerTitle: 'De topper van de week',
+    yesterdayWinnerTitle: 'Wereldrecord van deze maand',
     dailyTopperTitle: 'Topper van de dag',
-    yesterdayWinnerEmpty: 'Nog geen weektopper beschikbaar.',
+    yesterdayWinnerEmpty: 'Nog geen wereldrecord deze maand.',
     leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
     leaderboardNameLabel: 'Jouw naam',
     leaderboardNamePlaceholder: 'Vul je naam in',
@@ -262,7 +262,7 @@ function DailyWordPage() {
   const [chatError, setChatError] = useState('');
 
   const [leaderboard, setLeaderboard] = useState([]);
-  const [weeklyTopper, setWeeklyTopper] = useState(null);
+  const [monthlyWorldRecord, setMonthlyWorldRecord] = useState(null);
   const [scoreName, setScoreName] = useState('');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
@@ -277,15 +277,15 @@ function DailyWordPage() {
   const [nameChoice, setNameChoice] = useState('');
 
   const dateKey = useMemo(() => getTodayKey(), []);
-  const weekDateKeys = useMemo(() => {
+  const monthDateKeys = useMemo(() => {
     const base = new Date(`${dateKey}T00:00:00`);
-    return Array.from({ length: 7 }).map((_, index) => {
-      const d = new Date(base);
-      d.setDate(base.getDate() - index);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+    const year = base.getFullYear();
+    const month = base.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    return Array.from({ length: daysInMonth }).map((_, index) => {
+      const day = String(index + 1).padStart(2, '0');
+      return `${year}-${String(month + 1).padStart(2, '0')}-${day}`;
     });
   }, [dateKey]);
   const answer = useMemo(() => getDailyWord(language, DAILY_WORDS, dateKey), [language, dateKey]);
@@ -376,25 +376,25 @@ function DailyWordPage() {
         if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
         setLeaderboard(Array.isArray(todayData.top3) ? todayData.top3 : []);
 
-        const weeklyResponses = await Promise.all(weekDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`)));
-        const weeklyData = await Promise.all(weeklyResponses.map((response) => safeJson(response)));
+        const monthlyResponses = await Promise.all(monthDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`)));
+        const monthlyData = await Promise.all(monthlyResponses.map((response) => safeJson(response)));
 
-        const weeklyCandidates = [];
-        weeklyResponses.forEach((response, index) => {
+        const monthlyCandidates = [];
+        monthlyResponses.forEach((response, index) => {
           if (!response.ok) return;
-          const top = Array.isArray(weeklyData[index]?.top3) ? weeklyData[index].top3[0] : null;
-          if (top) weeklyCandidates.push({ ...top, dateKey: weekDateKeys[index] });
+          const top = Array.isArray(monthlyData[index]?.top3) ? monthlyData[index].top3[0] : null;
+          if (top) monthlyCandidates.push({ ...top, dateKey: monthDateKeys[index] });
         });
 
-        weeklyCandidates.sort((a, b) => {
-          if (a.attempts !== b.attempts) return a.attempts - b.attempts;
+        monthlyCandidates.sort((a, b) => {
           const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
           const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
           if (aDuration !== bDuration) return aDuration - bDuration;
+          if (a.attempts !== b.attempts) return a.attempts - b.attempts;
           return String(a.dateKey).localeCompare(String(b.dateKey));
         });
 
-        setWeeklyTopper(weeklyCandidates[0] || null);
+        setMonthlyWorldRecord(monthlyCandidates[0] || null);
       } catch (err) {
         setLeaderboardError(err.message || copy[language].leaderboardError);
       } finally {
@@ -403,7 +403,7 @@ function DailyWordPage() {
     };
 
     loadLeaderboard();
-  }, [language, dateKey, weekDateKeys]);
+  }, [language, dateKey, monthDateKeys]);
 
 
   useEffect(() => {
@@ -763,11 +763,11 @@ function DailyWordPage() {
 
           <div className="yesterday-winner" aria-label={copy[language].yesterdayWinnerTitle}>
             <p className="yesterday-winner-title">{copy[language].yesterdayWinnerTitle}</p>
-            {weeklyTopper ? (
+            {monthlyWorldRecord ? (
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">👑</span>
-                <span className="yesterday-winner-name">{weeklyTopper.name}</span>
-                <span className="yesterday-winner-score">{weeklyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(weeklyTopper.durationMs)}</span>
+                <span className="yesterday-winner-name">{monthlyWorldRecord.name}</span>
+                <span className="yesterday-winner-score">{monthlyWorldRecord.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(monthlyWorldRecord.durationMs)} <strong>({copy[language].worldRecord})</strong></span>
               </div>
             ) : (
               <p className="daily-tip">{copy[language].yesterdayWinnerEmpty}</p>
@@ -780,7 +780,7 @@ function DailyWordPage() {
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">🏆</span>
                 <span className="yesterday-winner-name">{dailyTopper.name}</span>
-                <span className="yesterday-winner-score">{dailyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(dailyTopper.durationMs)} <strong>({copy[language].worldRecord})</strong></span>
+                <span className="yesterday-winner-score">{dailyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(dailyTopper.durationMs)}</span>
               </div>
             ) : (
               <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
@@ -797,7 +797,7 @@ function DailyWordPage() {
               {leaderboard.map((entry, index) => (
                 <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
                   <span className={`leaderboard-rank`}>{getRankBadge(index)}</span>
-                  <span className="leaderboard-name">{entry.name} {index === 0 ? <strong>({copy[language].worldRecord})</strong> : null}</span>
+                  <span className="leaderboard-name">{entry.name}</span>
                   <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
                 </li>
               ))}

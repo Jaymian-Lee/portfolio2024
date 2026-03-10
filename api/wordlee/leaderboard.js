@@ -77,11 +77,15 @@ async function kvCommand(command) {
   return json.result;
 }
 
+function isCheatScore(attempts, durationMs) {
+  return attempts === 1 && Number.isInteger(durationMs) && durationMs >= 0 && durationMs < 1000;
+}
+
 async function getTop3(dateKey, language) {
   const key = leaderboardKey(dateKey, language);
   const namesKey = leaderboardNamesKey(dateKey, language);
 
-  const zrangeResult = await kvCommand(['zrange', key, '0', '2', 'WITHSCORES']);
+  const zrangeResult = await kvCommand(['zrange', key, '0', '49', 'WITHSCORES']);
   const pairs = Array.isArray(zrangeResult) ? zrangeResult : [];
   if (pairs.length === 0) return [];
 
@@ -94,11 +98,13 @@ async function getTop3(dateKey, language) {
 
   const names = await kvCommand(['hmget', namesKey, ...members]);
 
-  return members.map((member, index) => ({
+  const ranked = members.map((member, index) => ({
     name: (Array.isArray(names) ? names[index] : null) || member,
     attempts: decodeAttempts(scores[index]),
     ...decodeScoreMeta(scores[index])
   }));
+
+  return ranked.filter((entry) => !isCheatScore(entry.attempts, entry.durationMs)).slice(0, 3);
 }
 
 module.exports = async (req, res) => {
@@ -136,6 +142,10 @@ module.exports = async (req, res) => {
 
       if (durationMs !== null && (!Number.isInteger(durationMs) || durationMs < 0 || durationMs > 86400000)) {
         return res.status(400).json({ error: 'Ongeldige tijd.' });
+      }
+
+      if (attempts === 1 && durationMs !== null && durationMs < 1000) {
+        return res.status(400).json({ error: 'Verdachte score geweigerd.' });
       }
 
       const now = Date.now();
