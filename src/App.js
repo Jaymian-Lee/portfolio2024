@@ -543,10 +543,7 @@ function App() {
 
     const checkLiveStatus = async () => {
       try {
-        let response = await fetch('/api/stream/twitch/live');
-        if (!response.ok && response.status === 404) {
-          response = await fetch('/api/stream-twitch-live');
-        }
+        const response = await fetch('/api/stream/twitch/live');
 
         const raw = await response.text();
         let data = {};

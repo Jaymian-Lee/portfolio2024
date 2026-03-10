@@ -76,7 +76,7 @@ export default function StreamChatPage() {
 
     const loadConfig = async () => {
       try {
-        const result = await fetchJsonWithFallback(['/api/stream/chat/config', '/api/stream-chat-config']);
+        const result = await fetchJsonWithFallback(['/api/stream/chat/config']);
         if (result.ok && !stop) setConfig(result.data);
       } catch {
         // noop
@@ -102,8 +102,7 @@ export default function StreamChatPage() {
         });
         const query = params.toString();
         const result = await fetchJsonWithFallback([
-          `/api/stream/chat/messages?${query}`,
-          `/api/stream-chat-messages?${query}`
+          `/api/stream/chat/messages?${query}`
         ]);
 
         if (!result.ok) {
