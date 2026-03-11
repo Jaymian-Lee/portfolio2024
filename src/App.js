@@ -105,6 +105,20 @@ const projectLinks = [
       en: 'More stable ecommerce operations with cleaner structure for long-term growth.',
       nl: 'Stabielere ecommerce-operatie met een schonere structuur voor groei op lange termijn.'
     }
+  },
+  {
+    name: 'Refacthor',
+    url: 'https://refacthor.nl',
+    image: 'https://image.thum.io/get/width/1200/https://refacthor.nl',
+    category: { en: 'Owner Project', nl: 'Eigen project' },
+    summary: {
+      en: 'Owner-led platform focused on practical digital solutions, robust builds, and long-term performance for real businesses.',
+      nl: 'Eigen platform met focus op praktische digitale oplossingen, robuuste builds en duurzame performance voor echte bedrijven.'
+    },
+    impact: {
+      en: 'Acts as a flagship showcase for product quality, structure, and conversion-minded implementation.',
+      nl: 'Fungeert als vlaggenschip voor productkwaliteit, structuur en conversiegerichte implementatie.'
+    }
   }
 ];
 
@@ -315,6 +329,10 @@ const copy = {
     socialsTitle: 'Professional channels and project updates.',
     workKicker: 'Selected work',
     workTitle: 'Projects built for clarity, speed, and long term quality.',
+    refacthorBadge: 'Owner Refacthor',
+    refacthorTitle: 'Why Refacthor?',
+    refacthorText: 'Refacthor is where product vision, architecture, and execution come together. It reflects how I build fast, stable, conversion-minded web platforms with long-term maintainability.',
+    refacthorCta: 'View more 👉',
     contactKicker: 'Contact',
     contactTitle: 'Let us discuss your next build.',
     contactText:
@@ -381,6 +399,10 @@ const copy = {
     socialsTitle: 'Professionele kanalen en project updates.',
     workKicker: 'Geselecteerde projecten',
     workTitle: 'Projecten gebouwd voor helderheid, snelheid en duurzame kwaliteit.',
+    refacthorBadge: 'Eigenaar Refacthor',
+    refacthorTitle: 'Waarom Refacthor?',
+    refacthorText: 'Refacthor is de plek waar productvisie, architectuur en uitvoering samenkomen. Het laat zien hoe ik snelle, stabiele en conversiegerichte webplatforms bouw met focus op onderhoudbaarheid op lange termijn.',
+    refacthorCta: 'Bekijk meer 👉',
     contactKicker: 'Contact',
     contactTitle: 'Laten we je volgende build bespreken.',
     contactText:
@@ -902,7 +924,32 @@ function App() {
           </div>
         </header>
 
-        <section className="section reveal stack-card" id="about" ref={(el) => (revealRefs.current[1] = el)} style={{ '--stack-index': 1, '--stack-layer': 2 }}>
+        <section className="section reveal stack-card refacthor-spotlight" id="refacthor" ref={(el) => (revealRefs.current[1] = el)} style={{ '--stack-index': 1, '--stack-layer': 2 }}>
+          <div className="section-card stack-panel">
+            <article className="refacthor-card">
+              <div className="refacthor-visual-wrap">
+                <img
+                  src="https://image.thum.io/get/width/1400/https://refacthor.nl"
+                  alt="Refacthor website screenshot"
+                  className="refacthor-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span className="refacthor-badge">{t.refacthorBadge}</span>
+              </div>
+
+              <div className="refacthor-content">
+                <h2>{t.refacthorTitle}</h2>
+                <p>{t.refacthorText}</p>
+                <a href="https://refacthor.nl" target="_blank" rel="noreferrer" className="btn btn-primary refacthor-cta">
+                  {t.refacthorCta}
+                </a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section className="section reveal stack-card" id="about" ref={(el) => (revealRefs.current[2] = el)} style={{ '--stack-index': 2, '--stack-layer': 3 }}>
           <div className="section-card stack-panel">
             <div className="split">
               <div>
@@ -921,7 +968,7 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-card" id="services" ref={(el) => (revealRefs.current[2] = el)} style={{ '--stack-index': 2, '--stack-layer': 3 }}>
+        <section className="section reveal stack-card" id="services" ref={(el) => (revealRefs.current[3] = el)} style={{ '--stack-index': 3, '--stack-layer': 4 }}>
           <div className="section-card stack-panel">
             <p className="section-kicker">{t.capabilitiesKicker}</p>
             <h2>{t.capabilitiesTitle}</h2>
@@ -936,7 +983,7 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-card" id="case-studies" ref={(el) => (revealRefs.current[3] = el)} style={{ '--stack-index': 3, '--stack-layer': 4 }}>
+        <section className="section reveal stack-card" id="case-studies" ref={(el) => (revealRefs.current[4] = el)} style={{ '--stack-index': 4, '--stack-layer': 5 }}>
           <div className="section-card stack-panel">
             <p className="section-kicker">{t.caseKicker}</p>
             <h2>{t.caseTitle}</h2>
@@ -952,7 +999,7 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-card" id="experience" ref={(el) => (revealRefs.current[4] = el)} style={{ '--stack-index': 4, '--stack-layer': 5 }}>
+        <section className="section reveal stack-card" id="experience" ref={(el) => (revealRefs.current[5] = el)} style={{ '--stack-index': 5, '--stack-layer': 6 }}>
           <div className="section-card stack-panel">
             <p className="section-kicker">{t.experienceKicker}</p>
             <h2>{t.experienceTitle}</h2>
@@ -972,7 +1019,7 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-card" id="selected-work" ref={(el) => (revealRefs.current[5] = el)} style={{ '--stack-index': 5, '--stack-layer': 6 }}>
+        <section className="section reveal stack-card" id="selected-work" ref={(el) => (revealRefs.current[6] = el)} style={{ '--stack-index': 6, '--stack-layer': 7 }}>
           <div className="section-card stack-panel">
             <p className="section-kicker">{t.workKicker}</p>
             <h2>{t.workTitle}</h2>
@@ -1001,7 +1048,7 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-card" id="connect" ref={(el) => (revealRefs.current[6] = el)} style={{ '--stack-index': 6, '--stack-layer': 7 }}>
+        <section className="section reveal stack-card" id="connect" ref={(el) => (revealRefs.current[7] = el)} style={{ '--stack-index': 7, '--stack-layer': 8 }}>
           <div className="section-card stack-panel">
             <p className="section-kicker">{t.socialsKicker}</p>
             <h2>{t.socialsTitle}</h2>
@@ -1021,7 +1068,7 @@ function App() {
           </div>
         </section>
 
-        <section className="section reveal stack-card" id="contact" ref={(el) => (revealRefs.current[7] = el)} style={{ '--stack-index': 7, '--stack-layer': 8 }}>
+        <section className="section reveal stack-card" id="contact" ref={(el) => (revealRefs.current[8] = el)} style={{ '--stack-index': 8, '--stack-layer': 9 }}>
           <div className="section-card stack-panel">
             <p className="section-kicker">{t.contactKicker}</p>
             <h2>{t.contactTitle}</h2>

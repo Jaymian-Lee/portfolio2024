@@ -204,6 +204,83 @@ body {
   padding-top: 1.2rem;
 }
 
+.refacthor-spotlight {
+  padding-top: 1.1rem;
+}
+
+.refacthor-card {
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--border));
+  border-radius: 22px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--surface) 90%, transparent), color-mix(in srgb, var(--bg-soft) 92%, transparent));
+  box-shadow: 0 24px 48px rgba(57, 35, 20, 0.14);
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.refacthor-card:hover,
+.refacthor-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 56px rgba(57, 35, 20, 0.2);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+}
+
+.refacthor-visual-wrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+  background: #0f0f10;
+}
+
+.refacthor-visual-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 10%, rgba(255, 255, 255, 0.15) 44%, transparent 70%);
+  transform: translateX(-130%);
+  animation: refacthorSweep 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.refacthor-image {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+}
+
+.refacthor-badge {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  border-radius: 999px;
+  padding: 0.48rem 0.72rem;
+  background: rgba(14, 12, 10, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.refacthor-content h2 {
+  margin: 0;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+}
+
+.refacthor-content p {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  max-width: 70ch;
+}
+
+.refacthor-cta {
+  margin-top: 0.95rem;
+}
+
 .hero-topline {
   display: flex;
   align-items: center;
@@ -1217,6 +1294,16 @@ body {
   transform: translateY(0);
 }
 
+@keyframes refacthorSweep {
+  0%,
+  100% {
+    transform: translateX(-130%);
+  }
+  50% {
+    transform: translateX(120%);
+  }
+}
+
 @keyframes softPulse {
   0%,
   100% {
@@ -1350,6 +1437,13 @@ body {
 
   .hero-metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .refacthor-card {
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.15rem;
   }
 
   .capabilities-grid,

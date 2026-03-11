@@ -17,6 +17,7 @@ const footerProjects = [
   { label: 'Vizualy', href: 'https://vizualy.nl' },
   { label: 'Twigsie', href: 'https://twigsie.com' },
   { label: 'Vizualy Prints', href: 'https://vizualyprints.com' },
+  { label: 'Refacthor', href: 'https://refacthor.nl' },
   { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
   { label: 'Stream Dashboard', href: 'https://jaymian-lee.nl/stream' },
   { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' }
