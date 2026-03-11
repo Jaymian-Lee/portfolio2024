@@ -247,6 +247,15 @@ const experience = {
       summary:
         'Develops custom web solutions focused on digital growth, usability, and technical reliability.',
       highlight: 'Delivers high performance websites and structured development workflows for clients.'
+    },
+    {
+      role: 'Lead Developer',
+      company: 'MartijnKozijn.nl',
+      website: 'https://martijnkozijn.nl',
+      period: '2023 to Present',
+      summary:
+        'Lead developer for an innovative online webshop selling windows and doors, focused on scalable ecommerce architecture and smooth buying flows.',
+      highlight: 'Improved platform reliability, conversion flow, and technical delivery speed for ongoing growth.'
     }
   ],
   nl: [
@@ -275,6 +284,15 @@ const experience = {
       summary:
         'Ontwikkelt maatwerk websites met focus op digitale groei, gebruiksvriendelijkheid en technische betrouwbaarheid.',
       highlight: 'Levert snelle websites en gestructureerde ontwikkeltrajecten voor klanten.'
+    },
+    {
+      role: 'Lead Developer',
+      company: 'MartijnKozijn.nl',
+      website: 'https://martijnkozijn.nl',
+      period: '2023 tot Nu',
+      summary:
+        'Lead developer voor een innovatieve online webshop die kozijnen en deuren verkoopt, met focus op schaalbare ecommerce architectuur en een soepele koopflow.',
+      highlight: 'Versterkte platformstabiliteit, conversieflow en technische doorloopsnelheid voor verdere groei.'
     }
   ]
 };
