@@ -109,7 +109,7 @@ const projectLinks = [
   {
     name: 'Refacthor',
     url: 'https://refacthor.nl',
-    image: '/projects/refacthor-future.png',
+    image: '/projects/refacthor-site-screenshot.png',
     category: { en: 'Owner Project', nl: 'Eigen project' },
     summary: {
       en: 'Owner-led platform focused on practical digital solutions, robust builds, and long-term performance for real businesses.',
@@ -947,7 +947,7 @@ function App() {
             <article className="refacthor-card">
               <div className="refacthor-visual-wrap">
                 <img
-                  src="/projects/refacthor-future.png"
+                  src="/projects/refacthor-site-screenshot.png"
                   alt="Refacthor website screenshot"
                   className="refacthor-image"
                   loading="lazy"
