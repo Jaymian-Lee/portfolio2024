@@ -109,7 +109,7 @@ const projectLinks = [
   {
     name: 'Refacthor',
     url: 'https://refacthor.nl',
-    image: 'https://image.thum.io/get/width/1200/https://refacthor.nl',
+    image: '/projects/refacthor-future.png',
     category: { en: 'Owner Project', nl: 'Eigen project' },
     summary: {
       en: 'Owner-led platform focused on practical digital solutions, robust builds, and long-term performance for real businesses.',
@@ -929,7 +929,7 @@ function App() {
             <article className="refacthor-card">
               <div className="refacthor-visual-wrap">
                 <img
-                  src="https://image.thum.io/get/width/1400/https://refacthor.nl"
+                  src="/projects/refacthor-future.png"
                   alt="Refacthor website screenshot"
                   className="refacthor-image"
                   loading="lazy"
