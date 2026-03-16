@@ -325,6 +325,9 @@ const copy = {
     ctaSecondary: 'Jump to services',
     ctaDaily: 'Word-Lee',
     stickyDaily: 'Play Word-Lee',
+    sp500SpotlightTitle: 'New: S&P 500 Calculator',
+    sp500SpotlightText: 'Estimate long-term growth with historical percentages, clear scenarios, and a visual chart.',
+    sp500SpotlightCta: 'Open calculator',
     popupWordleeTitle: 'Word-Lee is live',
     popupWordleeText: 'Have you played Word-Lee today?',
     popupWordleeCta: 'Play Word-Lee',
@@ -395,6 +398,9 @@ const copy = {
     ctaSecondary: 'Ga naar services',
     ctaDaily: 'Word-Lee',
     stickyDaily: 'Speel Word-Lee',
+    sp500SpotlightTitle: 'Nieuw: S&P 500 Calculator',
+    sp500SpotlightText: 'Bereken lange-termijn groei met historische percentages, duidelijke scenario’s en een visuele grafiek.',
+    sp500SpotlightCta: 'Open calculator',
     popupWordleeTitle: 'Word-Lee staat klaar',
     popupWordleeText: 'Heb je vandaag Word-Lee al gedaan?',
     popupWordleeCta: 'Speel Word-Lee',
@@ -939,6 +945,14 @@ function App() {
                   </Link>
                   <Link to="/sp500-calculator" className="btn btn-ghost" aria-label="Open S&P 500 calculator">
                     S&P 500 Calculator
+                  </Link>
+                </div>
+
+                <div className="hero-sp500-spotlight" aria-label="S&P 500 calculator highlight">
+                  <p className="section-kicker">{t.sp500SpotlightTitle}</p>
+                  <p>{t.sp500SpotlightText}</p>
+                  <Link to="/sp500-calculator" className="btn btn-ghost" aria-label="Go to S&P 500 calculator page">
+                    {t.sp500SpotlightCta}
                   </Link>
                 </div>
               </div>

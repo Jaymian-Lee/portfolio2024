@@ -8,7 +8,8 @@ const footerQuickLinks = [
   { label: 'Experience', href: '/#experience' },
   { label: 'Contact', href: '/#contact' },
   { label: 'Stream', href: '/stream' },
-  { label: 'Toepen', href: '/toepen' }
+  { label: 'Toepen', href: '/toepen' },
+  { label: 'S&P 500 Calculator', href: '/sp500-calculator' }
 ];
 
 const footerProjects = [
@@ -20,7 +21,8 @@ const footerProjects = [
   { label: 'Refacthor', href: 'https://refacthor.nl' },
   { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
   { label: 'Stream Dashboard', href: 'https://jaymian-lee.nl/stream' },
-  { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' }
+  { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' },
+  { label: 'S&P 500 Calculator', href: 'https://jaymian-lee.nl/sp500-calculator' }
 ];
 
 const footerConnect = [

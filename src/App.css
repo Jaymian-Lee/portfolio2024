@@ -555,6 +555,22 @@ body {
   gap: 0.55rem;
 }
 
+.hero-sp500-spotlight {
+  margin-top: 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 86%, transparent), color-mix(in srgb, var(--bg-soft) 90%, transparent));
+  border-radius: 14px;
+  padding: 0.9rem;
+}
+
+.hero-sp500-spotlight p {
+  margin: 0.35rem 0;
+}
+
+.hero-sp500-spotlight .btn {
+  margin-top: 0.25rem;
+}
+
 .quick-links a,
 .social-inline-link {
   text-decoration: none;
