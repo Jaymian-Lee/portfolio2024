@@ -189,16 +189,47 @@ export default function SP500CalculatorPage() {
   const annualReturns = useMemo(() => SP500_ANNUAL_RETURNS.map((item) => item.pct / 100), []);
 
   useEffect(() => {
+    const fallbackLocal = () => ({
+      symbol: 'S&P 500',
+      value: 5230,
+      date: new Date().toISOString().slice(0, 10),
+      dayChangePct: null,
+      warning: 'Live koers tijdelijk niet beschikbaar, indicatieve waarde getoond.'
+    });
+
     const loadQuote = async () => {
       try {
         const response = await fetch('/api/market/sp500-current');
         const data = await response.json();
-        if (!response.ok) throw new Error(data?.error || 'Kan actuele S&P 500 waarde niet laden.');
+        if (!response.ok || !Number.isFinite(Number(data?.value))) throw new Error(data?.error || 'API quote failed');
         setSp500Quote(data);
         setQuoteError('');
-      } catch {
-        setQuoteError('Live koers tijdelijk niet beschikbaar.');
-      }
+        return;
+      } catch {}
+
+      try {
+        const yahooProxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=1d');
+        const response = await fetch(yahooProxy);
+        const data = await response.json();
+        const meta = data?.chart?.result?.[0]?.meta || {};
+        const current = Number(meta.regularMarketPrice);
+        const prev = Number(meta.previousClose);
+        if (!Number.isFinite(current) || current <= 0) throw new Error('Proxy quote failed');
+
+        setSp500Quote({
+          symbol: 'S&P 500',
+          value: current,
+          date: new Date((meta.regularMarketTime || Date.now() / 1000) * 1000).toISOString().slice(0, 10),
+          dayChangePct: Number.isFinite(prev) && prev > 0 ? ((current - prev) / prev) * 100 : null,
+          warning: 'Koers via externe fallback bron.'
+        });
+        setQuoteError('');
+        return;
+      } catch {}
+
+      const local = fallbackLocal();
+      setSp500Quote(local);
+      setQuoteError(local.warning);
     };
 
     loadQuote();
