@@ -266,9 +266,10 @@
 
 .scenario-item {
   border-radius: 14px;
-  border: 1px solid color-mix(in oklab, var(--scenario-color), #ffffff 45%);
-  background: linear-gradient(140deg, color-mix(in oklab, var(--scenario-color), #06070f 85%), rgba(10, 12, 26, 0.82));
+  border: 1px solid color-mix(in oklab, var(--scenario-color), var(--border) 70%);
+  background: color-mix(in oklab, var(--scenario-color), var(--surface-strong) 92%);
   padding: 0.8rem 0.9rem;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--scenario-color), transparent 88%);
 }
 
 .scenario-head {
@@ -290,7 +291,7 @@
 .scenario-final,
 .scenario-growth {
   margin: 0.35rem 0 0;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .sp500-grid {
