@@ -1,0 +1,211 @@
+.sp500-page {
+  min-height: 100vh;
+  padding: 2rem clamp(1rem, 3.5vw, 4rem) 3rem;
+  color: #f5f7ff;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(124, 84, 255, 0.32), transparent 34%),
+    radial-gradient(circle at 85% 0%, rgba(34, 225, 210, 0.28), transparent 42%),
+    linear-gradient(180deg, #0a0a13 0%, #090b18 60%, #06070f 100%);
+}
+
+.sp500-top-nav {
+  margin-bottom: 1.2rem;
+}
+
+.sp500-back-link {
+  color: #d8ddff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.sp500-back-link:hover {
+  color: #ffffff;
+}
+
+.sp500-hero {
+  max-width: 980px;
+  margin: 0 auto 1.6rem;
+}
+
+.sp500-kicker {
+  display: inline-block;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(127, 139, 255, 0.15);
+  border: 1px solid rgba(154, 160, 255, 0.35);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sp500-hero h1 {
+  margin: 1rem 0 0.8rem;
+  font-size: clamp(1.9rem, 4.2vw, 3.2rem);
+  line-height: 1.07;
+}
+
+.sp500-subtitle {
+  color: rgba(235, 238, 255, 0.82);
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  max-width: 750px;
+}
+
+.sp500-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 1180px;
+  margin: 0 auto 1rem;
+}
+
+.sp500-card {
+  border-radius: 20px;
+  border: 1px solid rgba(179, 188, 255, 0.28);
+  background: linear-gradient(160deg, rgba(18, 22, 44, 0.88), rgba(12, 14, 31, 0.84));
+  box-shadow: 0 22px 45px rgba(3, 4, 10, 0.48);
+  backdrop-filter: blur(7px);
+  padding: clamp(1rem, 2vw, 1.45rem);
+}
+
+.sp500-controls label,
+.sp500-controls fieldset {
+  display: block;
+  margin-top: 0.95rem;
+}
+
+.sp500-controls input[type='number'] {
+  margin-top: 0.45rem;
+  width: 100%;
+  border-radius: 11px;
+  border: 1px solid rgba(171, 179, 255, 0.35);
+  background: rgba(8, 10, 24, 0.88);
+  color: #fff;
+  padding: 0.7rem 0.8rem;
+  font-size: 1rem;
+}
+
+.sp500-controls input[type='range'] {
+  width: 100%;
+  margin-top: 0.55rem;
+}
+
+.range-value {
+  display: inline-block;
+  margin-top: 0.3rem;
+  color: rgba(213, 218, 255, 0.9);
+}
+
+.sp500-controls fieldset {
+  border: 1px solid rgba(145, 153, 235, 0.35);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+}
+
+.sp500-controls legend {
+  color: #b9c2ff;
+  font-size: 0.92rem;
+}
+
+.radio-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.4rem 0;
+}
+
+.scenario-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.scenario-item {
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--scenario-color), #ffffff 45%);
+  background: linear-gradient(140deg, color-mix(in oklab, var(--scenario-color), #06070f 85%), rgba(10, 12, 26, 0.82));
+  padding: 0.8rem 0.9rem;
+}
+
+.scenario-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.scenario-head p {
+  margin: 0;
+  color: rgba(236, 239, 255, 0.92);
+}
+
+.scenario-head strong {
+  color: #fff;
+}
+
+.scenario-final,
+.scenario-growth {
+  margin: 0.35rem 0 0;
+  color: rgba(227, 231, 255, 0.86);
+}
+
+.chart-card {
+  max-width: 1180px;
+  margin: 0 auto 1rem;
+}
+
+.growth-chart {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+
+.chart-legend {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(228, 232, 255, 0.96);
+}
+
+.chart-legend i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.insights-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+details {
+  margin-top: 0.65rem;
+  border-top: 1px solid rgba(157, 166, 244, 0.22);
+  padding-top: 0.65rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.sp500-footnote {
+  max-width: 1180px;
+  margin: 0.5rem auto 0;
+  color: rgba(210, 216, 255, 0.72);
+  font-size: 0.93rem;
+}
+
+@media (max-width: 960px) {
+  .sp500-grid {
+    grid-template-columns: 1fr;
+  }
+}

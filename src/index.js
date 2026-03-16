@@ -7,6 +7,7 @@ import DailyWordPage from './pages/DailyWordPage';
 import ToepenPage from './pages/ToepenPage';
 import StreamDashboardPage from './pages/StreamDashboardPage';
 import StreamChatPage from './pages/StreamChatPage';
+import SP500CalculatorPage from './pages/SP500CalculatorPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,6 +19,7 @@ root.render(
         <Route path="/toepen" element={<ToepenPage />} />
         <Route path="/stream" element={<StreamDashboardPage />} />
         <Route path="/stream/chat" element={<StreamChatPage />} />
+        <Route path="/sp500-calculator" element={<SP500CalculatorPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
