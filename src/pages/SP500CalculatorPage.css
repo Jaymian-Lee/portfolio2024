@@ -50,6 +50,33 @@
   max-width: 760px;
 }
 
+.sp500-live-strip {
+  margin-top: 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 154, 106, 0.36);
+  background: rgba(24, 20, 16, 0.75);
+  padding: 0.75rem 0.9rem;
+  max-width: 620px;
+}
+
+.live-label {
+  margin: 0;
+  color: #d7bd9f;
+  font-size: 0.84rem;
+}
+
+.live-value {
+  margin: 0.2rem 0 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.live-meta {
+  margin: 0.25rem 0 0;
+  color: rgba(235, 238, 255, 0.8);
+  font-size: 0.9rem;
+}
+
 .sp500-simulator-grid {
   max-width: 1180px;
   margin: 0 auto 1rem;
@@ -274,6 +301,16 @@
   border-radius: 16px;
 }
 
+.chart-dot {
+  opacity: 0.01;
+  transition: opacity 0.15s ease;
+  cursor: crosshair;
+}
+
+.chart-dot:hover {
+  opacity: 0.85;
+}
+
 .chart-legend {
   margin-top: 0.8rem;
   display: flex;
@@ -311,6 +348,15 @@ details {
 summary {
   cursor: pointer;
   font-weight: 600;
+}
+
+.sp500-seo-content {
+  max-width: 1180px;
+  margin: 0 auto 1rem;
+}
+
+.sp500-seo-content p {
+  color: rgba(234, 238, 255, 0.9);
 }
 
 .sp500-footnote {

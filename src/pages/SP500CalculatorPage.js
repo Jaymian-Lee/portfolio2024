@@ -41,6 +41,7 @@ const formatEuro = (value) =>
   }).format(Number.isFinite(value) ? value : 0);
 
 const formatPct = (value) => `${(value * 100).toFixed(1)}%`;
+const formatIndexValue = (value) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Number(value) || 0);
 
 const percentile = (arr, p) => {
   if (!arr.length) return 0;
@@ -84,6 +85,8 @@ const toPath = (series, width, height, maxY) => {
 export default function SP500CalculatorPage() {
   const [theme, setTheme] = useState('light');
   const [language, setLanguage] = useState('nl');
+  const [sp500Quote, setSp500Quote] = useState(null);
+  const [quoteError, setQuoteError] = useState('');
   const [initialInvestment, setInitialInvestment] = useState(10000);
   const [monthlyContribution, setMonthlyContribution] = useState(300);
   const [currentAge, setCurrentAge] = useState(30);
@@ -117,6 +120,22 @@ export default function SP500CalculatorPage() {
   }, [language]);
 
   const annualReturns = useMemo(() => SP500_ANNUAL_RETURNS.map((item) => item.pct / 100), []);
+
+  useEffect(() => {
+    const loadQuote = async () => {
+      try {
+        const response = await fetch('/api/market/sp500-current');
+        const data = await response.json();
+        if (!response.ok) throw new Error(data?.error || 'Kan actuele S&P 500 waarde niet laden.');
+        setSp500Quote(data);
+        setQuoteError('');
+      } catch {
+        setQuoteError('Live koers tijdelijk niet beschikbaar.');
+      }
+    };
+
+    loadQuote();
+  }, []);
 
   useEffect(() => {
     setYears(Math.max(1, 70 - currentAge));
@@ -291,6 +310,19 @@ export default function SP500CalculatorPage() {
         <p className="sp500-subtitle">
           Gebaseerd op echte historische percentages, met slimme scenario&apos;s, visuele grafiek en duidelijke output.
         </p>
+        <div className="sp500-live-strip">
+          <p className="live-label">Huidige S&P 500 waarde</p>
+          {sp500Quote ? (
+            <>
+              <p className="live-value">{formatIndexValue(sp500Quote.value)} punten</p>
+              <p className="live-meta">
+                Datum: {sp500Quote.date} · Dagverandering: {sp500Quote.dayChangePct === null ? 'n.v.t.' : `${sp500Quote.dayChangePct.toFixed(2)}%`}
+              </p>
+            </>
+          ) : (
+            <p className="live-meta">{quoteError || 'Koers ophalen...'}</p>
+          )}
+        </div>
       </section>
 
       <section className="sp500-simulator-grid">
@@ -397,15 +429,25 @@ export default function SP500CalculatorPage() {
             <line key={line} x1="30" x2="970" y1={420 * line} y2={420 * line} stroke="rgba(255,255,255,0.15)" strokeDasharray="6 8" />
           ))}
           {results.map((scenario) => (
-            <path
-              key={scenario.key}
-              d={toPath(scenario.series, 940, 360, bestValue)}
-              transform="translate(30,30)"
-              fill="none"
-              stroke={scenario.color}
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
+            <g key={scenario.key}>
+              <path
+                d={toPath(scenario.series, 940, 360, bestValue)}
+                transform="translate(30,30)"
+                fill="none"
+                stroke={scenario.color}
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+              {scenario.series.map((point, pointIndex) => {
+                const x = 30 + (point.x / scenario.series[scenario.series.length - 1].x) * 940;
+                const y = 30 + (360 - (point.y / bestValue) * 360);
+                return (
+                  <circle key={`${scenario.key}-${pointIndex}`} cx={x} cy={y} r="6" className="chart-dot" fill={scenario.color}>
+                    <title>{`${scenario.label} · Jaar ${point.x}: ${formatEuro(point.y)}`}</title>
+                  </circle>
+                );
+              })}
+            </g>
           ))}
         </svg>
         <div className="chart-legend">
@@ -444,6 +486,20 @@ export default function SP500CalculatorPage() {
             <p>Ja. De pagina en output zijn Nederlandstalig en geoptimaliseerd voor zoekopdrachten zoals &quot;S&P 500 calculator Nederland&quot;.</p>
           </details>
         </article>
+      </section>
+
+      <section className="sp500-card sp500-seo-content">
+        <h2>Wat is de S&amp;P 500 en waarom gebruiken beleggers deze index?</h2>
+        <p>
+          De S&amp;P 500 is een aandelenindex met 500 grote Amerikaanse bedrijven. Deze index wordt vaak gebruikt als benchmark voor
+          lange-termijn beleggen, pensioenopbouw en maandelijkse ETF-inleg. Zoekopdrachten zoals <strong>S&amp;P 500 berekenen per maand</strong>,
+          <strong> S&amp;P 500 calculator met inleg</strong> en <strong>rendement S&amp;P 500 lange termijn</strong> sluiten aan op wat deze pagina laat zien.
+        </p>
+        <p>
+          Deze Nederlandse S&amp;P 500 rekentool helpt je om realistischer te plannen met meerdere scenario&apos;s in plaats van één percentage.
+          Dat is vooral nuttig voor mensen die zoeken op long-tail termen zoals <em>hoeveel wordt 100 euro per maand in S&amp;P 500</em> of
+          <em> S&amp;P 500 rendement berekenen met startbedrag</em>.
+        </p>
       </section>
 
       <section className="sp500-footnote">

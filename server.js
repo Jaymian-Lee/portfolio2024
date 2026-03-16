@@ -626,6 +626,55 @@ app.get('/api/stream/twitch/live', async (req, res) => {
   }
 });
 
+app.get('/api/market/sp500-current', async (_req, res) => {
+  try {
+    const stooqResponse = await fetch('https://stooq.com/q/l/?s=%5Espx&i=d');
+    const csv = String(await stooqResponse.text() || '').trim();
+    const lines = csv.split('\n');
+
+    if (lines.length > 1) {
+      const values = lines[1].split(',');
+      const date = values[1];
+      const open = Number(values[3]);
+      const close = Number(values[6]);
+
+      if (Number.isFinite(close) && close > 0) {
+        const dayChangePct = Number.isFinite(open) && open > 0 ? ((close - open) / open) * 100 : null;
+        return res.json({
+          symbol: 'S&P 500',
+          value: close,
+          date,
+          dayChangePct,
+          source: 'stooq',
+          checkedAt: Date.now()
+        });
+      }
+    }
+
+    const yahooResponse = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=1d');
+    const yahoo = await yahooResponse.json();
+    const meta = yahoo?.chart?.result?.[0]?.meta || {};
+    const current = Number(meta.regularMarketPrice);
+    const prev = Number(meta.previousClose);
+
+    if (Number.isFinite(current) && current > 0) {
+      const dayChangePct = Number.isFinite(prev) && prev > 0 ? ((current - prev) / prev) * 100 : null;
+      return res.json({
+        symbol: 'S&P 500',
+        value: current,
+        date: new Date((meta.regularMarketTime || Date.now() / 1000) * 1000).toISOString().slice(0, 10),
+        dayChangePct,
+        source: 'yahoo',
+        checkedAt: Date.now()
+      });
+    }
+
+    return res.status(502).json({ error: 'Kon S&P 500 waarde niet ophalen.' });
+  } catch (error) {
+    return res.status(502).json({ error: 'Kon S&P 500 waarde niet ophalen.' });
+  }
+});
+
 app.get('/api/stream/chat/messages', (req, res) => {
   const rawPlatforms = String(req.query.platforms || '')
     .split(',')
