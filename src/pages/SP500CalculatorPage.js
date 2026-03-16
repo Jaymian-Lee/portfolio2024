@@ -46,11 +46,15 @@ const uiCopy = {
     ageEnd: 'Eindleeftijd',
     monthly: 'Maandelijkse inleg',
     historical: 'Historische basis',
+    fees: 'Jaarlijkse kosten (%)',
+    goal: 'Doelvermogen (€ optioneel)',
     calc: 'Bereken',
+    reset: 'Reset',
     learnMore: 'Meer leren over S&P 500 beleggen ↓',
     futureAt: 'Verwachte totaalwaarde op',
     duration: 'Looptijd vanaf nu',
-    scenarioTitle: 'Scenario uitkomst'
+    scenarioTitle: 'Scenario uitkomst',
+    compareTitle: 'Scenario vergelijking'
   },
   en: {
     back: '← Back to home',
@@ -64,11 +68,15 @@ const uiCopy = {
     ageEnd: 'End age',
     monthly: 'Monthly contribution',
     historical: 'Historical baseline',
+    fees: 'Annual fees (%)',
+    goal: 'Target amount (€ optional)',
     calc: 'Calculate',
+    reset: 'Reset',
     learnMore: 'Learn more about S&P 500 investing ↓',
     futureAt: 'Projected total value at age',
     duration: 'Time horizon from now',
-    scenarioTitle: 'Scenario outcomes'
+    scenarioTitle: 'Scenario outcomes',
+    compareTitle: 'Scenario comparison'
   }
 };
 
@@ -132,6 +140,8 @@ export default function SP500CalculatorPage() {
   const [currentAge, setCurrentAge] = useState(30);
   const [endAge, setEndAge] = useState(70);
   const [years, setYears] = useState(40);
+  const [annualFeesPct, setAnnualFeesPct] = useState(0.15);
+  const [targetAmount, setTargetAmount] = useState(0);
   const [selectedPeriodId, setSelectedPeriodId] = useState('20y');
 
   const selectedPeriod = useMemo(
@@ -157,6 +167,8 @@ export default function SP500CalculatorPage() {
         if (Number.isFinite(parsed.monthlyContribution)) setMonthlyContribution(Math.max(0, parsed.monthlyContribution));
         if (Number.isFinite(parsed.currentAge)) setCurrentAge(Math.min(120, Math.max(0, parsed.currentAge)));
         if (Number.isFinite(parsed.endAge)) setEndAge(Math.min(120, Math.max(0, parsed.endAge)));
+        if (Number.isFinite(parsed.annualFeesPct)) setAnnualFeesPct(Math.min(3, Math.max(0, parsed.annualFeesPct)));
+        if (Number.isFinite(parsed.targetAmount)) setTargetAmount(Math.max(0, parsed.targetAmount));
       } catch {}
     }
   }, []);
@@ -200,9 +212,11 @@ export default function SP500CalculatorPage() {
       monthlyContribution,
       currentAge,
       endAge,
-      selectedPeriodId
+      selectedPeriodId,
+      annualFeesPct,
+      targetAmount
     }));
-  }, [initialInvestment, monthlyContribution, currentAge, endAge, selectedPeriodId]);
+  }, [initialInvestment, monthlyContribution, currentAge, endAge, selectedPeriodId, annualFeesPct, targetAmount]);
 
   const assumptions = useMemo(() => {
     const median = percentile(annualReturns, 0.5);
@@ -220,6 +234,7 @@ export default function SP500CalculatorPage() {
   const results = useMemo(() => {
     const totalInvested = initialInvestment + monthlyContribution * years * 12;
 
+    const feeRate = annualFeesPct / 100;
     const scenarios = [
       {
         key: 'conservative',
@@ -248,25 +263,30 @@ export default function SP500CalculatorPage() {
     ];
 
     return scenarios.map((scenario) => {
+      const netRate = Math.max(-0.95, scenario.rate - feeRate);
       const series = buildSeries({
         years,
         initial: initialInvestment,
         monthly: monthlyContribution,
-        annualRate: scenario.rate
+        annualRate: netRate
       });
 
       const finalValue = series[series.length - 1]?.y || 0;
       const growth = finalValue - totalInvested;
 
+      const goalPoint = targetAmount > 0 ? series.find((point) => point.y >= targetAmount) : null;
+
       return {
         ...scenario,
+        netRate,
         series,
         finalValue,
         growth,
-        totalInvested
+        totalInvested,
+        goalYear: goalPoint ? goalPoint.x : null
       };
     });
-  }, [assumptions, initialInvestment, monthlyContribution, selectedPeriod.label, years]);
+  }, [assumptions, annualFeesPct, initialInvestment, monthlyContribution, selectedPeriod.label, targetAmount, years]);
 
   const bestValue = Math.max(...results.map((scenario) => scenario.finalValue), 1);
   const baseScenario = results.find((scenario) => scenario.key === 'base') || results[0];
@@ -311,6 +331,7 @@ export default function SP500CalculatorPage() {
     ensureMeta('meta[property="og:url"]', { property: 'og:url' }).setAttribute('content', canonical);
     ensureMeta('meta[name="robots"]', { name: 'robots' }).setAttribute('content', 'index,follow,max-image-preview:large');
     ensureMeta('meta[name="twitter:card"]', { name: 'twitter:card' }).setAttribute('content', 'summary_large_image');
+    ensureMeta('meta[name="keywords"]', { name: 'keywords' }).setAttribute('content', 's&p 500 calculator nederland,s&p 500 rendement berekenen,sp500 maandelijkse inleg,sp500 pensioen berekenen,etf rendement calculator nederlands,s&p 500 eindkapitaal berekenen');
 
     let canonicalTag = document.head.querySelector('link[rel="canonical"]');
     if (!canonicalTag) {
@@ -329,6 +350,22 @@ export default function SP500CalculatorPage() {
           url: canonical,
           inLanguage: 'nl-NL',
           description
+        },
+        {
+          '@type': 'SoftwareApplication',
+          name: 'S&P 500 Calculator Nederland',
+          applicationCategory: 'FinanceApplication',
+          operatingSystem: 'Web',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+          inLanguage: 'nl-NL',
+          url: canonical
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+            { '@type': 'ListItem', position: 2, name: 'S&P 500 Calculator', item: canonical }
+          ]
         },
         {
           '@type': 'FAQPage',
@@ -447,6 +484,29 @@ export default function SP500CalculatorPage() {
             />
           </label>
 
+          <label className="calc-input-card">
+            <span>{t.fees}</span>
+            <input
+              type="number"
+              min="0"
+              max="3"
+              step="0.05"
+              value={annualFeesPct}
+              onChange={(event) => setAnnualFeesPct(Math.min(3, Math.max(0, Number(event.target.value) || 0)))}
+            />
+          </label>
+
+          <label className="calc-input-card">
+            <span>{t.goal}</span>
+            <input
+              type="number"
+              min="0"
+              step="10000"
+              value={targetAmount}
+              onChange={(event) => setTargetAmount(Math.max(0, Number(event.target.value) || 0))}
+            />
+          </label>
+
           <fieldset>
             <legend>{t.historical}</legend>
             {HISTORICAL_PERIODS.map((period) => (
@@ -463,6 +523,21 @@ export default function SP500CalculatorPage() {
           </fieldset>
 
           <button type="button" className="sim-cta-main">{t.calc}</button>
+          <button
+            type="button"
+            className="sim-cta-secondary"
+            onClick={() => {
+              setInitialInvestment(10000);
+              setMonthlyContribution(300);
+              setCurrentAge(30);
+              setEndAge(70);
+              setAnnualFeesPct(0.15);
+              setTargetAmount(0);
+              setSelectedPeriodId('20y');
+            }}
+          >
+            {t.reset}
+          </button>
           <a href="#faq-sp500" className="sim-cta-secondary">{t.learnMore}</a>
         </article>
 
@@ -472,7 +547,8 @@ export default function SP500CalculatorPage() {
             <h2>{formatEuro(baseScenario.finalValue)}</h2>
             <p className="future-sub">{t.futureAt} <strong>{endAge}</strong></p>
             <p className="future-sub">{t.duration}: <strong>{years} {language === 'nl' ? 'jaar' : 'years'}</strong></p>
-            <p className="future-sub">{language === 'nl' ? 'Gebaseerd op gekozen basisrendement' : 'Based on selected base return'}: <strong>{formatPct(baseScenario.rate)}</strong></p>
+            <p className="future-sub">{language === 'nl' ? 'Gekozen basisrendement (bruto)' : 'Selected base return (gross)'}: <strong>{formatPct(baseScenario.rate)}</strong></p>
+            <p className="future-sub">{language === 'nl' ? 'Netto na kosten' : 'Net after fees'}: <strong>{formatPct(baseScenario.netRate)}</strong></p>
             <div className="future-metrics">
               <p>Totale inleg</p>
               <strong>{formatEuro(baseScenario.totalInvested)}</strong>
@@ -492,11 +568,31 @@ export default function SP500CalculatorPage() {
             <div key={scenario.key} className="scenario-item" style={{ '--scenario-color': scenario.color }}>
               <div className="scenario-head">
                 <p>{scenario.label}</p>
-                <strong>{formatPct(scenario.rate)}</strong>
+                <strong>{formatPct(scenario.netRate)}</strong>
               </div>
               <p className="scenario-final">Eindwaarde: {formatEuro(scenario.finalValue)}</p>
               <p className="scenario-growth">Groei boven inleg: {formatEuro(scenario.growth)}</p>
+              {targetAmount > 0 && (
+                <p className="scenario-growth">
+                  Doel {formatEuro(targetAmount)}: {scenario.goalYear === null ? 'niet bereikt' : `rond jaar ${scenario.goalYear} (leeftijd ${currentAge + scenario.goalYear})`}
+                </p>
+              )}
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="sp500-card sp500-comparison-card">
+        <h2>{t.compareTitle}</h2>
+        <div className="comparison-grid" role="table" aria-label="Scenario vergelijking tabel">
+          {results.map((scenario) => (
+            <article key={`cmp-${scenario.key}`} className="comparison-item" role="row">
+              <h3>{scenario.label}</h3>
+              <p>Netto rendement: <strong>{formatPct(scenario.netRate)}</strong></p>
+              <p>Eindwaarde: <strong>{formatEuro(scenario.finalValue)}</strong></p>
+              <p>Totale inleg: <strong>{formatEuro(scenario.totalInvested)}</strong></p>
+              <p>Netto groei: <strong>{formatEuro(scenario.growth)}</strong></p>
+            </article>
           ))}
         </div>
       </section>

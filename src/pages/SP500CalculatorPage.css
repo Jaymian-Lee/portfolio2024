@@ -159,6 +159,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .sim-cta-main {
@@ -256,10 +257,34 @@
 }
 
 .sp500-results,
+.sp500-comparison-card,
 .chart-card,
 .sp500-grid {
   max-width: 1180px;
   margin: 0 auto 1rem;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.comparison-item {
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  border-radius: 12px;
+  padding: 0.8rem;
+}
+
+.comparison-item h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+}
+
+.comparison-item p {
+  margin: 0.25rem 0;
+  color: var(--muted);
 }
 
 .scenario-list {
@@ -401,7 +426,8 @@ summary {
 
 @media (max-width: 960px) {
   .sp500-simulator-grid,
-  .sp500-grid {
+  .sp500-grid,
+  .comparison-grid {
     grid-template-columns: 1fr;
   }
 
