@@ -492,13 +492,13 @@ export default function SP500CalculatorPage() {
         <svg viewBox="0 0 1000 420" role="img" aria-label="S&P 500 scenario groeigrafiek" className="growth-chart">
           <defs>
             <linearGradient id="chartBg" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="rgba(127, 139, 255, 0.22)" />
-              <stop offset="100%" stopColor="rgba(17, 18, 38, 0.06)" />
+              <stop offset="0%" stopColor="var(--surface-strong)" />
+              <stop offset="100%" stopColor="var(--surface)" />
             </linearGradient>
           </defs>
           <rect x="0" y="0" width="1000" height="420" fill="url(#chartBg)" rx="20" />
           {[0.2, 0.4, 0.6, 0.8].map((line) => (
-            <line key={line} x1="30" x2="970" y1={420 * line} y2={420 * line} stroke="rgba(255,255,255,0.15)" strokeDasharray="6 8" />
+            <line key={line} x1="30" x2="970" y1={420 * line} y2={420 * line} stroke="var(--line)" strokeDasharray="6 8" />
           ))}
           {results.map((scenario) => (
             <g key={scenario.key}>

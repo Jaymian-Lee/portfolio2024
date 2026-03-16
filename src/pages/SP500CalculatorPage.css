@@ -327,7 +327,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: rgba(228, 232, 255, 0.96);
+  color: var(--text);
 }
 
 .chart-legend i {
@@ -346,7 +346,7 @@
 
 details {
   margin-top: 0.65rem;
-  border-top: 1px solid rgba(157, 166, 244, 0.22);
+  border-top: 1px solid var(--line);
   padding-top: 0.65rem;
 }
 
@@ -361,13 +361,13 @@ summary {
 }
 
 .sp500-seo-content p {
-  color: rgba(234, 238, 255, 0.9);
+  color: var(--text);
 }
 
 .sp500-footnote {
   max-width: 1180px;
   margin: 0.5rem auto 0;
-  color: rgba(210, 216, 255, 0.72);
+  color: var(--muted);
   font-size: 0.93rem;
 }
 
