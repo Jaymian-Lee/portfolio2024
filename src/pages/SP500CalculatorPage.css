@@ -1,11 +1,14 @@
+.sp500-shell {
+  position: relative;
+}
+
 .sp500-page {
   min-height: 100vh;
-  padding: 2rem clamp(1rem, 3.5vw, 4rem) 3rem;
-  color: #f5f7ff;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(124, 84, 255, 0.24), transparent 34%),
-    radial-gradient(circle at 85% 0%, rgba(34, 225, 210, 0.18), transparent 42%),
-    linear-gradient(180deg, #181410 0%, #201911 60%, #15110d 100%);
+  width: min(1000px, 92vw);
+  margin: 0 auto;
+  padding: 1.4rem 0 calc(6rem + env(safe-area-inset-bottom));
+  color: var(--text);
+  background: transparent;
 }
 
 .sp500-top-nav {
@@ -13,13 +16,13 @@
 }
 
 .sp500-back-link {
-  color: #e7d7c4;
+  color: var(--muted);
   text-decoration: none;
   font-weight: 600;
 }
 
 .sp500-back-link:hover {
-  color: #fff;
+  color: var(--text);
 }
 
 .sp500-hero {
@@ -31,8 +34,8 @@
   display: inline-block;
   padding: 0.45rem 0.85rem;
   border-radius: 999px;
-  background: rgba(201, 154, 106, 0.16);
-  border: 1px solid rgba(201, 154, 106, 0.45);
+  background: var(--surface);
+  border: 1px solid var(--border);
   font-size: 0.82rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -45,7 +48,7 @@
 }
 
 .sp500-subtitle {
-  color: rgba(235, 238, 255, 0.82);
+  color: var(--muted);
   font-size: clamp(1rem, 2vw, 1.15rem);
   max-width: 760px;
 }
@@ -53,15 +56,15 @@
 .sp500-live-strip {
   margin-top: 0.9rem;
   border-radius: 12px;
-  border: 1px solid rgba(201, 154, 106, 0.36);
-  background: rgba(24, 20, 16, 0.75);
+  border: 1px solid var(--border);
+  background: var(--surface);
   padding: 0.75rem 0.9rem;
   max-width: 620px;
 }
 
 .live-label {
   margin: 0;
-  color: #d7bd9f;
+  color: var(--muted);
   font-size: 0.84rem;
 }
 
@@ -73,7 +76,7 @@
 
 .live-meta {
   margin: 0.25rem 0 0;
-  color: rgba(235, 238, 255, 0.8);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -88,10 +91,9 @@
 
 .sp500-controls-panel {
   border-radius: 18px;
-  border: 1px solid rgba(231, 214, 191, 0.16);
-  background: rgba(9, 10, 16, 0.65);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.36);
-  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
   padding: 1rem;
 }
 
@@ -103,37 +105,37 @@
 .calc-input-card {
   display: block;
   border-radius: 14px;
-  border: 1px solid rgba(238, 231, 220, 0.17);
-  background: rgba(9, 10, 14, 0.72);
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
   padding: 0.72rem;
   margin-bottom: 0.75rem;
 }
 
 .calc-input-card span {
   font-size: 0.84rem;
-  color: rgba(245, 236, 226, 0.82);
+  color: var(--muted);
 }
 
 .calc-input-card input {
   width: 100%;
   margin-top: 0.45rem;
   border-radius: 10px;
-  border: 1px solid rgba(236, 227, 214, 0.22);
-  background: #111217;
-  color: #fff;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text);
   padding: 0.68rem 0.75rem;
   font-size: 1rem;
 }
 
 .sp500-controls-panel fieldset {
-  border: 1px solid rgba(236, 221, 201, 0.2);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.7rem 0.8rem;
   margin-bottom: 0.75rem;
 }
 
 .sp500-controls-panel legend {
-  color: #e0c4a2;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -143,7 +145,7 @@
   gap: 0.45rem;
   margin: 0.36rem 0;
   font-size: 0.9rem;
-  color: rgba(239, 233, 225, 0.92);
+  color: var(--text);
 }
 
 .sim-cta-main,
@@ -160,26 +162,28 @@
 }
 
 .sim-cta-main {
-  background: linear-gradient(90deg, #85d590, #73cd99);
-  color: #182115;
+  background: var(--button);
+  color: var(--button-text);
   margin-bottom: 0.55rem;
 }
 
 .sim-cta-secondary {
-  background: linear-gradient(90deg, #5ec7c9, #77a5f0);
-  color: #f6f9ff;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
 .sp500-future-card {
   border-radius: 18px;
-  border: 1px solid rgba(125, 235, 166, 0.28);
-  background: linear-gradient(180deg, rgba(22, 99, 64, 0.78), rgba(19, 73, 50, 0.88));
+  border: 1px solid var(--border);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--bg-soft) 95%, transparent));
   position: relative;
   overflow: hidden;
   padding: 1.35rem;
   display: flex;
   align-items: flex-start;
   min-height: 470px;
+  box-shadow: var(--shadow-soft);
 }
 
 .future-card-inner {
@@ -191,7 +195,7 @@
 
 .future-kicker {
   margin: 0;
-  color: rgba(227, 252, 238, 0.95);
+  color: var(--muted);
   font-size: 1.2rem;
 }
 
@@ -203,7 +207,7 @@
 
 .future-sub {
   margin: 0.3rem 0;
-  color: rgba(218, 247, 227, 0.9);
+  color: var(--muted);
 }
 
 .future-metrics {
@@ -215,7 +219,7 @@
 
 .future-metrics p {
   margin: 0.4rem 0 0;
-  color: rgba(218, 243, 225, 0.84);
+  color: var(--muted);
 }
 
 .future-metrics strong {
@@ -225,7 +229,7 @@
 .future-disclaimer {
   margin-top: 0.9rem;
   font-size: 0.82rem;
-  color: rgba(216, 242, 225, 0.7);
+  color: var(--muted);
 }
 
 .future-mountains {
@@ -233,18 +237,18 @@
   inset: auto -8% -2% -8%;
   height: 48%;
   background:
-    radial-gradient(120% 75% at 10% 100%, rgba(62, 132, 84, 0.8) 0 45%, transparent 46%),
-    radial-gradient(90% 70% at 45% 100%, rgba(79, 155, 95, 0.78) 0 46%, transparent 47%),
-    radial-gradient(80% 65% at 85% 100%, rgba(99, 179, 108, 0.76) 0 46%, transparent 47%);
+    radial-gradient(120% 75% at 10% 100%, rgba(177, 133, 88, 0.28) 0 45%, transparent 46%),
+    radial-gradient(90% 70% at 45% 100%, rgba(177, 133, 88, 0.22) 0 46%, transparent 47%),
+    radial-gradient(80% 65% at 85% 100%, rgba(177, 133, 88, 0.2) 0 46%, transparent 47%);
   filter: blur(0.3px);
   z-index: 1;
 }
 
 .sp500-card {
   border-radius: 20px;
-  border: 1px solid rgba(179, 188, 255, 0.2);
-  background: linear-gradient(160deg, rgba(18, 22, 44, 0.6), rgba(12, 14, 31, 0.56));
-  box-shadow: 0 22px 45px rgba(3, 4, 10, 0.3);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
   padding: clamp(1rem, 2vw, 1.45rem);
 }
 
@@ -276,17 +280,17 @@
 
 .scenario-head p {
   margin: 0;
-  color: rgba(236, 239, 255, 0.92);
+  color: var(--text);
 }
 
 .scenario-head strong {
-  color: #fff;
+  color: var(--text);
 }
 
 .scenario-final,
 .scenario-growth {
   margin: 0.35rem 0 0;
-  color: rgba(227, 231, 255, 0.86);
+  color: var(--muted);
 }
 
 .sp500-grid {
