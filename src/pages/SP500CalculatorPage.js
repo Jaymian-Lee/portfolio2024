@@ -154,8 +154,8 @@ export default function SP500CalculatorPage() {
         const parsed = JSON.parse(savedSp500);
         if (Number.isFinite(parsed.initialInvestment)) setInitialInvestment(Math.max(0, parsed.initialInvestment));
         if (Number.isFinite(parsed.monthlyContribution)) setMonthlyContribution(Math.max(0, parsed.monthlyContribution));
-        if (Number.isFinite(parsed.currentAge)) setCurrentAge(Math.min(90, Math.max(18, parsed.currentAge)));
-        if (Number.isFinite(parsed.endAge)) setEndAge(Math.min(95, Math.max(19, parsed.endAge)));
+        if (Number.isFinite(parsed.currentAge)) setCurrentAge(Math.min(120, Math.max(0, parsed.currentAge)));
+        if (Number.isFinite(parsed.endAge)) setEndAge(Math.min(120, Math.max(0, parsed.endAge)));
       } catch {}
     }
   }, []);
@@ -190,10 +190,6 @@ export default function SP500CalculatorPage() {
   }, []);
 
   useEffect(() => {
-    if (endAge <= currentAge) {
-      setEndAge(currentAge + 1);
-      return;
-    }
     setYears(Math.max(1, endAge - currentAge));
   }, [currentAge, endAge]);
 
@@ -409,10 +405,10 @@ export default function SP500CalculatorPage() {
             <span>{t.ageNow}</span>
             <input
               type="number"
-              min="18"
-              max="90"
+              min="0"
+              max="120"
               value={currentAge}
-              onChange={(event) => setCurrentAge(Math.min(90, Math.max(18, Number(event.target.value) || 18)))}
+              onChange={(event) => setCurrentAge(Math.min(120, Math.max(0, Number(event.target.value) || 0)))}
             />
           </label>
 
@@ -420,10 +416,10 @@ export default function SP500CalculatorPage() {
             <span>{t.ageEnd}</span>
             <input
               type="number"
-              min={Math.max(19, currentAge + 1)}
-              max="95"
+              min="0"
+              max="120"
               value={endAge}
-              onChange={(event) => setEndAge(Math.min(95, Math.max(currentAge + 1, Number(event.target.value) || currentAge + 1)))}
+              onChange={(event) => setEndAge(Math.min(120, Math.max(0, Number(event.target.value) || 0)))}
             />
           </label>
 
