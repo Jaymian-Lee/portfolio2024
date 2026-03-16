@@ -47,7 +47,6 @@ const uiCopy = {
     ageEnd: 'Eindleeftijd',
     monthly: 'Maandelijkse inleg',
     historical: 'Historische basis',
-    fees: 'Jaarlijkse kosten (%)',
     goal: 'Doelvermogen (€ optioneel)',
     calc: 'Bereken',
     reset: 'Reset',
@@ -69,7 +68,6 @@ const uiCopy = {
     ageEnd: 'End age',
     monthly: 'Monthly contribution',
     historical: 'Historical baseline',
-    fees: 'Annual fees (%)',
     goal: 'Target amount (€ optional)',
     calc: 'Calculate',
     reset: 'Reset',
@@ -141,7 +139,6 @@ export default function SP500CalculatorPage() {
   const [currentAge, setCurrentAge] = useState(30);
   const [endAge, setEndAge] = useState(70);
   const [years, setYears] = useState(40);
-  const [annualFeesPct, setAnnualFeesPct] = useState(0.15);
   const [targetAmount, setTargetAmount] = useState(0);
   const [customAnnualReturnPct, setCustomAnnualReturnPct] = useState(8);
   const [selectedPeriodId, setSelectedPeriodId] = useState('20y');
@@ -172,7 +169,6 @@ export default function SP500CalculatorPage() {
         if (Number.isFinite(parsed.monthlyContribution)) setMonthlyContribution(Math.max(0, parsed.monthlyContribution));
         if (Number.isFinite(parsed.currentAge)) setCurrentAge(Math.min(120, Math.max(0, parsed.currentAge)));
         if (Number.isFinite(parsed.endAge)) setEndAge(Math.min(120, Math.max(0, parsed.endAge)));
-        if (Number.isFinite(parsed.annualFeesPct)) setAnnualFeesPct(Math.min(3, Math.max(0, parsed.annualFeesPct)));
         if (Number.isFinite(parsed.targetAmount)) setTargetAmount(Math.max(0, parsed.targetAmount));
         if (Number.isFinite(parsed.customAnnualReturnPct)) setCustomAnnualReturnPct(Math.min(30, Math.max(-20, parsed.customAnnualReturnPct)));
       } catch {}
@@ -219,11 +215,10 @@ export default function SP500CalculatorPage() {
       currentAge,
       endAge,
       selectedPeriodId,
-      annualFeesPct,
       targetAmount,
       customAnnualReturnPct
     }));
-  }, [initialInvestment, monthlyContribution, currentAge, endAge, selectedPeriodId, annualFeesPct, targetAmount, customAnnualReturnPct]);
+  }, [initialInvestment, monthlyContribution, currentAge, endAge, selectedPeriodId, targetAmount, customAnnualReturnPct]);
 
   const assumptions = useMemo(() => {
     const median = percentile(annualReturns, 0.5);
@@ -241,7 +236,6 @@ export default function SP500CalculatorPage() {
   const results = useMemo(() => {
     const totalInvested = initialInvestment + monthlyContribution * years * 12;
 
-    const feeRate = annualFeesPct / 100;
     const scenarios = [
       {
         key: 'conservative',
@@ -270,12 +264,11 @@ export default function SP500CalculatorPage() {
     ];
 
     return scenarios.map((scenario) => {
-      const netRate = Math.max(-0.95, scenario.rate - feeRate);
       const series = buildSeries({
         years,
         initial: initialInvestment,
         monthly: monthlyContribution,
-        annualRate: netRate
+        annualRate: scenario.rate
       });
 
       const finalValue = series[series.length - 1]?.y || 0;
@@ -285,7 +278,6 @@ export default function SP500CalculatorPage() {
 
       return {
         ...scenario,
-        netRate,
         series,
         finalValue,
         growth,
@@ -293,7 +285,7 @@ export default function SP500CalculatorPage() {
         goalYear: goalPoint ? goalPoint.x : null
       };
     });
-  }, [assumptions, annualFeesPct, initialInvestment, monthlyContribution, selectedPeriod.label, targetAmount, years]);
+  }, [assumptions, initialInvestment, monthlyContribution, selectedPeriod.label, targetAmount, years]);
 
   const bestValue = Math.max(...results.map((scenario) => scenario.finalValue), 1);
   const baseScenario = results.find((scenario) => scenario.key === 'base') || results[0];
@@ -492,18 +484,6 @@ export default function SP500CalculatorPage() {
           </label>
 
           <label className="calc-input-card">
-            <span>{t.fees}</span>
-            <input
-              type="number"
-              min="0"
-              max="3"
-              step="0.05"
-              value={annualFeesPct}
-              onChange={(event) => setAnnualFeesPct(Math.min(3, Math.max(0, Number(event.target.value) || 0)))}
-            />
-          </label>
-
-          <label className="calc-input-card">
             <span>{t.goal}</span>
             <input
               type="number"
@@ -552,7 +532,6 @@ export default function SP500CalculatorPage() {
               setMonthlyContribution(300);
               setCurrentAge(30);
               setEndAge(70);
-              setAnnualFeesPct(0.15);
               setTargetAmount(0);
               setCustomAnnualReturnPct(8);
               setSelectedPeriodId('20y');
@@ -569,8 +548,7 @@ export default function SP500CalculatorPage() {
             <h2>{formatEuro(baseScenario.finalValue)}</h2>
             <p className="future-sub">{t.futureAt} <strong>{endAge}</strong></p>
             <p className="future-sub">{t.duration}: <strong>{years} {language === 'nl' ? 'jaar' : 'years'}</strong></p>
-            <p className="future-sub">{language === 'nl' ? 'Gekozen basisrendement (bruto)' : 'Selected base return (gross)'}: <strong>{formatPct(baseScenario.rate)}</strong></p>
-            <p className="future-sub">{language === 'nl' ? 'Netto na kosten' : 'Net after fees'}: <strong>{formatPct(baseScenario.netRate)}</strong></p>
+            <p className="future-sub">{language === 'nl' ? 'Gekozen basisrendement' : 'Selected base return'}: <strong>{formatPct(baseScenario.rate)}</strong></p>
             <div className="future-metrics">
               <p>Totale inleg</p>
               <strong>{formatEuro(baseScenario.totalInvested)}</strong>
@@ -590,7 +568,7 @@ export default function SP500CalculatorPage() {
             <div key={scenario.key} className="scenario-item" style={{ '--scenario-color': scenario.color }}>
               <div className="scenario-head">
                 <p>{scenario.label}</p>
-                <strong>{formatPct(scenario.netRate)}</strong>
+                <strong>{formatPct(scenario.rate)}</strong>
               </div>
               <p className="scenario-final">Eindwaarde: {formatEuro(scenario.finalValue)}</p>
               <p className="scenario-growth">Groei boven inleg: {formatEuro(scenario.growth)}</p>
@@ -610,7 +588,7 @@ export default function SP500CalculatorPage() {
           {results.map((scenario) => (
             <article key={`cmp-${scenario.key}`} className="comparison-item" role="row">
               <h3>{scenario.label}</h3>
-              <p>Netto rendement: <strong>{formatPct(scenario.netRate)}</strong></p>
+              <p>Rendement: <strong>{formatPct(scenario.rate)}</strong></p>
               <p>Eindwaarde: <strong>{formatEuro(scenario.finalValue)}</strong></p>
               <p>Totale inleg: <strong>{formatEuro(scenario.totalInvested)}</strong></p>
               <p>Netto groei: <strong>{formatEuro(scenario.growth)}</strong></p>
