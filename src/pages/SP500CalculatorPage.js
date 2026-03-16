@@ -33,6 +33,45 @@ const SP500_ANNUAL_RETURNS = [
   { year: 2025, pct: 11.2 }
 ];
 
+const uiCopy = {
+  nl: {
+    back: '← Terug naar home',
+    heroKicker: 'S&P 500 calculator voor Nederland',
+    heroTitle: 'Bereken je potentiële S&P 500 rendement met historische data',
+    heroSub: 'Gebaseerd op echte historische percentages, met slimme scenario\'s, visuele grafiek en duidelijke output.',
+    liveLabel: 'Huidige S&P 500 waarde',
+    settingsTitle: 'Bereken direct',
+    startAmount: 'Startbedrag',
+    ageNow: 'Leeftijd nu',
+    ageEnd: 'Eindleeftijd',
+    monthly: 'Maandelijkse inleg',
+    historical: 'Historische basis',
+    calc: 'Bereken',
+    learnMore: 'Meer leren over S&P 500 beleggen ↓',
+    futureAt: 'Verwachte totaalwaarde op',
+    duration: 'Looptijd vanaf nu',
+    scenarioTitle: 'Scenario uitkomst'
+  },
+  en: {
+    back: '← Back to home',
+    heroKicker: 'S&P 500 calculator',
+    heroTitle: 'Estimate your potential S&P 500 return with historical data',
+    heroSub: 'Based on historical percentages, smart scenarios, visual charting, and clear output.',
+    liveLabel: 'Current S&P 500 value',
+    settingsTitle: 'Calculate now',
+    startAmount: 'Starting amount',
+    ageNow: 'Current age',
+    ageEnd: 'End age',
+    monthly: 'Monthly contribution',
+    historical: 'Historical baseline',
+    calc: 'Calculate',
+    learnMore: 'Learn more about S&P 500 investing ↓',
+    futureAt: 'Projected total value at age',
+    duration: 'Time horizon from now',
+    scenarioTitle: 'Scenario outcomes'
+  }
+};
+
 const formatEuro = (value) =>
   new Intl.NumberFormat('nl-NL', {
     style: 'currency',
@@ -90,6 +129,7 @@ export default function SP500CalculatorPage() {
   const [initialInvestment, setInitialInvestment] = useState(10000);
   const [monthlyContribution, setMonthlyContribution] = useState(300);
   const [currentAge, setCurrentAge] = useState(30);
+  const [endAge, setEndAge] = useState(70);
   const [years, setYears] = useState(40);
   const [selectedPeriodId, setSelectedPeriodId] = useState('20y');
 
@@ -101,12 +141,23 @@ export default function SP500CalculatorPage() {
   useEffect(() => {
     const savedTheme = localStorage.getItem('portfolio-theme');
     const savedLanguage = localStorage.getItem('portfolio-language');
+    const savedSp500 = localStorage.getItem('sp500-calculator-settings-v1');
 
     const nextTheme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : detectBrowserTheme();
     const nextLanguage = savedLanguage === 'en' || savedLanguage === 'nl' ? savedLanguage : detectBrowserLanguage();
 
     setTheme(nextTheme);
     setLanguage(nextLanguage);
+
+    if (savedSp500) {
+      try {
+        const parsed = JSON.parse(savedSp500);
+        if (Number.isFinite(parsed.initialInvestment)) setInitialInvestment(Math.max(0, parsed.initialInvestment));
+        if (Number.isFinite(parsed.monthlyContribution)) setMonthlyContribution(Math.max(0, parsed.monthlyContribution));
+        if (Number.isFinite(parsed.currentAge)) setCurrentAge(Math.min(90, Math.max(18, parsed.currentAge)));
+        if (Number.isFinite(parsed.endAge)) setEndAge(Math.min(95, Math.max(19, parsed.endAge)));
+      } catch {}
+    }
   }, []);
 
   useEffect(() => {
@@ -119,6 +170,7 @@ export default function SP500CalculatorPage() {
     document.documentElement.setAttribute('lang', language);
   }, [language]);
 
+  const t = uiCopy[language] || uiCopy.nl;
   const annualReturns = useMemo(() => SP500_ANNUAL_RETURNS.map((item) => item.pct / 100), []);
 
   useEffect(() => {
@@ -138,8 +190,22 @@ export default function SP500CalculatorPage() {
   }, []);
 
   useEffect(() => {
-    setYears(Math.max(1, 70 - currentAge));
-  }, [currentAge]);
+    if (endAge <= currentAge) {
+      setEndAge(currentAge + 1);
+      return;
+    }
+    setYears(Math.max(1, endAge - currentAge));
+  }, [currentAge, endAge]);
+
+  useEffect(() => {
+    localStorage.setItem('sp500-calculator-settings-v1', JSON.stringify({
+      initialInvestment,
+      monthlyContribution,
+      currentAge,
+      endAge,
+      selectedPeriodId
+    }));
+  }, [initialInvestment, monthlyContribution, currentAge, endAge, selectedPeriodId]);
 
   const assumptions = useMemo(() => {
     const median = percentile(annualReturns, 0.5);
@@ -303,15 +369,13 @@ export default function SP500CalculatorPage() {
       <main className="sp500-page">
       <section className="sp500-hero">
         <div className="sp500-top-nav">
-          <Link to="/" className="sp500-back-link">← Terug naar home</Link>
+          <Link to="/" className="sp500-back-link">{t.back}</Link>
         </div>
-        <p className="sp500-kicker">S&P 500 calculator voor Nederland</p>
-        <h1>Bereken je potentiële S&P 500 rendement met historische data</h1>
-        <p className="sp500-subtitle">
-          Gebaseerd op echte historische percentages, met slimme scenario&apos;s, visuele grafiek en duidelijke output.
-        </p>
+        <p className="sp500-kicker">{t.heroKicker}</p>
+        <h1>{t.heroTitle}</h1>
+        <p className="sp500-subtitle">{t.heroSub}</p>
         <div className="sp500-live-strip">
-          <p className="live-label">Huidige S&P 500 waarde</p>
+          <p className="live-label">{t.liveLabel}</p>
           {sp500Quote ? (
             <>
               <p className="live-value">{formatIndexValue(sp500Quote.value)} punten</p>
@@ -327,10 +391,10 @@ export default function SP500CalculatorPage() {
 
       <section className="sp500-simulator-grid">
         <article className="sp500-controls-panel">
-          <h2 className="sim-title">Bereken direct</h2>
+          <h2 className="sim-title">{t.settingsTitle}</h2>
 
           <label className="calc-input-card">
-            <span>Startbedrag</span>
+            <span>{t.startAmount}</span>
             <input
               type="number"
               min="0"
@@ -341,18 +405,29 @@ export default function SP500CalculatorPage() {
           </label>
 
           <label className="calc-input-card">
-            <span>Leeftijd nu</span>
+            <span>{t.ageNow}</span>
             <input
               type="number"
               min="18"
-              max="69"
+              max="90"
               value={currentAge}
-              onChange={(event) => setCurrentAge(Math.min(69, Math.max(18, Number(event.target.value) || 18)))}
+              onChange={(event) => setCurrentAge(Math.min(90, Math.max(18, Number(event.target.value) || 18)))}
             />
           </label>
 
           <label className="calc-input-card">
-            <span>Maandelijkse inleg</span>
+            <span>{t.ageEnd}</span>
+            <input
+              type="number"
+              min={Math.max(19, currentAge + 1)}
+              max="95"
+              value={endAge}
+              onChange={(event) => setEndAge(Math.min(95, Math.max(currentAge + 1, Number(event.target.value) || currentAge + 1)))}
+            />
+          </label>
+
+          <label className="calc-input-card">
+            <span>{t.monthly}</span>
             <input
               type="number"
               min="0"
@@ -363,7 +438,7 @@ export default function SP500CalculatorPage() {
           </label>
 
           <fieldset>
-            <legend>Historische basis</legend>
+            <legend>{t.historical}</legend>
             {HISTORICAL_PERIODS.map((period) => (
               <label key={period.id} className="radio-line">
                 <input
@@ -377,16 +452,16 @@ export default function SP500CalculatorPage() {
             ))}
           </fieldset>
 
-          <button type="button" className="sim-cta-main">Bereken</button>
-          <a href="#faq-sp500" className="sim-cta-secondary">Meer leren over S&P 500 beleggen ↓</a>
+          <button type="button" className="sim-cta-main">{t.calc}</button>
+          <a href="#faq-sp500" className="sim-cta-secondary">{t.learnMore}</a>
         </article>
 
         <article className="sp500-future-card">
           <div className="future-card-inner">
             <p className="future-kicker">Future Value</p>
             <h2>{formatEuro(baseScenario.finalValue)}</h2>
-            <p className="future-sub">Verwachte totaalwaarde op 70-jarige leeftijd</p>
-            <p className="future-sub">Looptijd vanaf nu: <strong>{years} jaar</strong></p>
+            <p className="future-sub">{t.futureAt} <strong>{endAge}</strong></p>
+            <p className="future-sub">{t.duration}: <strong>{years} {language === 'nl' ? 'jaar' : 'years'}</strong></p>
             <div className="future-metrics">
               <p>Totale inleg</p>
               <strong>{formatEuro(baseScenario.totalInvested)}</strong>
@@ -400,7 +475,7 @@ export default function SP500CalculatorPage() {
       </section>
 
       <section className="sp500-card sp500-results">
-        <h2>Scenario uitkomst</h2>
+        <h2>{t.scenarioTitle}</h2>
         <div className="scenario-list">
           {results.map((scenario) => (
             <div key={scenario.key} className="scenario-item" style={{ '--scenario-color': scenario.color }}>

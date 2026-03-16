@@ -71,6 +71,22 @@ const pickWordleeSnapshot = () => {
   };
 };
 
+const pickSp500Snapshot = () => {
+  const state = safeParse(localStorage.getItem('sp500-calculator-settings-v1'), null);
+  if (!state) {
+    return { hasData: false };
+  }
+
+  return {
+    hasData: true,
+    initialInvestment: Number(state.initialInvestment) || 0,
+    monthlyContribution: Number(state.monthlyContribution) || 0,
+    currentAge: Number(state.currentAge) || null,
+    endAge: Number(state.endAge) || null,
+    selectedPeriodId: state.selectedPeriodId || null
+  };
+};
+
 export const buildAiContext = ({ page, language }) => {
   return {
     page,
@@ -83,6 +99,7 @@ export const buildAiContext = ({ page, language }) => {
     localData: {
       toepen: pickToepenSnapshot(),
       wordlee: pickWordleeSnapshot(),
+      sp500: pickSp500Snapshot(),
       ui: {
         theme: localStorage.getItem('portfolio-theme') || null,
         language: localStorage.getItem('portfolio-language') || language || null
