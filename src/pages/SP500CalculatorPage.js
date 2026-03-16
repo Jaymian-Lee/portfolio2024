@@ -72,7 +72,8 @@ const toPath = (series, width, height, maxY) => {
 export default function SP500CalculatorPage() {
   const [initialInvestment, setInitialInvestment] = useState(10000);
   const [monthlyContribution, setMonthlyContribution] = useState(300);
-  const [years, setYears] = useState(20);
+  const [currentAge, setCurrentAge] = useState(30);
+  const [years, setYears] = useState(40);
   const [selectedPeriodId, setSelectedPeriodId] = useState('20y');
 
   const selectedPeriod = useMemo(
@@ -81,6 +82,10 @@ export default function SP500CalculatorPage() {
   );
 
   const annualReturns = useMemo(() => SP500_ANNUAL_RETURNS.map((item) => item.pct / 100), []);
+
+  useEffect(() => {
+    setYears(Math.max(1, 70 - currentAge));
+  }, [currentAge]);
 
   const assumptions = useMemo(() => {
     const median = percentile(annualReturns, 0.5);
@@ -147,6 +152,7 @@ export default function SP500CalculatorPage() {
   }, [assumptions, initialInvestment, monthlyContribution, selectedPeriod.label, years]);
 
   const bestValue = Math.max(...results.map((scenario) => scenario.finalValue), 1);
+  const baseScenario = results.find((scenario) => scenario.key === 'base') || results[0];
 
   useEffect(() => {
     const title = 'S&P 500 Calculator Nederland, rendement berekenen met historische data';
@@ -240,12 +246,12 @@ export default function SP500CalculatorPage() {
         </p>
       </section>
 
-      <section className="sp500-grid">
-        <article className="sp500-card sp500-controls">
-          <h2>Instellingen</h2>
+      <section className="sp500-simulator-grid">
+        <article className="sp500-controls-panel">
+          <h2 className="sim-title">Bereken direct</h2>
 
-          <label>
-            Startbedrag (€)
+          <label className="calc-input-card">
+            <span>Startbedrag</span>
             <input
               type="number"
               min="0"
@@ -255,8 +261,19 @@ export default function SP500CalculatorPage() {
             />
           </label>
 
-          <label>
-            Maandelijkse inleg (€)
+          <label className="calc-input-card">
+            <span>Leeftijd nu</span>
+            <input
+              type="number"
+              min="18"
+              max="69"
+              value={currentAge}
+              onChange={(event) => setCurrentAge(Math.min(69, Math.max(18, Number(event.target.value) || 18)))}
+            />
+          </label>
+
+          <label className="calc-input-card">
+            <span>Maandelijkse inleg</span>
             <input
               type="number"
               min="0"
@@ -264,18 +281,6 @@ export default function SP500CalculatorPage() {
               value={monthlyContribution}
               onChange={(event) => setMonthlyContribution(Number(event.target.value) || 0)}
             />
-          </label>
-
-          <label>
-            Beleggingsduur (jaren)
-            <input
-              type="range"
-              min="1"
-              max="45"
-              value={years}
-              onChange={(event) => setYears(Number(event.target.value) || 1)}
-            />
-            <span className="range-value">{years} jaar</span>
           </label>
 
           <fieldset>
@@ -292,23 +297,43 @@ export default function SP500CalculatorPage() {
               </label>
             ))}
           </fieldset>
+
+          <button type="button" className="sim-cta-main">Bereken</button>
+          <a href="#faq-sp500" className="sim-cta-secondary">Meer leren over S&P 500 beleggen ↓</a>
         </article>
 
-        <article className="sp500-card sp500-results">
-          <h2>Scenario uitkomst</h2>
-          <div className="scenario-list">
-            {results.map((scenario) => (
-              <div key={scenario.key} className="scenario-item" style={{ '--scenario-color': scenario.color }}>
-                <div className="scenario-head">
-                  <p>{scenario.label}</p>
-                  <strong>{formatPct(scenario.rate)}</strong>
-                </div>
-                <p className="scenario-final">Eindwaarde: {formatEuro(scenario.finalValue)}</p>
-                <p className="scenario-growth">Groei boven inleg: {formatEuro(scenario.growth)}</p>
-              </div>
-            ))}
+        <article className="sp500-future-card">
+          <div className="future-card-inner">
+            <p className="future-kicker">Future Value</p>
+            <h2>{formatEuro(baseScenario.finalValue)}</h2>
+            <p className="future-sub">Verwachte totaalwaarde op 70-jarige leeftijd</p>
+            <p className="future-sub">Looptijd vanaf nu: <strong>{years} jaar</strong></p>
+            <div className="future-metrics">
+              <p>Totale inleg</p>
+              <strong>{formatEuro(baseScenario.totalInvested)}</strong>
+              <p>Verwachte groei</p>
+              <strong>{formatEuro(baseScenario.growth)}</strong>
+            </div>
+            <p className="future-disclaimer">Historische prestaties zijn geen garantie voor toekomstige resultaten.</p>
           </div>
+          <div className="future-mountains" aria-hidden="true" />
         </article>
+      </section>
+
+      <section className="sp500-card sp500-results">
+        <h2>Scenario uitkomst</h2>
+        <div className="scenario-list">
+          {results.map((scenario) => (
+            <div key={scenario.key} className="scenario-item" style={{ '--scenario-color': scenario.color }}>
+              <div className="scenario-head">
+                <p>{scenario.label}</p>
+                <strong>{formatPct(scenario.rate)}</strong>
+              </div>
+              <p className="scenario-final">Eindwaarde: {formatEuro(scenario.finalValue)}</p>
+              <p className="scenario-growth">Groei boven inleg: {formatEuro(scenario.growth)}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="sp500-card chart-card">
@@ -357,7 +382,7 @@ export default function SP500CalculatorPage() {
           </ul>
         </article>
 
-        <article className="sp500-card">
+        <article className="sp500-card" id="faq-sp500">
           <h2>Veelgestelde vragen</h2>
           <details>
             <summary>Is dit een garantie voor toekomstig rendement?</summary>
