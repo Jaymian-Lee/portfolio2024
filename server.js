@@ -21,6 +21,15 @@ const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
 const STREAM_DEFAULT_CHANNEL = String(process.env.STREAM_CHANNEL || 'jaymianlee').toLowerCase();
 const STREAM_PLATFORM_KEYS = ['twitch', 'tiktok', 'youtube'];
 const streamMessages = [];
+let sp500QuoteCache = {
+  symbol: 'S&P 500',
+  value: 5230,
+  date: new Date().toISOString().slice(0, 10),
+  dayChangePct: null,
+  source: 'fallback',
+  checkedAt: Date.now(),
+  stale: true
+};
 
 const TWITCH_BOT_TOKEN_PATH = '/home/jay/.openclaw/credentials/twitch.bot_token.json';
 const TWITCH_BOT_USERNAME = process.env.TWITCH_BOT_USERNAME || 'JaymianLeeBot';
@@ -627,9 +636,20 @@ app.get('/api/stream/twitch/live', async (req, res) => {
 });
 
 app.get('/api/market/sp500-current', async (_req, res) => {
+  const timeoutMs = 5000;
+  const withTimeout = async (url) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { signal: controller.signal, headers: { 'User-Agent': 'portfolio2024/1.0' } });
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
   try {
-    const stooqResponse = await fetch('https://stooq.com/q/l/?s=%5Espx&i=d');
-    const csv = String(await stooqResponse.text() || '').trim();
+    const stooqResponse = await withTimeout('https://stooq.com/q/l/?s=%5Espx&i=d');
+    const csv = String((await stooqResponse.text()) || '').trim();
     const lines = csv.split('\n');
 
     if (lines.length > 1) {
@@ -640,38 +660,50 @@ app.get('/api/market/sp500-current', async (_req, res) => {
 
       if (Number.isFinite(close) && close > 0) {
         const dayChangePct = Number.isFinite(open) && open > 0 ? ((close - open) / open) * 100 : null;
-        return res.json({
+        sp500QuoteCache = {
           symbol: 'S&P 500',
           value: close,
           date,
           dayChangePct,
           source: 'stooq',
-          checkedAt: Date.now()
-        });
+          checkedAt: Date.now(),
+          stale: false
+        };
+        return res.json(sp500QuoteCache);
       }
     }
 
-    const yahooResponse = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=1d');
-    const yahoo = await yahooResponse.json();
-    const meta = yahoo?.chart?.result?.[0]?.meta || {};
-    const current = Number(meta.regularMarketPrice);
-    const prev = Number(meta.previousClose);
+    throw new Error('stooq-invalid');
+  } catch (_stooqError) {
+    try {
+      const yahooResponse = await withTimeout('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=1d');
+      const yahoo = await yahooResponse.json();
+      const meta = yahoo?.chart?.result?.[0]?.meta || {};
+      const current = Number(meta.regularMarketPrice);
+      const prev = Number(meta.previousClose);
 
-    if (Number.isFinite(current) && current > 0) {
-      const dayChangePct = Number.isFinite(prev) && prev > 0 ? ((current - prev) / prev) * 100 : null;
+      if (Number.isFinite(current) && current > 0) {
+        const dayChangePct = Number.isFinite(prev) && prev > 0 ? ((current - prev) / prev) * 100 : null;
+        sp500QuoteCache = {
+          symbol: 'S&P 500',
+          value: current,
+          date: new Date((meta.regularMarketTime || Date.now() / 1000) * 1000).toISOString().slice(0, 10),
+          dayChangePct,
+          source: 'yahoo',
+          checkedAt: Date.now(),
+          stale: false
+        };
+        return res.json(sp500QuoteCache);
+      }
+
+      throw new Error('yahoo-invalid');
+    } catch (_yahooError) {
       return res.json({
-        symbol: 'S&P 500',
-        value: current,
-        date: new Date((meta.regularMarketTime || Date.now() / 1000) * 1000).toISOString().slice(0, 10),
-        dayChangePct,
-        source: 'yahoo',
-        checkedAt: Date.now()
+        ...sp500QuoteCache,
+        stale: true,
+        warning: 'Live koers tijdelijk niet beschikbaar, laatst bekende waarde getoond.'
       });
     }
-
-    return res.status(502).json({ error: 'Kon S&P 500 waarde niet ophalen.' });
-  } catch (error) {
-    return res.status(502).json({ error: 'Kon S&P 500 waarde niet ophalen.' });
   }
 });
 

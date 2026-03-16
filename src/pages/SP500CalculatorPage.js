@@ -382,6 +382,7 @@ export default function SP500CalculatorPage() {
               <p className="live-meta">
                 Datum: {sp500Quote.date} · Dagverandering: {sp500Quote.dayChangePct === null ? 'n.v.t.' : `${sp500Quote.dayChangePct.toFixed(2)}%`}
               </p>
+              {sp500Quote.warning && <p className="live-meta">{sp500Quote.warning}</p>}
             </>
           ) : (
             <p className="live-meta">{quoteError || 'Koers ophalen...'}</p>
