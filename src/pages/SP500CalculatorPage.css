@@ -215,11 +215,14 @@
   width: min(340px, 100%);
   display: grid;
   gap: 0.15rem;
+  text-align: center;
+  justify-items: center;
 }
 
 .future-metrics p {
   margin: 0.4rem 0 0;
   color: var(--muted);
+  text-align: center;
 }
 
 .future-metrics strong {

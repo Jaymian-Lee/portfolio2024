@@ -472,6 +472,7 @@ export default function SP500CalculatorPage() {
             <h2>{formatEuro(baseScenario.finalValue)}</h2>
             <p className="future-sub">{t.futureAt} <strong>{endAge}</strong></p>
             <p className="future-sub">{t.duration}: <strong>{years} {language === 'nl' ? 'jaar' : 'years'}</strong></p>
+            <p className="future-sub">{language === 'nl' ? 'Gebaseerd op gekozen basisrendement' : 'Based on selected base return'}: <strong>{formatPct(baseScenario.rate)}</strong></p>
             <div className="future-metrics">
               <p>Totale inleg</p>
               <strong>{formatEuro(baseScenario.totalInvested)}</strong>
