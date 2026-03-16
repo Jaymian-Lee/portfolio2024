@@ -1,9 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import MainFooter from '../components/MainFooter';
 import './SP500CalculatorPage.css';
 
 const SITE_URL = 'https://jaymian-lee.nl';
 const PAGE_PATH = '/sp500-calculator';
+
+const detectBrowserLanguage = () => {
+  const lang = (navigator.language || '').toLowerCase();
+  return lang.startsWith('nl') ? 'nl' : 'en';
+};
+
+const detectBrowserTheme = () => {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
+};
 
 const HISTORICAL_PERIODS = [
   { id: '10y', label: 'Gemiddelde laatste 10 jaar', cagr: 0.122, volatility: 0.145, years: 10 },
@@ -70,6 +82,8 @@ const toPath = (series, width, height, maxY) => {
 };
 
 export default function SP500CalculatorPage() {
+  const [theme, setTheme] = useState('light');
+  const [language, setLanguage] = useState('nl');
   const [initialInvestment, setInitialInvestment] = useState(10000);
   const [monthlyContribution, setMonthlyContribution] = useState(300);
   const [currentAge, setCurrentAge] = useState(30);
@@ -80,6 +94,27 @@ export default function SP500CalculatorPage() {
     () => HISTORICAL_PERIODS.find((period) => period.id === selectedPeriodId) || HISTORICAL_PERIODS[1],
     [selectedPeriodId]
   );
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('portfolio-theme');
+    const savedLanguage = localStorage.getItem('portfolio-language');
+
+    const nextTheme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : detectBrowserTheme();
+    const nextLanguage = savedLanguage === 'en' || savedLanguage === 'nl' ? savedLanguage : detectBrowserLanguage();
+
+    setTheme(nextTheme);
+    setLanguage(nextLanguage);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('portfolio-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('portfolio-language', language);
+    document.documentElement.setAttribute('lang', language);
+  }, [language]);
 
   const annualReturns = useMemo(() => SP500_ANNUAL_RETURNS.map((item) => item.pct / 100), []);
 
@@ -155,13 +190,15 @@ export default function SP500CalculatorPage() {
   const baseScenario = results.find((scenario) => scenario.key === 'base') || results[0];
 
   useEffect(() => {
-    const title = 'S&P 500 Calculator Nederland, rendement berekenen met historische data';
-    const description =
-      'Bereken je potentiële S&P 500 rendement met historische gemiddelden, scenariovergelijking en heldere grafieken. Gratis Nederlandse S&P 500 calculator.';
+    const title = language === 'nl'
+      ? 'S&P 500 Calculator Nederland, rendement berekenen met historische data'
+      : 'S&P 500 Calculator, estimate returns with historical data';
+    const description = language === 'nl'
+      ? 'Bereken je potentiële S&P 500 rendement met historische gemiddelden, scenariovergelijking en heldere grafieken. Gratis Nederlandse S&P 500 calculator.'
+      : 'Estimate potential S&P 500 returns with historical averages, scenario comparison, and visual charts.';
     const canonical = `${SITE_URL}${PAGE_PATH}`;
 
     document.title = title;
-    document.documentElement.setAttribute('lang', 'nl');
 
     const ensureMeta = (selector, attrs) => {
       let tag = document.head.querySelector(selector);
@@ -231,10 +268,20 @@ export default function SP500CalculatorPage() {
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify(jsonLd);
-  }, []);
+  }, [language]);
 
   return (
-    <main className="sp500-page">
+    <div className="sp500-shell">
+      <FloatingUtilityBar
+        language={language}
+        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        theme={theme}
+        onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+        askLabel={language === 'nl' ? 'Vragen?' : 'Questions?'}
+        onAsk={() => {}}
+        askAriaLabel={language === 'nl' ? 'Open chat' : 'Open chat'}
+      />
+      <main className="sp500-page">
       <section className="sp500-hero">
         <div className="sp500-top-nav">
           <Link to="/" className="sp500-back-link">← Terug naar home</Link>
@@ -405,6 +452,8 @@ export default function SP500CalculatorPage() {
           niet als harde voorspelling.
         </p>
       </section>
-    </main>
+      </main>
+      <MainFooter language={language} />
+    </div>
   );
 }
