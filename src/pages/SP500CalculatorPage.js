@@ -126,6 +126,7 @@ export default function SP500CalculatorPage() {
   const [language, setLanguage] = useState('nl');
   const [sp500Quote, setSp500Quote] = useState(null);
   const [quoteError, setQuoteError] = useState('');
+  const [hoverYear, setHoverYear] = useState(null);
   const [initialInvestment, setInitialInvestment] = useState(10000);
   const [monthlyContribution, setMonthlyContribution] = useState(300);
   const [currentAge, setCurrentAge] = useState(30);
@@ -269,6 +270,18 @@ export default function SP500CalculatorPage() {
 
   const bestValue = Math.max(...results.map((scenario) => scenario.finalValue), 1);
   const baseScenario = results.find((scenario) => scenario.key === 'base') || results[0];
+
+  const chartDims = {
+    width: 1000,
+    height: 420,
+    marginLeft: 86,
+    marginRight: 26,
+    marginTop: 22,
+    marginBottom: 52
+  };
+  const plotWidth = chartDims.width - chartDims.marginLeft - chartDims.marginRight;
+  const plotHeight = chartDims.height - chartDims.marginTop - chartDims.marginBottom;
+  const activeYear = hoverYear === null ? years : Math.min(years, Math.max(0, hoverYear));
 
   useEffect(() => {
     const title = language === 'nl'
@@ -489,32 +502,86 @@ export default function SP500CalculatorPage() {
 
       <section className="sp500-card chart-card">
         <h2>Groei simulatie per scenario</h2>
-        <svg viewBox="0 0 1000 420" role="img" aria-label="S&P 500 scenario groeigrafiek" className="growth-chart">
+        <svg
+          viewBox={`0 0 ${chartDims.width} ${chartDims.height}`}
+          role="img"
+          aria-label="S&P 500 scenario groeigrafiek"
+          className="growth-chart"
+          onMouseMove={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * chartDims.width;
+            const plotX = Math.min(plotWidth, Math.max(0, x - chartDims.marginLeft));
+            setHoverYear(Math.round((plotX / plotWidth) * years));
+          }}
+          onMouseLeave={() => setHoverYear(null)}
+        >
           <defs>
             <linearGradient id="chartBg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--surface-strong)" />
               <stop offset="100%" stopColor="var(--surface)" />
             </linearGradient>
           </defs>
-          <rect x="0" y="0" width="1000" height="420" fill="url(#chartBg)" rx="20" />
-          {[0.2, 0.4, 0.6, 0.8].map((line) => (
-            <line key={line} x1="30" x2="970" y1={420 * line} y2={420 * line} stroke="var(--line)" strokeDasharray="6 8" />
-          ))}
+          <rect x="0" y="0" width={chartDims.width} height={chartDims.height} fill="url(#chartBg)" rx="20" />
+
+          {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+            const y = chartDims.marginTop + plotHeight * (1 - ratio);
+            const value = bestValue * ratio;
+            return (
+              <g key={`y-${ratio}`}>
+                <line x1={chartDims.marginLeft} x2={chartDims.width - chartDims.marginRight} y1={y} y2={y} stroke="var(--line)" strokeDasharray="4 6" />
+                <text x={chartDims.marginLeft - 10} y={y + 4} textAnchor="end" className="axis-label">{formatEuro(value)}</text>
+              </g>
+            );
+          })}
+
+          {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+            const yearValue = Math.round(years * ratio);
+            const x = chartDims.marginLeft + plotWidth * ratio;
+            return (
+              <g key={`x-${ratio}`}>
+                <line x1={x} x2={x} y1={chartDims.marginTop} y2={chartDims.height - chartDims.marginBottom} stroke="var(--line)" strokeDasharray="4 6" />
+                <text x={x} y={chartDims.height - chartDims.marginBottom + 22} textAnchor="middle" className="axis-label">{yearValue}j</text>
+              </g>
+            );
+          })}
+
+          <line x1={chartDims.marginLeft} x2={chartDims.marginLeft} y1={chartDims.marginTop} y2={chartDims.height - chartDims.marginBottom} stroke="var(--border)" />
+          <line x1={chartDims.marginLeft} x2={chartDims.width - chartDims.marginRight} y1={chartDims.height - chartDims.marginBottom} y2={chartDims.height - chartDims.marginBottom} stroke="var(--border)" />
+
+          {hoverYear !== null && (
+            <line
+              x1={chartDims.marginLeft + (activeYear / years) * plotWidth}
+              x2={chartDims.marginLeft + (activeYear / years) * plotWidth}
+              y1={chartDims.marginTop}
+              y2={chartDims.height - chartDims.marginBottom}
+              stroke="var(--accent)"
+              strokeDasharray="3 4"
+            />
+          )}
+
           {results.map((scenario) => (
             <g key={scenario.key}>
               <path
-                d={toPath(scenario.series, 940, 360, bestValue)}
-                transform="translate(30,30)"
+                d={toPath(scenario.series, plotWidth, plotHeight, bestValue)}
+                transform={`translate(${chartDims.marginLeft},${chartDims.marginTop})`}
                 fill="none"
                 stroke={scenario.color}
                 strokeWidth="4"
                 strokeLinecap="round"
               />
               {scenario.series.map((point, pointIndex) => {
-                const x = 30 + (point.x / scenario.series[scenario.series.length - 1].x) * 940;
-                const y = 30 + (360 - (point.y / bestValue) * 360);
+                const x = chartDims.marginLeft + (point.x / scenario.series[scenario.series.length - 1].x) * plotWidth;
+                const y = chartDims.marginTop + (plotHeight - (point.y / bestValue) * plotHeight);
+                const isActive = point.x === activeYear;
                 return (
-                  <circle key={`${scenario.key}-${pointIndex}`} cx={x} cy={y} r="6" className="chart-dot" fill={scenario.color}>
+                  <circle
+                    key={`${scenario.key}-${pointIndex}`}
+                    cx={x}
+                    cy={y}
+                    r={isActive ? 5 : 2.6}
+                    className="chart-dot"
+                    fill={scenario.color}
+                  >
                     <title>{`${scenario.label} · Jaar ${point.x}: ${formatEuro(point.y)}`}</title>
                   </circle>
                 );
@@ -522,6 +589,20 @@ export default function SP500CalculatorPage() {
             </g>
           ))}
         </svg>
+
+        <div className="chart-hover-readout">
+          <strong>Jaar {activeYear}</strong>
+          {results.map((scenario) => {
+            const point = scenario.series.find((p) => p.x === activeYear) || scenario.series[scenario.series.length - 1];
+            return (
+              <span key={`hover-${scenario.key}`}>
+                <i style={{ backgroundColor: scenario.color }} />
+                {scenario.label}: {formatEuro(point.y)}
+              </span>
+            );
+          })}
+        </div>
+
         <div className="chart-legend">
           {results.map((scenario) => (
             <span key={`legend-${scenario.key}`}>

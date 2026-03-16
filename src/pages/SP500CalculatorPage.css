@@ -307,13 +307,38 @@
 }
 
 .chart-dot {
-  opacity: 0.01;
-  transition: opacity 0.15s ease;
-  cursor: crosshair;
+  opacity: 0.9;
+  transition: transform 0.15s ease;
 }
 
-.chart-dot:hover {
-  opacity: 0.85;
+.axis-label {
+  font-size: 12px;
+  fill: var(--muted);
+}
+
+.chart-hover-readout {
+  margin-top: 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.chart-hover-readout span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.chart-hover-readout i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .chart-legend {
