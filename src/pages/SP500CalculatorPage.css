@@ -425,13 +425,45 @@ summary {
 }
 
 @media (max-width: 960px) {
+  .sp500-page {
+    width: min(100%, 94vw);
+    padding-top: 1rem;
+  }
+
   .sp500-simulator-grid,
   .sp500-grid,
   .comparison-grid {
     grid-template-columns: 1fr;
   }
 
+  .sp500-controls-panel,
+  .sp500-card {
+    padding: 0.85rem;
+    border-radius: 14px;
+  }
+
+  .calc-input-card {
+    margin-bottom: 0.55rem;
+    padding: 0.62rem;
+  }
+
+  .sim-cta-main,
+  .sim-cta-secondary {
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+
   .sp500-future-card {
-    min-height: 420px;
+    min-height: 340px;
+    padding: 1rem;
+  }
+
+  .sp500-future-card h2 {
+    font-size: clamp(1.9rem, 9vw, 2.7rem);
+  }
+
+  .chart-hover-readout span,
+  .chart-legend span {
+    font-size: 0.84rem;
   }
 }

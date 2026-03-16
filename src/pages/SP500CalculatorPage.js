@@ -21,7 +21,8 @@ const HISTORICAL_PERIODS = [
   { id: '10y', label: 'Gemiddelde laatste 10 jaar', cagr: 0.122, volatility: 0.145, years: 10 },
   { id: '20y', label: 'Gemiddelde laatste 20 jaar', cagr: 0.091, volatility: 0.165, years: 20 },
   { id: '30y', label: 'Gemiddelde laatste 30 jaar', cagr: 0.099, volatility: 0.176, years: 30 },
-  { id: 'all', label: 'Lange termijn (sinds 1957)', cagr: 0.103, volatility: 0.184, years: 68 }
+  { id: 'all', label: 'Lange termijn (sinds 1957)', cagr: 0.103, volatility: 0.184, years: 68 },
+  { id: 'custom', label: 'Aangepast percentage', cagr: 0.08, volatility: 0.184, years: 0 }
 ];
 
 const SP500_ANNUAL_RETURNS = [
@@ -142,12 +143,16 @@ export default function SP500CalculatorPage() {
   const [years, setYears] = useState(40);
   const [annualFeesPct, setAnnualFeesPct] = useState(0.15);
   const [targetAmount, setTargetAmount] = useState(0);
+  const [customAnnualReturnPct, setCustomAnnualReturnPct] = useState(8);
   const [selectedPeriodId, setSelectedPeriodId] = useState('20y');
 
-  const selectedPeriod = useMemo(
-    () => HISTORICAL_PERIODS.find((period) => period.id === selectedPeriodId) || HISTORICAL_PERIODS[1],
-    [selectedPeriodId]
-  );
+  const selectedPeriod = useMemo(() => {
+    const found = HISTORICAL_PERIODS.find((period) => period.id === selectedPeriodId) || HISTORICAL_PERIODS[1];
+    if (found.id === 'custom') {
+      return { ...found, cagr: customAnnualReturnPct / 100, label: `Aangepast (${customAnnualReturnPct.toFixed(1)}%)` };
+    }
+    return found;
+  }, [selectedPeriodId, customAnnualReturnPct]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('portfolio-theme');
@@ -169,6 +174,7 @@ export default function SP500CalculatorPage() {
         if (Number.isFinite(parsed.endAge)) setEndAge(Math.min(120, Math.max(0, parsed.endAge)));
         if (Number.isFinite(parsed.annualFeesPct)) setAnnualFeesPct(Math.min(3, Math.max(0, parsed.annualFeesPct)));
         if (Number.isFinite(parsed.targetAmount)) setTargetAmount(Math.max(0, parsed.targetAmount));
+        if (Number.isFinite(parsed.customAnnualReturnPct)) setCustomAnnualReturnPct(Math.min(30, Math.max(-20, parsed.customAnnualReturnPct)));
       } catch {}
     }
   }, []);
@@ -214,9 +220,10 @@ export default function SP500CalculatorPage() {
       endAge,
       selectedPeriodId,
       annualFeesPct,
-      targetAmount
+      targetAmount,
+      customAnnualReturnPct
     }));
-  }, [initialInvestment, monthlyContribution, currentAge, endAge, selectedPeriodId, annualFeesPct, targetAmount]);
+  }, [initialInvestment, monthlyContribution, currentAge, endAge, selectedPeriodId, annualFeesPct, targetAmount, customAnnualReturnPct]);
 
   const assumptions = useMemo(() => {
     const median = percentile(annualReturns, 0.5);
@@ -522,6 +529,20 @@ export default function SP500CalculatorPage() {
             ))}
           </fieldset>
 
+          {selectedPeriodId === 'custom' && (
+            <label className="calc-input-card">
+              <span>Aangepast jaarlijks rendement (%)</span>
+              <input
+                type="number"
+                min="-20"
+                max="30"
+                step="0.1"
+                value={customAnnualReturnPct}
+                onChange={(event) => setCustomAnnualReturnPct(Math.min(30, Math.max(-20, Number(event.target.value) || 0)))}
+              />
+            </label>
+          )}
+
           <button type="button" className="sim-cta-main">{t.calc}</button>
           <button
             type="button"
@@ -533,6 +554,7 @@ export default function SP500CalculatorPage() {
               setEndAge(70);
               setAnnualFeesPct(0.15);
               setTargetAmount(0);
+              setCustomAnnualReturnPct(8);
               setSelectedPeriodId('20y');
             }}
           >

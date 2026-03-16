@@ -85,7 +85,8 @@ const pickSp500Snapshot = () => {
     endAge: Number(state.endAge) || null,
     selectedPeriodId: state.selectedPeriodId || null,
     annualFeesPct: Number(state.annualFeesPct) || 0,
-    targetAmount: Number(state.targetAmount) || 0
+    targetAmount: Number(state.targetAmount) || 0,
+    customAnnualReturnPct: Number(state.customAnnualReturnPct) || 0
   };
 };
 
