@@ -7,10 +7,7 @@ const footerQuickLinks = [
   { label: 'Case studies', href: '/#case-studies' },
   { label: 'Experience', href: '/#experience' },
   { label: 'Contact', href: '/#contact' },
-  { label: 'Lab', href: '/lab' },
-  { label: 'Stream', href: '/stream' },
-  { label: 'Toepen', href: '/toepen' },
-  { label: 'S&P 500 Calculator', href: '/sp500-calculator' }
+  { label: 'Lab', href: '/lab' }
 ];
 
 const footerProjects = [
@@ -21,10 +18,7 @@ const footerProjects = [
   { label: 'Vizualy Prints', href: 'https://vizualyprints.com' },
   { label: 'Refacthor', href: 'https://refacthor.nl' },
   { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
-  { label: 'The Lab', href: 'https://jaymian-lee.nl/lab' },
-  { label: 'Stream Dashboard', href: 'https://jaymian-lee.nl/stream' },
-  { label: 'Toepen', href: 'https://jaymian-lee.nl/toepen' },
-  { label: 'S&P 500 Calculator', href: 'https://jaymian-lee.nl/sp500-calculator' }
+  { label: 'The Lab', href: 'https://jaymian-lee.nl/lab' }
 ];
 
 const footerConnect = [
