@@ -324,6 +324,7 @@ const copy = {
     ctaPrimary: 'Start a project',
     ctaSecondary: 'Jump to services',
     ctaDaily: 'Word-Lee',
+    ctaLab: 'Open Lab',
     stickyDaily: 'Play Word-Lee',
     sp500SpotlightTitle: 'New: S&P 500 Calculator',
     sp500SpotlightText: 'Estimate long-term growth with historical percentages, clear scenarios, and a visual chart.',
@@ -397,6 +398,7 @@ const copy = {
     ctaPrimary: 'Start een project',
     ctaSecondary: 'Ga naar services',
     ctaDaily: 'Word-Lee',
+    ctaLab: 'Open Lab',
     stickyDaily: 'Speel Word-Lee',
     sp500SpotlightTitle: 'Nieuw: S&P 500 Calculator',
     sp500SpotlightText: 'Bereken lange-termijn groei met historische percentages, duidelijke scenario’s en een visuele grafiek.',
@@ -900,10 +902,8 @@ function App() {
                   <a href="#case-studies">Case Studies</a>
                   <a href="#experience">Experience</a>
                   <a href="#contact">Contact</a>
+                  <Link to="/lab">Lab</Link>
                   <Link to="/daily-word">Word-Lee</Link>
-                  <Link to="/stream">Stream</Link>
-                  <Link to="/toepen">Toepen</Link>
-                  <Link to="/sp500-calculator">S&P 500 Calculator</Link>
                 </nav>
 
                 <div className="hero-metrics" aria-label="Credibility highlights">
@@ -940,11 +940,8 @@ function App() {
                   <Link to="/daily-word" className="btn btn-daily" aria-label="Open Word-Lee game">
                     {t.ctaDaily}
                   </Link>
-                  <Link to="/stream" className="btn btn-ghost" aria-label="Open Stream dashboard">
-                    Stream dashboard
-                  </Link>
-                  <Link to="/sp500-calculator" className="btn btn-ghost" aria-label="Open S&P 500 calculator">
-                    S&P 500 Calculator
+                  <Link to="/lab" className="btn btn-ghost" aria-label="Open Lab page">
+                    {t.ctaLab}
                   </Link>
                 </div>
 
