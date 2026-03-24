@@ -67,6 +67,8 @@ const copy = {
     leaderboardSubtitle: 'Today\'s fastest solves',
     yesterdayWinnerTitle: 'World record of this month',
     dailyTopperTitle: 'Topper of the day',
+    weeklyTopppersTitle: 'Top performers of this week',
+    weeklyTopppersSubtitle: 'Scoreboard from Monday to Sunday',
     yesterdayWinnerEmpty: 'No world record yet this month.',
     leaderboardEmpty: 'No scores yet today. Be the first.',
     leaderboardNameLabel: 'Your name',
@@ -130,6 +132,8 @@ const copy = {
     leaderboardSubtitle: 'Snelste oplossingen van vandaag',
     yesterdayWinnerTitle: 'Wereldrecord van deze maand',
     dailyTopperTitle: 'Topper van de dag',
+    weeklyTopppersTitle: 'Toppers van deze week',
+    weeklyTopppersSubtitle: 'Scorebord van maandag tot zondag',
     yesterdayWinnerEmpty: 'Nog geen wereldrecord deze maand.',
     leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
     leaderboardNameLabel: 'Jouw naam',
@@ -193,6 +197,36 @@ const getInitialState = (language, dateKey) => {
 };
 
 
+
+const getMondayWeekStart = (dateKey) => {
+  const base = new Date(`${dateKey}T00:00:00`);
+  const jsDay = base.getDay();
+  const mondayOffset = jsDay === 0 ? -6 : 1 - jsDay;
+  base.setDate(base.getDate() + mondayOffset);
+  return base;
+};
+
+const getWeekDateKeys = (dateKey) => {
+  const monday = getMondayWeekStart(dateKey);
+  return Array.from({ length: 7 }).map((_, index) => {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + index);
+    const year = day.getFullYear();
+    const month = String(day.getMonth() + 1).padStart(2, '0');
+    const date = String(day.getDate()).padStart(2, '0');
+    return `${year}-${month}-${date}`;
+  });
+};
+
+const formatWeekdayLabel = (dateKey, language) => {
+  const locale = language === 'nl' ? 'nl-NL' : 'en-US';
+  const date = new Date(`${dateKey}T00:00:00`);
+  const dayLabel = date.toLocaleDateString(locale, { weekday: 'long' });
+  const normalizedDayLabel = dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1);
+  const shortDate = date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' });
+  return `${normalizedDayLabel} (${shortDate})`;
+};
+
 const safeJson = async (response) => {
   const raw = await response.text();
   if (!raw) return {};
@@ -241,6 +275,7 @@ function DailyWordPage() {
 
   const [leaderboard, setLeaderboard] = useState([]);
   const [monthlyWorldRecord, setMonthlyWorldRecord] = useState(null);
+  const [weeklyTopDays, setWeeklyTopDays] = useState([]);
   const [scoreName, setScoreName] = useState('');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
@@ -373,8 +408,30 @@ function DailyWordPage() {
         });
 
         setMonthlyWorldRecord(monthlyCandidates[0] || null);
+
+        const weekDateKeys = getWeekDateKeys(dateKey);
+        const weeklyResponses = await Promise.all(
+          weekDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`))
+        );
+        const weeklyData = await Promise.all(weeklyResponses.map((response) => safeJson(response)));
+
+        const weekRows = weekDateKeys
+          .map((key, index) => {
+            if (!weeklyResponses[index].ok) return null;
+            const entries = Array.isArray(weeklyData[index]?.top3) ? weeklyData[index].top3 : [];
+            if (entries.length === 0) return null;
+            return {
+              dateKey: key,
+              label: formatWeekdayLabel(key, language),
+              entries
+            };
+          })
+          .filter(Boolean);
+
+        setWeeklyTopDays(weekRows);
       } catch (err) {
         setLeaderboardError(err.message || copy[language].leaderboardError);
+        setWeeklyTopDays([]);
       } finally {
         setLeaderboardLoading(false);
       }
@@ -762,6 +819,32 @@ function DailyWordPage() {
               </div>
             ) : (
               <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
+            )}
+          </div>
+
+
+          <div className="weekly-topppers" aria-label={copy[language].weeklyTopppersTitle}>
+            <p className="yesterday-winner-title">{copy[language].weeklyTopppersTitle}</p>
+            <p className="leaderboard-subtitle weekly-topppers-subtitle">{copy[language].weeklyTopppersSubtitle}</p>
+            {weeklyTopDays.length === 0 ? (
+              <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
+            ) : (
+              <div className="weekly-topppers-grid">
+                {weeklyTopDays.map((day) => (
+                  <article key={day.dateKey} className="weekly-day-card">
+                    <h4 className="weekly-day-title">{day.label}</h4>
+                    <ol className="weekly-day-list">
+                      {day.entries.map((entry, index) => (
+                        <li key={`${day.dateKey}-${entry.name}-${entry.submittedAt || index}`}>
+                          <span className="weekly-rank">#{index + 1}</span>
+                          <span className="weekly-name">{entry.name}</span>
+                          <span className="weekly-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </article>
+                ))}
+              </div>
             )}
           </div>
 

@@ -285,6 +285,65 @@
   font-size: 0.86rem;
 }
 
+
+.weekly-topppers {
+  margin-top: 0.8rem;
+  padding-top: 0.25rem;
+}
+
+.weekly-topppers-subtitle {
+  margin-top: 0.25rem;
+}
+
+.weekly-topppers-grid {
+  margin-top: 0.55rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.weekly-day-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  padding: 0.55rem 0.6rem;
+}
+
+.weekly-day-title {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+.weekly-day-list {
+  list-style: none;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.weekly-day-list li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  border-radius: 8px;
+  padding: 0.4rem 0.45rem;
+}
+
+.weekly-rank {
+  font-weight: 700;
+}
+
+.weekly-name {
+  font-weight: 600;
+}
+
+.weekly-score {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .leaderboard-list {
   list-style: none;
   margin: 0.8rem 0 0;
