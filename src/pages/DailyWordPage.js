@@ -481,13 +481,6 @@ function DailyWordPage() {
   }, [language, myScoresQuery]);
 
 
-  const getRankBadge = (index) => {
-    if (index === 0) return '👑 #1';
-    if (index === 1) return '🥈 #2';
-    if (index === 2) return '🥉 #3';
-    return `#${index + 1}`;
-  };
-
   const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
   const filteredPlayerOptions = useMemo(() => {
     return playerOptions;
@@ -853,17 +846,6 @@ function DailyWordPage() {
             <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
           )}
 
-          {leaderboard.length > 0 && (
-            <ol className="leaderboard-list">
-              {leaderboard.map((entry, index) => (
-                <li key={`${entry.name}-${entry.attempts}-${entry.submittedAt || index}`}>
-                  <span className={`leaderboard-rank`}>{getRankBadge(index)}</span>
-                  <span className="leaderboard-name">{entry.name}</span>
-                  <span className="leaderboard-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
-                </li>
-              ))}
-            </ol>
-          )}
 
           {game.status === 'won' && !scoreSubmitted && (
             <div className="leaderboard-join-wrap">
