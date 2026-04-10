@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 const fs = require('node:fs');
+const path = require('node:path');
 const tmi = require('tmi.js');
 const crypto = require('node:crypto');
 
@@ -901,6 +902,21 @@ app.post('/api/chat', async (req, res) => {
     });
   }
 });
+
+const buildDir = path.join(__dirname, 'build');
+const buildIndex = path.join(buildDir, 'index.html');
+
+if (fs.existsSync(buildIndex)) {
+  app.use(express.static(buildDir));
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+
+    return res.sendFile(buildIndex);
+  });
+}
 
 app.listen(port, () => {
   console.log(`Portfolio API draait op http://localhost:${port}`);

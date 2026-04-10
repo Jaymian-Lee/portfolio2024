@@ -2,7 +2,11 @@
   "name": "portfolio2024",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.6.2",
   "proxy": "http://localhost:3001",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -26,9 +30,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server.js",
     "start:api": "node server.js",
-    "dev": "concurrently \"npm run start:api\" \"npm start\"",
+    "start:client": "react-scripts start",
+    "dev": "concurrently \"npm run start:api\" \"npm run start:client\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

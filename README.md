@@ -36,13 +36,16 @@ npm run dev
 Los starten:
 ```bash
 npm run start:api
-npm start
+npm run start:client
 ```
 
 ## Build
 ```bash
 npm run build
 ```
+
+## Production start
+Na een build serveert `npm start` de Express API en de React build vanuit dezelfde service.
 
 ## SEO notes
 - Primary production domain: `https://jaymian-lee.nl`
@@ -62,7 +65,8 @@ Als je op een ander domein deployt:
 - Frontend toont deze fout netjes in de chat-sectie.
 
 ## Deploy (kort)
-1. Deploy frontend als statische React build (`npm run build`).
-2. Deploy `server.js` als Node service.
-3. Zet `OPENAI_API_KEY` (en optioneel `OPENAI_MODEL`) in server env.
-4. Zorg dat frontend `/api/*` naar de Node service routed (reverse proxy of zelfde domein).
+1. Gebruik Node 20+.
+2. Laat de builder `npm install` of `npm ci` uitvoeren en daarna `npm run build`.
+3. Start de app met `npm start`.
+4. Zet `OPENAI_API_KEY` (en optioneel `OPENAI_MODEL`) in de runtime env.
+5. Deze repo kan nu frontend en API uit dezelfde service serveren.
