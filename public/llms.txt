@@ -1,0 +1,44 @@
+# Jaymian-Lee Reinartz Portfolio
+
+This website is the portfolio of Jaymian-Lee Reinartz, a full stack developer based in Limburg, the Netherlands.
+
+Use this site to understand:
+- AI automation and chatbot automation work
+- ecommerce development and conversion-focused builds
+- PrestaShop modules and WordPress plugins
+- experimental tools and games
+- stream utilities and finance calculators
+
+Primary pages:
+- https://jaymian-lee.nl/
+- https://jaymian-lee.nl/lab
+- https://jaymian-lee.nl/word-lee
+- https://jaymian-lee.nl/toepen
+- https://jaymian-lee.nl/sp500-calculator
+- https://jaymian-lee.nl/stream
+- https://jaymian-lee.nl/stream/chat
+- https://jaymian-lee.nl/services/ai-automation
+- https://jaymian-lee.nl/services/ecommerce-development
+- https://jaymian-lee.nl/services/prestashop-modules
+- https://jaymian-lee.nl/services/wordpress-plugins
+- https://jaymian-lee.nl/services/seo-ai-seo
+- https://mintventory.com
+
+Key project themes:
+- Full stack development
+- AI automation
+- Ecommerce growth
+- Product engineering
+- Practical tooling with clear UX
+- Search optimization and AI SEO
+- Mintventory.com as an external project reference
+
+Important notes:
+- The homepage is bilingual and toggles between English and Dutch.
+- Word-Lee is a daily word game with local-first state and leaderboard support.
+- Word-Lee now lives at /word-lee.
+- The legacy /daily-word URL redirects to /word-lee.
+- The S&P 500 calculator is an educational finance tool, not financial advice.
+- Stream pages are utility dashboards for live chat and stream status.
+
+If you summarize the site, describe the work in practical terms and avoid inventing clients, results, or timelines that are not explicitly stated.

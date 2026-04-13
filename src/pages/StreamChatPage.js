@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SiteChrome from '../components/SiteChrome';
 import PlatformIcon from '../components/PlatformIcon';
+import Seo from '../components/Seo';
+import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import './StreamPages.css';
 
 const DEFAULT_FILTERS = {
@@ -71,6 +73,23 @@ export default function StreamChatPage() {
     () => Object.entries(filters).filter(([, enabled]) => enabled).map(([key]) => key),
     [filters]
   );
+  const pageJsonLd = useMemo(() => ({
+    '@context': 'https://schema.org',
+    '@graph': [
+      createWebsiteSchema({ language: ['en', 'nl'] }),
+      createWebPageSchema({
+        name: 'Stream Chat',
+        url: `${siteSeo.siteUrl}/stream/chat`,
+        description: 'Combined live chat view for Twitch, TikTok, and YouTube stream messages.',
+        language: 'en-US'
+      }),
+      createBreadcrumbSchema([
+        { name: 'Home', item: siteSeo.siteUrl },
+        { name: 'Stream Dashboard', item: `${siteSeo.siteUrl}/stream` },
+        { name: 'Stream Chat', item: `${siteSeo.siteUrl}/stream/chat` }
+      ])
+    ]
+  }), []);
 
   useEffect(() => {
     let stop = false;
@@ -139,6 +158,16 @@ export default function StreamChatPage() {
 
   return (
     <SiteChrome>
+      <Seo
+        title="Stream Chat | Jaymian-Lee Reinartz"
+        description="Combined live chat view for Twitch, TikTok, and YouTube stream messages."
+        canonicalPath="/stream/chat"
+        language="en"
+        image={`${siteSeo.siteUrl}/jay.png`}
+        imageAlt="Stream chat overview for Jaymian-Lee Reinartz"
+        jsonLd={pageJsonLd}
+      />
+
       <main className="stream-shell">
         <section className="stream-card">
           <p className="stream-kicker">Stream Chat</p>

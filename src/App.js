@@ -4,6 +4,15 @@ import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
 import FloatingUtilityBar from './components/FloatingUtilityBar';
 import MainFooter from './components/MainFooter';
+import Seo from './components/Seo';
+import {
+  createBreadcrumbSchema,
+  createPersonSchema,
+  createWebPageSchema,
+  createWebsiteSchema,
+  siteSeo
+} from './data/seo';
+import services from './data/services';
 import { buildAiContext } from './utils/aiContext';
 import './App.css';
 
@@ -76,6 +85,20 @@ const projectLinks = [
     impact: {
       en: 'Made product discovery and post-purchase plant care easier for new customers.',
       nl: 'Maakte productontdekking en nazorg voor planten eenvoudiger voor nieuwe klanten.'
+    }
+  },
+  {
+    name: 'Mintventory.com',
+    url: 'https://mintventory.com',
+    image: '/projects/mintventory-com.svg',
+    category: { en: 'Inventory Platform', nl: 'Inventory platform' },
+    summary: {
+      en: 'Built a clean site presence for Mintventory.com with a focus on inventory clarity, product storytelling, and a practical digital experience.',
+      nl: 'Een heldere online aanwezigheid gebouwd voor Mintventory.com met focus op inventory duidelijkheid, productverhaal en een praktische digitale ervaring.'
+    },
+    impact: {
+      en: 'Helps present the product proposition clearly and make inventory-focused workflows easier to understand.',
+      nl: 'Helpt het productverhaal duidelijk te presenteren en inventory-gerichte workflows beter uitlegbaar te maken.'
     }
   },
   {
@@ -326,9 +349,9 @@ const copy = {
     ctaDaily: 'Word-Lee',
     ctaLab: 'Open Lab',
     stickyDaily: 'Play Word-Lee',
-    sp500SpotlightTitle: 'New: S&P 500 Calculator',
-    sp500SpotlightText: 'Estimate long-term growth with historical percentages, clear scenarios, and a visual chart.',
-    sp500SpotlightCta: 'Open calculator',
+    sp500SpotlightTitle: 'New: Word-Lee',
+    sp500SpotlightText: 'Play the daily word challenge built for curious minds, with leaderboard support and a clean, focused flow.',
+    sp500SpotlightCta: 'Play Word-Lee',
     popupWordleeTitle: 'Word-Lee is live',
     popupWordleeText: 'Have you played Word-Lee today?',
     popupWordleeCta: 'Play Word-Lee',
@@ -343,6 +366,8 @@ const copy = {
     storyTitle: 'Simple where it should be, strong where it matters.',
     capabilitiesKicker: 'Services',
     capabilitiesTitle: 'Technical services for scalable digital products.',
+    servicePagesKicker: 'Landing pages',
+    servicePagesTitle: 'SEO landing pages for specific search intent.',
     caseKicker: 'Case studies',
     caseTitle: 'Recent outcomes across automation and ecommerce.',
     experienceKicker: 'Experience',
@@ -360,6 +385,25 @@ const copy = {
     contactText:
       'Available for product engineering, ecommerce development, PrestaShop modules, WordPress plugins, and AI automation projects.',
     contactCta: 'Send an email',
+    seoKicker: 'SEO and AI search',
+    seoTitle: 'Clear answers for people, search engines, and AI assistants.',
+    seoText:
+      'This portfolio is structured around the services, projects, and outcomes people search for most often. That means direct copy, crawlable headings, meaningful image alt text, and page-level context that helps AI systems understand what I do.',
+    seoFaqTitle: 'Frequently asked questions',
+    seoFaq: [
+      {
+        q: 'What kind of work do you do?',
+        a: 'I build full stack web products, AI automation flows, ecommerce improvements, PrestaShop modules, WordPress plugins, and chatbot systems.'
+      },
+      {
+        q: 'Do you work on projects outside Limburg?',
+        a: 'Yes. I am based in Limburg, but I work with clients and teams across the Netherlands and on international projects.'
+      },
+      {
+        q: 'Can you help with SEO and AI SEO?',
+        a: 'Yes. I can structure pages, improve content hierarchy, add schema, optimize metadata, and make content more understandable for search engines and AI systems.'
+      }
+    ],
     visit: 'Visit project',
     askMe: 'Questions?',
     askTitle: 'Questions?',
@@ -400,9 +444,9 @@ const copy = {
     ctaDaily: 'Word-Lee',
     ctaLab: 'Open Lab',
     stickyDaily: 'Speel Word-Lee',
-    sp500SpotlightTitle: 'Nieuw: S&P 500 Calculator',
-    sp500SpotlightText: 'Bereken lange-termijn groei met historische percentages, duidelijke scenario’s en een visuele grafiek.',
-    sp500SpotlightCta: 'Open calculator',
+    sp500SpotlightTitle: 'Nieuw: Word-Lee',
+    sp500SpotlightText: 'Speel de dagelijkse woordchallenge voor nieuwsgierige denkers, met leaderboard en een rustige, gerichte flow.',
+    sp500SpotlightCta: 'Speel Word-Lee',
     popupWordleeTitle: 'Word-Lee staat klaar',
     popupWordleeText: 'Heb je vandaag Word-Lee al gedaan?',
     popupWordleeCta: 'Speel Word-Lee',
@@ -417,6 +461,8 @@ const copy = {
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
     capabilitiesKicker: 'Services',
     capabilitiesTitle: 'Technische services voor schaalbare digitale producten.',
+    servicePagesKicker: 'Landingspagina\'s',
+    servicePagesTitle: 'SEO landingspagina\'s voor specifieke zoekintentie.',
     caseKicker: 'Case studies',
     caseTitle: 'Recente resultaten in automation en ecommerce.',
     experienceKicker: 'Ervaring',
@@ -434,6 +480,25 @@ const copy = {
     contactText:
       'Beschikbaar voor product engineering, ecommerce development, PrestaShop modules, WordPress plugins en AI automation projecten.',
     contactCta: 'Stuur een e-mail',
+    seoKicker: 'SEO en AI search',
+    seoTitle: 'Duidelijke antwoorden voor mensen, zoekmachines en AI assistants.',
+    seoText:
+      'Deze portfolio is opgebouwd rond de services, projecten en resultaten waar mensen het vaakst op zoeken. Dat betekent directe copy, crawlbare headings, zinvolle alt teksten en paginacontext die AI-systemen helpt begrijpen wat ik doe.',
+    seoFaqTitle: 'Veelgestelde vragen',
+    seoFaq: [
+      {
+        q: 'Wat voor werk doe je?',
+        a: 'Ik bouw full stack webproducten, AI automation flows, ecommerce verbeteringen, PrestaShop modules, WordPress plugins en chatbot systemen.'
+      },
+      {
+        q: 'Werk je alleen in Limburg?',
+        a: 'Nee. Ik zit in Limburg, maar werk met klanten en teams in heel Nederland en aan internationale projecten.'
+      },
+      {
+        q: 'Kun je helpen met SEO en AI SEO?',
+        a: 'Ja. Ik kan paginastructuur verbeteren, content hiërarchie aanscherpen, schema toevoegen, metadata optimaliseren en content beter leesbaar maken voor zoekmachines en AI systemen.'
+      }
+    ],
     visit: 'Bekijk project',
     askMe: 'Vragen?',
     askTitle: 'Vragen?',
@@ -821,10 +886,65 @@ function App() {
   };
 
   const t = copy[language];
+  const homeSeoJsonLd = useMemo(() => {
+    const canonical = siteSeo.siteUrl;
+    const pageTitle = language === 'nl'
+      ? 'Jaymian-Lee Reinartz | Full stack developer voor AI automation en ecommerce groei'
+      : 'Jaymian-Lee Reinartz | Full stack developer for AI automation and ecommerce growth';
+    const pageDescription = language === 'nl'
+      ? 'Portfolio van Jaymian-Lee Reinartz, full stack developer uit Limburg, gespecialiseerd in AI automation, ecommerce development, chatbot automation, PrestaShop modules en WordPress plugins.'
+      : 'Portfolio of Jaymian-Lee Reinartz, a full stack developer in Limburg focused on AI automation, ecommerce development, chatbot automation, PrestaShop modules, and WordPress plugins.';
+
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        createPersonSchema(),
+        createWebsiteSchema({ language: ['en', 'nl'] }),
+        createWebPageSchema({
+          name: pageTitle,
+          url: canonical,
+          description: pageDescription,
+          language: language === 'nl' ? 'nl-NL' : 'en-US',
+          image: `${siteSeo.siteUrl}/jay.png`
+        }),
+        createBreadcrumbSchema([
+          { name: 'Home', item: canonical }
+        ]),
+        {
+          '@type': 'FAQPage',
+          mainEntity: t.seoFaq.map((item) => ({
+            '@type': 'Question',
+            name: item.q,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.a
+            }
+          }))
+        }
+      ]
+    };
+  }, [language, t.seoFaq]);
+
   const activeGreetings = prefersReducedMotion ? PRELOADER_GREETINGS.slice(0, 4) : PRELOADER_GREETINGS;
 
   return (
     <div className={`site-shell ${showPreloader ? 'is-preloading' : ''}`}>
+      <Seo
+        title={language === 'nl'
+          ? 'Jaymian-Lee Reinartz | Full stack developer voor AI automation en ecommerce groei'
+          : 'Jaymian-Lee Reinartz | Full stack developer for AI automation and ecommerce growth'}
+        description={language === 'nl'
+          ? 'Portfolio van Jaymian-Lee Reinartz, full stack developer uit Limburg, gespecialiseerd in AI automation, ecommerce development, chatbot automation, PrestaShop modules en WordPress plugins.'
+          : 'Portfolio of Jaymian-Lee Reinartz, a full stack developer in Limburg focused on AI automation, ecommerce development, chatbot automation, PrestaShop modules, and WordPress plugins.'}
+        canonicalPath="/"
+        language={language}
+        image={`${siteSeo.siteUrl}/jay.png`}
+        imageAlt={language === 'nl'
+          ? 'Portret van Jaymian-Lee Reinartz, full stack developer uit Limburg'
+          : 'Portrait of Jaymian-Lee Reinartz, full stack developer based in Limburg'}
+        jsonLd={homeSeoJsonLd}
+      />
+
       {showPreloader && (
         <div className={`preloader ${preloaderExiting ? 'exit' : ''}`} aria-hidden="true">
           <div className="preloader-inner">
@@ -880,10 +1000,13 @@ function App() {
               <figure className="portrait-wrap hero-portrait">
                 <img
                   src="/jay-portrait.jpg"
-                  alt="Jaymian-Lee Reinartz"
-                  loading="lazy"
+                  alt={language === 'nl'
+                    ? 'Portret van Jaymian-Lee Reinartz, full stack developer gespecialiseerd in AI automation en ecommerce'
+                    : 'Portrait of Jaymian-Lee Reinartz, full stack developer specialized in AI automation and ecommerce'}
+                  loading="eager"
                   decoding="async"
                   className="portrait-image"
+                  fetchPriority="high"
                   width="1050"
                   height="1400"
                 />
@@ -903,7 +1026,7 @@ function App() {
                   <a href="#experience">Experience</a>
                   <a href="#contact">Contact</a>
                   <Link to="/lab">Lab</Link>
-                  <Link to="/daily-word">Word-Lee</Link>
+                  <Link to="/word-lee">Word-Lee</Link>
                 </nav>
 
                 <div className="hero-metrics" aria-label="Credibility highlights">
@@ -937,7 +1060,7 @@ function App() {
                   >
                     LinkedIn profile
                   </a>
-                  <Link to="/daily-word" className="btn btn-daily" aria-label="Open Word-Lee game">
+                  <Link to="/word-lee" className="btn btn-daily" aria-label="Open Word-Lee game">
                     {t.ctaDaily}
                   </Link>
                   <Link to="/lab" className="btn btn-ghost" aria-label="Open Lab page">
@@ -945,10 +1068,10 @@ function App() {
                   </Link>
                 </div>
 
-                <div className="hero-sp500-spotlight" aria-label="S&P 500 calculator highlight">
+                <div className="hero-sp500-spotlight" aria-label="Word-Lee highlight">
                   <p className="section-kicker">{t.sp500SpotlightTitle}</p>
                   <p>{t.sp500SpotlightText}</p>
-                  <Link to="/sp500-calculator" className="btn btn-ghost" aria-label="Go to S&P 500 calculator page">
+                  <Link to="/word-lee" className="btn btn-ghost" aria-label="Go to Word-Lee page">
                     {t.sp500SpotlightCta}
                   </Link>
                 </div>
@@ -967,6 +1090,8 @@ function App() {
                   className="refacthor-image"
                   loading="lazy"
                   decoding="async"
+                  width="1600"
+                  height="900"
                 />
                 <span className="refacthor-badge">{t.refacthorBadge}</span>
               </div>
@@ -1010,6 +1135,24 @@ function App() {
                 <article className="capability-card" key={item.title}>
                   <h3>{item.title}</h3>
                   <p>{item.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section reveal stack-card" id="service-pages" ref={(el) => (revealRefs.current[10] = el)} style={{ '--stack-index': 3.5, '--stack-layer': 4.5 }}>
+          <div className="section-card stack-panel">
+            <p className="section-kicker">{t.servicePagesKicker}</p>
+            <h2>{t.servicePagesTitle}</h2>
+            <div className="capabilities-grid">
+              {services.map((service) => (
+                <article className="capability-card" key={service.slug}>
+                  <h3>{service.title[language]}</h3>
+                  <p>{service.summary[language]}</p>
+                  <Link to={`/services/${service.slug}`} className="work-link">
+                    {language === 'nl' ? 'Open pagina' : 'Open page'} →
+                  </Link>
                 </article>
               ))}
             </div>
@@ -1061,10 +1204,16 @@ function App() {
                 <article className="work-card" key={project.name}>
                   <img
                     src={project.image}
-                    alt={`${project.name} project screenshot`}
+                    alt={
+                      language === 'nl'
+                        ? `${project.name} project screenshot, voorbeeld van ${project.category[language].toLowerCase()}`
+                        : `${project.name} project screenshot showing the ${project.category[language].toLowerCase()} product`
+                    }
                     className="work-image"
                     loading="lazy"
                     decoding="async"
+                    width="1600"
+                    height="900"
                   />
                   <div className="work-top">
                     <p className="work-category">{project.category[language]}</p>
@@ -1110,6 +1259,22 @@ function App() {
               <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Contact Jaymian-Lee by email">
                 {t.contactCta}
               </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="section reveal stack-card" id="seo-faq" ref={(el) => (revealRefs.current[9] = el)} style={{ '--stack-index': 9, '--stack-layer': 10 }}>
+          <div className="section-card stack-panel">
+            <p className="section-kicker">{t.seoKicker}</p>
+            <h2>{t.seoTitle}</h2>
+            <p className="lead">{t.seoText}</p>
+            <div className="experience-grid">
+              {t.seoFaq.map((item) => (
+                <article className="experience-card" key={item.q}>
+                  <h3>{item.q}</h3>
+                  <p>{item.a}</p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -1169,7 +1334,7 @@ function App() {
                 <button type="button" className="wordly-popup-dismiss" onClick={() => setShowWordleePopup(false)}>
                   {t.popupDismiss}
                 </button>
-                <Link to="/daily-word" className="wordly-popup-cta" onClick={() => setShowWordleePopup(false)}>
+                  <Link to="/word-lee" className="wordly-popup-cta" onClick={() => setShowWordleePopup(false)}>
                   {t.popupWordleeCta}
                 </Link>
               </div>
@@ -1251,3 +1416,5 @@ function App() {
 }
 
 export default App;
+
+

@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import MainFooter from '../components/MainFooter';
+import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import './LabPage.css';
 
 const detectBrowserLanguage = () => {
@@ -37,12 +39,12 @@ const copy = {
 
 const projects = {
   nl: [
-    {
-      name: 'Word-Lee',
-      path: '/daily-word',
-      badge: 'Word Game',
-      description: 'Dagelijkse woordchallenge met leaderboard, wereldrecord en snelle rounds.',
-      tags: ['React', 'Game', 'Realtime ranking']
+      {
+        name: 'Word-Lee',
+        path: '/word-lee',
+        badge: 'Word Game',
+        description: 'Dagelijkse woordchallenge met leaderboard, wereldrecord en snelle rounds.',
+        tags: ['React', 'Game', 'Realtime ranking']
     },
     {
       name: 'Stream Dashboard',
@@ -74,12 +76,12 @@ const projects = {
     }
   ],
   en: [
-    {
-      name: 'Word-Lee',
-      path: '/daily-word',
-      badge: 'Word Game',
-      description: 'Daily word challenge with leaderboard, world record, and quick rounds.',
-      tags: ['React', 'Game', 'Realtime ranking']
+      {
+        name: 'Word-Lee',
+        path: '/word-lee',
+        badge: 'Word Game',
+        description: 'Daily word challenge with leaderboard, world record, and quick rounds.',
+        tags: ['React', 'Game', 'Realtime ranking']
     },
     {
       name: 'Stream Dashboard',
@@ -137,9 +139,44 @@ export default function LabPage() {
 
   const t = copy[language] || copy.en;
   const labProjects = useMemo(() => projects[language] || projects.en, [language]);
+  const labSeoJsonLd = useMemo(() => {
+    const canonical = `${siteSeo.siteUrl}/lab`;
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        createWebsiteSchema({ language: ['en', 'nl'] }),
+        createWebPageSchema({
+          name: language === 'nl' ? 'The Lab | Experimentele subprojecten' : 'The Lab | Experimental subprojects',
+          url: canonical,
+          description: language === 'nl'
+            ? 'The Lab bundelt de experimentele tools, games en utilities van Jaymian-Lee Reinartz op een centrale pagina.'
+            : 'The Lab brings together Jaymian-Lee Reinartz experiments, games, and utilities on one central page.',
+          language: language === 'nl' ? 'nl-NL' : 'en-US'
+        }),
+        createBreadcrumbSchema([
+          { name: 'Home', item: siteSeo.siteUrl },
+          { name: 'Lab', item: canonical }
+        ])
+      ]
+    };
+  }, [language]);
 
   return (
     <div className="lab-page-shell">
+      <Seo
+        title={language === 'nl' ? 'The Lab | Experimentele subprojecten' : 'The Lab | Experimental subprojects'}
+        description={language === 'nl'
+          ? 'Bekijk The Lab: een overzicht van experimentele tools, games en utilities zoals Word-Lee, Stream Dashboard, Stream Chat, Toepen en de S&P 500 calculator.'
+          : 'Explore The Lab: an overview of experimental tools, games, and utilities such as Word-Lee, Stream Dashboard, Stream Chat, Toepen, and the S&P 500 calculator.'}
+        canonicalPath="/lab"
+        language={language}
+        image={`${siteSeo.siteUrl}/jay.png`}
+        imageAlt={language === 'nl'
+          ? 'The Lab overzichtspagina met experimentele projecten van Jaymian-Lee Reinartz'
+          : 'The Lab overview page with experimental projects by Jaymian-Lee Reinartz'}
+        jsonLd={labSeoJsonLd}
+      />
+
       <FloatingUtilityBar
         language={language}
         onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}

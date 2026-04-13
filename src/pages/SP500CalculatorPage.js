@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import MainFooter from '../components/MainFooter';
+import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import './SP500CalculatorPage.css';
 
 const SITE_URL = 'https://jaymian-lee.nl';
@@ -79,15 +81,28 @@ const uiCopy = {
   }
 };
 
-const formatEuro = (value) =>
-  new Intl.NumberFormat('nl-NL', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0
-  }).format(Number.isFinite(value) ? value : 0);
+const formatEuro = (value) => {
+  const amount = Number.isFinite(value) ? value : 0;
+  try {
+    return new Intl.NumberFormat('nl-NL', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0
+    }).format(amount);
+  } catch {
+    return `€${Math.round(amount).toLocaleString('nl-NL')}`;
+  }
+};
 
 const formatPct = (value) => `${(value * 100).toFixed(1)}%`;
-const formatIndexValue = (value) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Number(value) || 0);
+const formatIndexValue = (value) => {
+  const amount = Number(value) || 0;
+  try {
+    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(amount);
+  } catch {
+    return String(amount);
+  }
+};
 
 const percentile = (arr, p) => {
   if (!arr.length) return 0;
@@ -320,6 +335,39 @@ export default function SP500CalculatorPage() {
 
   const bestValue = Math.max(...results.map((scenario) => scenario.finalValue), 1);
   const baseScenario = results.find((scenario) => scenario.key === 'base') || results[0];
+  const sp500SeoJsonLd = useMemo(() => {
+    const canonical = `${SITE_URL}${PAGE_PATH}`;
+    const pageName = language === 'nl' ? 'S&P 500 Calculator Nederland' : 'S&P 500 Calculator';
+    const pageDescription = language === 'nl'
+      ? 'Bereken je potentiële S&P 500 rendement met historische gemiddelden, scenariovergelijking en heldere grafieken.'
+      : 'Estimate potential S&P 500 returns with historical averages, scenario comparison, and visual charts.';
+
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        createWebsiteSchema({ language: ['en', 'nl'] }),
+        createWebPageSchema({
+          name: pageName,
+          url: canonical,
+          description: pageDescription,
+          language: language === 'nl' ? 'nl-NL' : 'en-US'
+        }),
+        createBreadcrumbSchema([
+          { name: 'Home', item: SITE_URL },
+          { name: pageName, item: canonical }
+        ]),
+        {
+          '@type': 'SoftwareApplication',
+          name: pageName,
+          applicationCategory: 'FinanceApplication',
+          operatingSystem: 'Web',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+          inLanguage: language === 'nl' ? 'nl-NL' : 'en-US',
+          url: canonical
+        }
+      ]
+    };
+  }, [language]);
 
   const chartDims = {
     width: 1000,
@@ -433,6 +481,22 @@ export default function SP500CalculatorPage() {
 
   return (
     <div className="sp500-shell">
+      <Seo
+        title={language === 'nl'
+          ? 'S&P 500 Calculator Nederland | Rendement berekenen met historische data'
+          : 'S&P 500 Calculator | Estimate returns with historical data'}
+        description={language === 'nl'
+          ? 'Bereken je potentiële S&P 500 rendement met historische gemiddelden, scenariovergelijking en heldere grafieken.'
+          : 'Estimate potential S&P 500 returns with historical averages, scenario comparison, and visual charts.'}
+        canonicalPath="/sp500-calculator"
+        language={language}
+        image={`${siteSeo.siteUrl}/jay.png`}
+        imageAlt={language === 'nl'
+          ? 'S&P 500 calculator van Jaymian-Lee Reinartz'
+          : 'S&P 500 calculator by Jaymian-Lee Reinartz'}
+        jsonLd={sp500SeoJsonLd}
+      />
+
       <FloatingUtilityBar
         language={language}
         onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}

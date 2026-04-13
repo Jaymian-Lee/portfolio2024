@@ -4,6 +4,9 @@ import '../App.css';
 
 const footerQuickLinks = [
   { label: 'Services', href: '/#services' },
+  { label: 'AI SEO', href: '/services/seo-ai-seo' },
+  { label: 'AI automation', href: '/services/ai-automation' },
+  { label: 'Ecommerce', href: '/services/ecommerce-development' },
   { label: 'Case studies', href: '/#case-studies' },
   { label: 'Experience', href: '/#experience' },
   { label: 'Contact', href: '/#contact' },
@@ -15,10 +18,13 @@ const footerProjects = [
   { label: 'Corthex', href: 'https://corthex.app' },
   { label: 'Vizualy', href: 'https://vizualy.nl' },
   { label: 'Twigsie', href: 'https://twigsie.com' },
+  { label: 'Mintventory.com', href: 'https://mintventory.com' },
   { label: 'Vizualy Prints', href: 'https://vizualyprints.com' },
   { label: 'Refacthor', href: 'https://refacthor.nl' },
   { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
-  { label: 'The Lab', href: 'https://jaymian-lee.nl/lab' }
+  { label: 'The Lab', href: 'https://jaymian-lee.nl/lab' },
+  { label: 'Word-Lee', href: 'https://jaymian-lee.nl/word-lee' },
+  { label: 'Service pages', href: 'https://jaymian-lee.nl/services/seo-ai-seo' }
 ];
 
 const footerConnect = [
@@ -116,7 +122,7 @@ export default function MainFooter({ language = 'en', twitchLive = null }) {
             <p className="footer-kicker">{t.footerWordleeTitle}</p>
             <h3>Daily challenge</h3>
             <p>{t.footerWordleeText}</p>
-            <Link to="/daily-word" className="footer-wordly-cta">
+            <Link to="/word-lee" className="footer-wordly-cta">
               {t.footerWordleeCta}
             </Link>
           </section>

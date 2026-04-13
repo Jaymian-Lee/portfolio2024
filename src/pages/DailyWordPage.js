@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
+import Seo from '../components/Seo';
+import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import MainFooter from '../components/MainFooter';
@@ -290,6 +292,36 @@ function DailyWordPage() {
   const [nameChoice, setNameChoice] = useState('');
 
   const dateKey = useMemo(() => getTodayKey(), []);
+  const dailySeoJsonLd = useMemo(() => {
+    const canonical = `${siteSeo.siteUrl}/word-lee`;
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        createWebsiteSchema({ language: ['en', 'nl'] }),
+        createWebPageSchema({
+          name: language === 'nl' ? 'Word-Lee | Dagelijkse woordgame' : 'Word-Lee | Daily word game',
+          url: canonical,
+          description: language === 'nl'
+            ? 'Word-Lee is een dagelijkse woordgame met 5 letters, leaderboard, local-first opslag en een AI assistent voor vragen over deze portfolio.'
+            : 'Word-Lee is a daily 5-letter word game with a leaderboard, local-first storage, and an AI assistant for questions about this portfolio.',
+          language: language === 'nl' ? 'nl-NL' : 'en-US'
+        }),
+        createBreadcrumbSchema([
+          { name: 'Home', item: siteSeo.siteUrl },
+          { name: 'Word-Lee', item: canonical }
+        ]),
+        {
+          '@type': 'SoftwareApplication',
+          name: 'Word-Lee',
+          applicationCategory: 'GameApplication',
+          operatingSystem: 'Web',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+          url: canonical,
+          inLanguage: language === 'nl' ? 'nl-NL' : 'en-US'
+        }
+      ]
+    };
+  }, [language]);
   const monthDateKeys = useMemo(() => {
     const base = new Date(`${dateKey}T00:00:00`);
     const year = base.getFullYear();
@@ -685,7 +717,7 @@ function DailyWordPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: nextMessages.slice(-12),
-          context: buildAiContext({ page: 'daily-word', language })
+          context: buildAiContext({ page: 'word-lee', language })
         })
       });
 
@@ -702,6 +734,20 @@ function DailyWordPage() {
 
   return (
     <main className="daily-page">
+      <Seo
+        title={language === 'nl' ? 'Word-Lee | Dagelijkse woordgame' : 'Word-Lee | Daily word game'}
+        description={language === 'nl'
+          ? 'Speel Word-Lee, een dagelijkse 5-letter woordgame met leaderboard, local-first opslag en een AI assistent voor vragen over Jaymian-Lee en zijn portfolio.'
+          : 'Play Word-Lee, a daily 5-letter word game with a leaderboard, local-first storage, and an AI assistant for questions about Jaymian-Lee and the portfolio.'}
+        canonicalPath="/word-lee"
+        language={language}
+        image={`${siteSeo.siteUrl}/jay.png`}
+        imageAlt={language === 'nl'
+          ? 'Word-Lee dagelijkse woordgame van Jaymian-Lee Reinartz'
+          : 'Word-Lee daily word game by Jaymian-Lee Reinartz'}
+        jsonLd={dailySeoJsonLd}
+      />
+
       <div className="daily-wrap">
         <header className="daily-header">
           <Link to="/" className="daily-back" aria-label={copy[language].back}>

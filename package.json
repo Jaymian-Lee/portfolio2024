@@ -35,8 +35,24 @@
     "start:client": "react-scripts start",
     "dev": "concurrently \"npm run start:api\" \"npm run start:client\"",
     "build": "react-scripts build",
+    "postbuild": "react-snap",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "reactSnap": {
+    "include": [
+      "/",
+      "/lab",
+      "/daily-word",
+      "/toepen",
+      "/stream",
+      "/stream/chat",
+      "/services/ai-automation",
+      "/services/ecommerce-development",
+      "/services/prestashop-modules",
+      "/services/wordpress-plugins",
+      "/services/seo-ai-seo"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -55,5 +71,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-snap": "^1.23.0"
   }
 }

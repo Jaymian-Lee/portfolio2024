@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import MainFooter from '../components/MainFooter';
+import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import './ToepenPage.css';
 
 const STORAGE_STATE_KEY = 'toepen-state-v1';
@@ -373,9 +375,44 @@ function ToepenPage() {
 
   const askLabel = language === 'nl' ? 'Vragen?' : 'Questions?';
   const t = copy[language] || copy.en;
+  const toePenSeoJsonLd = useMemo(() => {
+    const canonical = `${siteSeo.siteUrl}/toepen`;
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        createWebsiteSchema({ language: ['en', 'nl'] }),
+        createWebPageSchema({
+          name: language === 'nl' ? 'Toepen scorebord' : 'Toepen scoreboard',
+          url: canonical,
+          description: language === 'nl'
+            ? 'Een lokaal scorebord voor Toepen met snelle invoer, historische gamegeschiedenis en duidelijke statussen.'
+            : 'A local Toepen scoreboard with fast input, game history, and clear status tracking.',
+          language: language === 'nl' ? 'nl-NL' : 'en-US'
+        }),
+        createBreadcrumbSchema([
+          { name: 'Home', item: siteSeo.siteUrl },
+          { name: 'Toepen', item: canonical }
+        ])
+      ]
+    };
+  }, [language]);
 
   return (
     <main className="toepen-page">
+      <Seo
+        title={language === 'nl' ? 'Toepen scorebord' : 'Toepen scoreboard'}
+        description={language === 'nl'
+          ? 'Toepen scorebord met localStorage-only opslag, snelle score-invoer en een complete spelgeschiedenis voor game nights.'
+          : 'Toepen scoreboard with localStorage-only storage, fast score entry, and full game history for game nights.'}
+        canonicalPath="/toepen"
+        language={language}
+        image={`${siteSeo.siteUrl}/jay.png`}
+        imageAlt={language === 'nl'
+          ? 'Toepen scorebord van Jaymian-Lee Reinartz'
+          : 'Toepen scoreboard by Jaymian-Lee Reinartz'}
+        jsonLd={toePenSeoJsonLd}
+      />
+
       <div className="toepen-wrap">
         <header className="toepen-header">
           <Link to="/" className="toepen-back">{t.back}</Link>
