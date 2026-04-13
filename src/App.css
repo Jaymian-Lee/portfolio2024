@@ -232,6 +232,7 @@ body {
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
   background: #0f0f10;
+  aspect-ratio: 4 / 3;
 }
 
 .refacthor-visual-wrap::after {
@@ -246,8 +247,9 @@ body {
 
 .refacthor-image {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  height: 100%;
   object-fit: cover;
+  object-position: top center;
   display: block;
 }
 
@@ -275,6 +277,21 @@ body {
   margin: 0.6rem 0 0;
   color: var(--muted);
   max-width: 70ch;
+}
+
+.refacthor-points {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.refacthor-points li {
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+  font-size: 0.94rem;
 }
 
 .refacthor-cta {
@@ -712,17 +729,30 @@ body {
 }
 
 .work-card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-.work-image {
+.work-media {
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: calc(var(--radius) - 8px);
   border: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
   margin-bottom: 0.8rem;
   background: color-mix(in srgb, var(--surface) 88%, #000 12%);
+}
+
+.work-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
 }
 
 .capability-card h3,
@@ -1456,10 +1486,21 @@ body {
   }
 
   .refacthor-card {
-    grid-template-columns: 1.1fr 1fr;
-    align-items: center;
-    gap: 1.2rem;
-    padding: 1.15rem;
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+    align-items: start;
+    gap: 1rem;
+    padding: 1.05rem;
+  }
+
+  .refacthor-visual-wrap {
+    max-height: 380px;
+  }
+
+  .refacthor-content {
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+    padding: 0.2rem 0.2rem 0.3rem;
   }
 
   .capabilities-grid,
@@ -1475,17 +1516,21 @@ body {
     gap: 1.6rem;
   }
 
+  .work-media {
+    aspect-ratio: 16 / 10;
+  }
+
   .hero-intro {
-    grid-template-columns: 1.35fr 0.8fr;
-    align-items: start;
-    gap: 1.4rem;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.82fr);
+    align-items: center;
+    gap: 1.25rem;
   }
 
   .hero-portrait {
     order: 2;
     margin: 0;
     justify-self: end;
-    width: min(100%, 320px);
+    width: min(100%, 260px);
   }
 
   .hero-copy {
@@ -1529,13 +1574,13 @@ body {
 
 @media (min-width: 841px) {
   .site {
-    padding: 3.3rem 0 6rem;
+    padding: 2.2rem 0 5rem;
   }
 
   .hero,
   .section {
-    margin: 1.15rem 0;
-    padding: 3rem 0;
+    margin: 1rem 0;
+    padding: 2.2rem 0;
   }
 
   .hero-topline {

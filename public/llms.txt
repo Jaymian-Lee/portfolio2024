@@ -17,11 +17,6 @@ Primary pages:
 - https://jaymian-lee.nl/sp500-calculator
 - https://jaymian-lee.nl/stream
 - https://jaymian-lee.nl/stream/chat
-- https://jaymian-lee.nl/services/ai-automation
-- https://jaymian-lee.nl/services/ecommerce-development
-- https://jaymian-lee.nl/services/prestashop-modules
-- https://jaymian-lee.nl/services/wordpress-plugins
-- https://jaymian-lee.nl/services/seo-ai-seo
 - https://mintventory.com
 
 Key project themes:

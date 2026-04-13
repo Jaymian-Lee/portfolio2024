@@ -4,9 +4,6 @@ import '../App.css';
 
 const footerQuickLinks = [
   { label: 'Services', href: '/#services' },
-  { label: 'AI SEO', href: '/services/seo-ai-seo' },
-  { label: 'AI automation', href: '/services/ai-automation' },
-  { label: 'Ecommerce', href: '/services/ecommerce-development' },
   { label: 'Case studies', href: '/#case-studies' },
   { label: 'Experience', href: '/#experience' },
   { label: 'Contact', href: '/#contact' },
@@ -24,7 +21,6 @@ const footerProjects = [
   { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
   { label: 'The Lab', href: 'https://jaymian-lee.nl/lab' },
   { label: 'Word-Lee', href: 'https://jaymian-lee.nl/word-lee' },
-  { label: 'Service pages', href: 'https://jaymian-lee.nl/services/seo-ai-seo' }
 ];
 
 const footerConnect = [

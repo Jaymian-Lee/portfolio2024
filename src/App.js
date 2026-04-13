@@ -12,7 +12,6 @@ import {
   createWebsiteSchema,
   siteSeo
 } from './data/seo';
-import services from './data/services';
 import { buildAiContext } from './utils/aiContext';
 import './App.css';
 
@@ -345,7 +344,7 @@ const copy = {
     metricC: 'Limburg, Nederland',
     metricCText: 'Local collaboration with international delivery',
     ctaPrimary: 'Start a project',
-    ctaSecondary: 'Jump to services',
+    ctaSecondary: 'View selected work',
     ctaDaily: 'Word-Lee',
     ctaLab: 'Open Lab',
     stickyDaily: 'Play Word-Lee',
@@ -366,8 +365,6 @@ const copy = {
     storyTitle: 'Simple where it should be, strong where it matters.',
     capabilitiesKicker: 'Services',
     capabilitiesTitle: 'Technical services for scalable digital products.',
-    servicePagesKicker: 'Landing pages',
-    servicePagesTitle: 'SEO landing pages for specific search intent.',
     caseKicker: 'Case studies',
     caseTitle: 'Recent outcomes across automation and ecommerce.',
     experienceKicker: 'Experience',
@@ -379,6 +376,11 @@ const copy = {
     refacthorBadge: 'Owner Refacthor',
     refacthorTitle: 'Why Refacthor?',
     refacthorText: 'Refacthor is where product vision, architecture, and execution come together. It reflects how I build fast, stable, conversion-minded web platforms with long-term maintainability.',
+    refacthorPoints: [
+      'Brand and product work in one consistent system',
+      'Fast execution without losing structure or polish',
+      'Designed to scale with real client needs'
+    ],
     refacthorCta: 'View more 👉',
     contactKicker: 'Contact',
     contactTitle: 'Let us discuss your next build.',
@@ -388,7 +390,7 @@ const copy = {
     seoKicker: 'SEO and AI search',
     seoTitle: 'Clear answers for people, search engines, and AI assistants.',
     seoText:
-      'This portfolio is structured around the services, projects, and outcomes people search for most often. That means direct copy, crawlable headings, meaningful image alt text, and page-level context that helps AI systems understand what I do.',
+      'This portfolio is structured around the projects, services, and outcomes people search for most often. That means direct copy, crawlable headings, meaningful image alt text, and page-level context that helps AI systems understand what I do.',
     seoFaqTitle: 'Frequently asked questions',
     seoFaq: [
       {
@@ -440,7 +442,7 @@ const copy = {
     metricC: 'Limburg, Nederland',
     metricCText: 'Lokaal samenwerken met internationale oplevering',
     ctaPrimary: 'Start een project',
-    ctaSecondary: 'Ga naar services',
+    ctaSecondary: 'Bekijk geselecteerd werk',
     ctaDaily: 'Word-Lee',
     ctaLab: 'Open Lab',
     stickyDaily: 'Speel Word-Lee',
@@ -461,8 +463,6 @@ const copy = {
     storyTitle: 'Eenvoud waar het kan, kracht waar het telt.',
     capabilitiesKicker: 'Services',
     capabilitiesTitle: 'Technische services voor schaalbare digitale producten.',
-    servicePagesKicker: 'Landingspagina\'s',
-    servicePagesTitle: 'SEO landingspagina\'s voor specifieke zoekintentie.',
     caseKicker: 'Case studies',
     caseTitle: 'Recente resultaten in automation en ecommerce.',
     experienceKicker: 'Ervaring',
@@ -474,6 +474,11 @@ const copy = {
     refacthorBadge: 'Eigenaar Refacthor',
     refacthorTitle: 'Waarom Refacthor?',
     refacthorText: 'Refacthor is de plek waar productvisie, architectuur en uitvoering samenkomen. Het laat zien hoe ik snelle, stabiele en conversiegerichte webplatforms bouw met focus op onderhoudbaarheid op lange termijn.',
+    refacthorPoints: [
+      'Brand, content en techniek in één consistente lijn',
+      'Snel opleveren zonder in te leveren op afwerking',
+      'Gebouwd om mee te groeien met echte klantbehoeften'
+    ],
     refacthorCta: 'Bekijk meer 👉',
     contactKicker: 'Contact',
     contactTitle: 'Laten we je volgende build bespreken.',
@@ -483,7 +488,7 @@ const copy = {
     seoKicker: 'SEO en AI search',
     seoTitle: 'Duidelijke antwoorden voor mensen, zoekmachines en AI assistants.',
     seoText:
-      'Deze portfolio is opgebouwd rond de services, projecten en resultaten waar mensen het vaakst op zoeken. Dat betekent directe copy, crawlbare headings, zinvolle alt teksten en paginacontext die AI-systemen helpt begrijpen wat ik doe.',
+      'Deze portfolio is opgebouwd rond de projecten, services en resultaten waar mensen het vaakst op zoeken. Dat betekent directe copy, crawlbare headings, zinvolle alt teksten en paginacontext die AI-systemen helpt begrijpen wat ik doe.',
     seoFaqTitle: 'Veelgestelde vragen',
     seoFaq: [
       {
@@ -1048,14 +1053,14 @@ function App() {
                   <a href="mailto:info@jaymian-lee.nl" className="btn btn-primary" aria-label="Email Jaymian-Lee to start a project">
                     {t.ctaPrimary}
                   </a>
-                  <a href="#services" className="btn btn-ghost" aria-label="Read about services">
+                  <a href="#selected-work" className="btn btn-ghost" aria-label="Read about selected work">
                     {t.ctaSecondary}
                   </a>
-                  <a
-                    href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn btn-ghost"
+                <a
+                  href="https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-ghost"
                     aria-label="Open LinkedIn profile"
                   >
                     LinkedIn profile
@@ -1063,17 +1068,9 @@ function App() {
                   <Link to="/word-lee" className="btn btn-daily" aria-label="Open Word-Lee game">
                     {t.ctaDaily}
                   </Link>
-                  <Link to="/lab" className="btn btn-ghost" aria-label="Open Lab page">
-                    {t.ctaLab}
-                  </Link>
-                </div>
-
-                <div className="hero-sp500-spotlight" aria-label="Word-Lee highlight">
-                  <p className="section-kicker">{t.sp500SpotlightTitle}</p>
-                  <p>{t.sp500SpotlightText}</p>
-                  <Link to="/word-lee" className="btn btn-ghost" aria-label="Go to Word-Lee page">
-                    {t.sp500SpotlightCta}
-                  </Link>
+                <Link to="/lab" className="btn btn-ghost" aria-label="Open Lab page">
+                  {t.ctaLab}
+                </Link>
                 </div>
               </div>
             </div>
@@ -1099,6 +1096,11 @@ function App() {
               <div className="refacthor-content">
                 <h2>{t.refacthorTitle}</h2>
                 <p>{t.refacthorText}</p>
+                <ul className="refacthor-points" aria-label={language === 'nl' ? 'Refacthor kernpunten' : 'Refacthor highlights'}>
+                  {t.refacthorPoints.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
                 <a href="https://refacthor.nl" target="_blank" rel="noreferrer" className="btn btn-primary refacthor-cta">
                   {t.refacthorCta}
                 </a>
@@ -1140,25 +1142,6 @@ function App() {
             </div>
           </div>
         </section>
-
-        <section className="section reveal stack-card" id="service-pages" ref={(el) => (revealRefs.current[10] = el)} style={{ '--stack-index': 3.5, '--stack-layer': 4.5 }}>
-          <div className="section-card stack-panel">
-            <p className="section-kicker">{t.servicePagesKicker}</p>
-            <h2>{t.servicePagesTitle}</h2>
-            <div className="capabilities-grid">
-              {services.map((service) => (
-                <article className="capability-card" key={service.slug}>
-                  <h3>{service.title[language]}</h3>
-                  <p>{service.summary[language]}</p>
-                  <Link to={`/services/${service.slug}`} className="work-link">
-                    {language === 'nl' ? 'Open pagina' : 'Open page'} →
-                  </Link>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section className="section reveal stack-card" id="case-studies" ref={(el) => (revealRefs.current[4] = el)} style={{ '--stack-index': 4, '--stack-layer': 5 }}>
           <div className="section-card stack-panel">
             <p className="section-kicker">{t.caseKicker}</p>
@@ -1202,19 +1185,21 @@ function App() {
             <div className="work-grid">
               {projectLinks.map((project) => (
                 <article className="work-card" key={project.name}>
-                  <img
-                    src={project.image}
-                    alt={
-                      language === 'nl'
-                        ? `${project.name} project screenshot, voorbeeld van ${project.category[language].toLowerCase()}`
-                        : `${project.name} project screenshot showing the ${project.category[language].toLowerCase()} product`
-                    }
-                    className="work-image"
-                    loading="lazy"
-                    decoding="async"
-                    width="1600"
-                    height="900"
-                  />
+                  <div className="work-media">
+                    <img
+                      src={project.image}
+                      alt={
+                        language === 'nl'
+                          ? `${project.name} project screenshot, voorbeeld van ${project.category[language].toLowerCase()}`
+                          : `${project.name} project screenshot showing the ${project.category[language].toLowerCase()} product`
+                      }
+                      className="work-image"
+                      loading="lazy"
+                      decoding="async"
+                      width="1600"
+                      height="900"
+                    />
+                  </div>
                   <div className="work-top">
                     <p className="work-category">{project.category[language]}</p>
                     <a href={project.url} target="_blank" rel="noreferrer" className="work-link" aria-label={`Visit ${project.name} project`}>

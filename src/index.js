@@ -10,7 +10,6 @@ import StreamDashboardPage from './pages/StreamDashboardPage';
 import StreamChatPage from './pages/StreamChatPage';
 import SP500CalculatorPage from './pages/SP500CalculatorPage';
 import LabPage from './pages/LabPage';
-import ServiceLandingPage from './pages/ServiceLandingPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -25,7 +24,6 @@ root.render(
         <Route path="/stream/chat" element={<StreamChatPage />} />
         <Route path="/sp500-calculator" element={<SP500CalculatorPage />} />
         <Route path="/lab" element={<LabPage />} />
-        <Route path="/services/:slug" element={<ServiceLandingPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
