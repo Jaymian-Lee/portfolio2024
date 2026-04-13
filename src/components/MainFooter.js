@@ -7,7 +7,9 @@ const footerQuickLinks = [
   { label: 'Case studies', href: '/#case-studies' },
   { label: 'Experience', href: '/#experience' },
   { label: 'Contact', href: '/#contact' },
-  { label: 'Lab', href: '/lab' }
+  { label: 'Lab', href: '/lab' },
+  { label: 'Sitemap', href: '/sitemap.xml' },
+  { label: 'LLMs', href: '/llms.txt' }
 ];
 
 const footerProjects = [
