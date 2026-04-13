@@ -35,7 +35,7 @@
     "start:client": "react-scripts start",
     "dev": "concurrently \"npm run start:api\" \"npm run start:client\"",
     "build": "react-scripts build",
-    "postbuild": "react-snap",
+    "postbuild": "node scripts/postbuild.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -43,7 +43,7 @@
     "include": [
       "/",
       "/lab",
-      "/daily-word",
+      "/word-lee",
       "/toepen",
       "/stream",
       "/stream/chat",

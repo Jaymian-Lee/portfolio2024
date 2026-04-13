@@ -93,12 +93,12 @@ const projectLinks = [
     image: '/projects/mintventory-com.svg',
     category: { en: 'Inventory Platform', nl: 'Inventory platform' },
     summary: {
-      en: 'Built a clean site presence for Mintventory.com with a focus on inventory clarity, product storytelling, and a practical digital experience.',
-      nl: 'Een heldere online aanwezigheid gebouwd voor Mintventory.com met focus op inventory duidelijkheid, productverhaal en een praktische digitale ervaring.'
+      en: 'Built a collector platform for trading card inventory, catalog search, card scanning, and grading across Pokemon, Magic: The Gathering, Lorcana, One Piece, and sealed product.',
+      nl: 'Een collector platform gebouwd voor trading card inventory, cataloguszoeker, card scanning en grading voor Pokemon, Magic: The Gathering, Lorcana, One Piece en sealed product.'
     },
     impact: {
-      en: 'Helps present the product proposition clearly and make inventory-focused workflows easier to understand.',
-      nl: 'Helpt het productverhaal duidelijk te presenteren en inventory-gerichte workflows beter uitlegbaar te maken.'
+      en: 'Helps collectors identify cards faster, track condition and value, and keep the collection organized in one fast workflow.',
+      nl: 'Helpt verzamelaars kaarten sneller te vinden, conditie en waarde te volgen en de collectie in één snelle workflow te organiseren.'
     }
   },
   {
