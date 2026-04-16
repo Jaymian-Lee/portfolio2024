@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const tmi = require('tmi.js');
 const crypto = require('node:crypto');
+const nspell = require('nspell');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -18,6 +19,8 @@ const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
 const SCORE_FACTOR = 10 ** 13;
 const DURATION_MULTIPLIER = 1000;
 const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
+const SPELLCHECK_WORD_LENGTH = 5;
+const COMBINING_MARKS_REGEX = /[\u0300-\u036f]/g;
 
 const STREAM_DEFAULT_CHANNEL = String(process.env.STREAM_CHANNEL || 'jaymianlee').toLowerCase();
 const STREAM_PLATFORM_KEYS = ['twitch', 'tiktok', 'youtube'];
@@ -49,6 +52,16 @@ let youtubeBridgeState = {
   liveChatId: null,
   nextPageToken: null,
   pollIntervalMs: 5000
+};
+
+const wordSpellcheckers = {
+  en: null,
+  nl: null
+};
+
+const wordValidityCache = {
+  en: new Map(),
+  nl: new Map()
 };
 
 function loadYoutubeClientCreds() {
@@ -370,6 +383,51 @@ function normalizeDateKey(dateKey) {
 
 function normalizeLanguage(language) {
   return language === 'nl' ? 'nl' : 'en';
+}
+
+function normalizeSpellcheckWord(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(COMBINING_MARKS_REGEX, '');
+}
+
+async function loadDictionary(language) {
+  const normalizedLanguage = normalizeLanguage(language);
+  if (wordSpellcheckers[normalizedLanguage]) return wordSpellcheckers[normalizedLanguage];
+
+  const dictionaryName = normalizedLanguage === 'nl' ? 'dictionary-nl' : 'dictionary-en';
+  const module = await import(dictionaryName);
+  const dict = module?.default || module;
+  const spellchecker = nspell(dict);
+  wordSpellcheckers[normalizedLanguage] = spellchecker;
+  return spellchecker;
+}
+
+async function isValidWord(language, word) {
+  const normalizedLanguage = normalizeLanguage(language);
+  const normalizedWord = normalizeSpellcheckWord(word);
+
+  if (wordValidityCache[normalizedLanguage].has(normalizedWord)) {
+    return {
+      normalizedWord,
+      valid: wordValidityCache[normalizedLanguage].get(normalizedWord)
+    };
+  }
+
+  if (normalizedWord.length !== SPELLCHECK_WORD_LENGTH || !/^[a-z]+$/.test(normalizedWord)) {
+    wordValidityCache[normalizedLanguage].set(normalizedWord, false);
+    return { normalizedWord, valid: false };
+  }
+
+  const spellchecker = await loadDictionary(normalizedLanguage);
+  const valid = Boolean(spellchecker.correct(normalizedWord));
+  wordValidityCache[normalizedLanguage].set(normalizedWord, valid);
+
+  return {
+    normalizedWord,
+    valid
+  };
 }
 
 function leaderboardKey(dateKey, language) {
@@ -780,6 +838,23 @@ app.get('/api/wordlee/players', async (req, res) => {
   }
 });
 
+app.get('/api/wordlee/validate-word', async (req, res) => {
+  try {
+    const language = normalizeLanguage(req.query.language);
+    const word = String(req.query.word || '');
+    const result = await isValidWord(language, word);
+
+    return res.json({
+      language,
+      normalizedWord: result.normalizedWord,
+      valid: result.valid
+    });
+  } catch (error) {
+    console.error('Word validation GET error:', error);
+    return res.status(500).json({ error: 'Kon het woord niet controleren.' });
+  }
+});
+
 app.post('/api/wordlee/leaderboard', async (req, res) => {
   try {
     const name = normalizeName(req.body?.name);
@@ -902,6 +977,11 @@ app.post('/api/chat', async (req, res) => {
     });
   }
 });
+
+void Promise.allSettled([
+  loadDictionary('en'),
+  loadDictionary('nl')
+]);
 
 const buildDir = path.join(__dirname, 'build');
 const buildIndex = path.join(buildDir, 'index.html');

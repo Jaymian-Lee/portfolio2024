@@ -54,7 +54,8 @@ const copy = {
     enter: 'Enter',
     del: 'Delete',
     invalid: 'Use exactly 5 letters.',
-    invalidWord: 'That word does not exist in the Word-Lee list.',
+    invalidWord: 'That word is not in the dictionary.',
+    wordValidationError: 'Could not verify that word right now. Try again.',
     alreadyDone: 'You already finished this language today.',
     answer: 'Today\'s word',
     askMe: 'Questions?',
@@ -119,7 +120,8 @@ const copy = {
     enter: 'Enter',
     del: 'Wissen',
     invalid: 'Gebruik precies 5 letters.',
-    invalidWord: 'Dit woord staat niet in de Word-Lee woordenlijst.',
+    invalidWord: 'Dit woord staat niet in het woordenboek.',
+    wordValidationError: 'Dit woord kon nu niet worden gecontroleerd. Probeer het opnieuw.',
     alreadyDone: 'Je hebt deze taal vandaag al uitgespeeld.',
     answer: 'Woord van vandaag',
     askMe: 'Vragen?',
@@ -262,8 +264,10 @@ function DailyWordPage() {
   });
   const [currentGuess, setCurrentGuess] = useState('');
   const [shakeRow, setShakeRow] = useState(-1);
+  const [invalidRow, setInvalidRow] = useState(-1);
   const [popRow, setPopRow] = useState(-1);
   const [error, setError] = useState('');
+  const [isCheckingGuess, setIsCheckingGuess] = useState(false);
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('portfolio-theme');
     if (saved === 'dark' || saved === 'light') return saved;
@@ -356,6 +360,9 @@ function DailyWordPage() {
     setGame(nextState);
     setCurrentGuess('');
     setError('');
+    setShakeRow(-1);
+    setInvalidRow(-1);
+    setIsCheckingGuess(false);
     localStorage.setItem('portfolio-language', language);
 
     const rememberedName = localStorage.getItem(getScoreNameKey(language, dateKey)) || '';
@@ -388,7 +395,7 @@ function DailyWordPage() {
 
   useEffect(() => {
     const onKeyDown = (event) => {
-      if (game.status !== 'playing') return;
+      if (game.status !== 'playing' || isCheckingGuess) return;
 
       if (event.key === 'Enter') {
         submitGuess();
@@ -396,6 +403,8 @@ function DailyWordPage() {
       }
 
       if (event.key === 'Backspace') {
+        setError('');
+        setInvalidRow(-1);
         setCurrentGuess((prev) => prev.slice(0, -1));
         return;
       }
@@ -403,6 +412,8 @@ function DailyWordPage() {
       if (LETTER_INPUT_REGEX.test(event.key) && currentGuess.length < WORD_RULES.WORD_LENGTH) {
         const nextChar = normalizeGuessChar(event.key);
         if (nextChar.length !== 1 || !/^[a-z]$/.test(nextChar)) return;
+        setError('');
+        setInvalidRow(-1);
         setCurrentGuess((prev) => `${prev}${nextChar}`);
       }
     };
@@ -583,7 +594,9 @@ function DailyWordPage() {
     return score;
   }, [game]);
 
-  const submitGuess = () => {
+  const submitGuess = async () => {
+    if (game.status !== 'playing' || isCheckingGuess) return;
+
     const normalizedGuess = normalizeWord(currentGuess);
 
     if (normalizedGuess.length !== WORD_RULES.WORD_LENGTH) {
@@ -593,35 +606,65 @@ function DailyWordPage() {
       return;
     }
 
-    const nextEvaluation = evaluateGuess(normalizedGuess, answer);
-    const nextGuesses = [...game.guesses, normalizedGuess];
-    const nextEvaluations = [...game.evaluations, nextEvaluation];
+    setIsCheckingGuess(true);
 
-    let status = 'playing';
-    if (normalizedGuess === answer) status = 'won';
-    if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && normalizedGuess !== answer) status = 'lost';
+    try {
+      const response = await fetch(`/api/wordlee/validate-word?language=${language}&word=${encodeURIComponent(normalizedGuess)}`);
+      const data = await safeJson(response);
+      if (!response.ok) throw new Error(data?.error || copy[language].wordValidationError);
 
-    const startedAt = Number.isInteger(game.startedAt) ? game.startedAt : Date.now();
-    const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);
+      if (!data?.valid) {
+        setError(copy[language].invalidWord);
+        setShakeRow(game.guesses.length);
+        setInvalidRow(game.guesses.length);
+        setTimeout(() => {
+          setShakeRow(-1);
+          setInvalidRow(-1);
+        }, 380);
+        return;
+      }
 
-    setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status, startedAt, durationMs });
-    setPopRow(nextGuesses.length - 1);
-    setTimeout(() => setPopRow(-1), 460);
-    setCurrentGuess('');
-    setError('');
+      const nextEvaluation = evaluateGuess(normalizedGuess, answer);
+      const nextGuesses = [...game.guesses, normalizedGuess];
+      const nextEvaluations = [...game.evaluations, nextEvaluation];
+
+      let status = 'playing';
+      if (normalizedGuess === answer) status = 'won';
+      if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && normalizedGuess !== answer) status = 'lost';
+
+      const startedAt = Number.isInteger(game.startedAt) ? game.startedAt : Date.now();
+      const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);
+
+      setInvalidRow(-1);
+      setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status, startedAt, durationMs });
+      setPopRow(nextGuesses.length - 1);
+      setTimeout(() => setPopRow(-1), 460);
+      setCurrentGuess('');
+      setError('');
+    } catch (err) {
+      setError(err.message || copy[language].wordValidationError);
+      setShakeRow(game.guesses.length);
+      setTimeout(() => setShakeRow(-1), 380);
+    } finally {
+      setIsCheckingGuess(false);
+    }
   };
 
   const onVirtualKey = (key) => {
-    if (game.status !== 'playing') return;
+    if (game.status !== 'playing' || isCheckingGuess) return;
     if (key === 'enter') {
       submitGuess();
       return;
     }
     if (key === 'backspace') {
+      setError('');
+      setInvalidRow(-1);
       setCurrentGuess((prev) => prev.slice(0, -1));
       return;
     }
     if (currentGuess.length >= WORD_RULES.WORD_LENGTH) return;
+    setError('');
+    setInvalidRow(-1);
     setCurrentGuess((prev) => `${prev}${key}`);
   };
 
@@ -778,7 +821,7 @@ function DailyWordPage() {
 
             return (
               <div
-                className={`daily-row ${rowIndex === shakeRow ? 'shake' : ''} ${rowIndex === popRow ? 'pop' : ''}`}
+                className={`daily-row ${rowIndex === shakeRow ? 'shake' : ''} ${rowIndex === popRow ? 'pop' : ''} ${rowIndex === invalidRow ? 'invalid' : ''}`}
                 key={`row-${rowIndex}`}
               >
                 {letters.map((char, colIndex) => {
