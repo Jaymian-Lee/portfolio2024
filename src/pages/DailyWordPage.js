@@ -88,13 +88,20 @@ const copy = {
     leaderboardSubmit: 'Submit score',
     leaderboardSubmitLoading: 'Saving...',
     leaderboardSubmitted: 'Score submitted',
+    leaderboardFailedSubmitted: 'Close call added to the board.',
     leaderboardHint: 'Only available after solving.',
+    leaderboardFailedHint: 'Even a near miss can earn a spot on the board.',
     leaderboardAttempts: 'tries',
     leaderboardError: 'Could not update leaderboard.',
     joinBoardCta: 'Join leaderboard',
     joinBoardTitle: 'Join today\'s leaderboard',
     joinBoardText: 'Want your name on the board? Enter it now.',
     joinBoardCongrats: 'Congrats! Lock in your name and share the win.',
+    joinBoardLostTitle: 'So close.',
+    joinBoardLostText: 'You did not crack the word, but the board still wants to meet your attempt.',
+    joinBoardLostCongrats: 'Tough round. Nice try, nice vibe.',
+    resultWon: 'Won',
+    resultFailed: 'Close call',
     myScoresTitle: 'Score spotlight',
     myScoresSearchPlaceholder: 'Search or pick a player',
     myScoresEmpty: 'No scores saved yet for this name.',
@@ -154,13 +161,20 @@ const copy = {
     leaderboardSubmit: 'Score opslaan',
     leaderboardSubmitLoading: 'Opslaan...',
     leaderboardSubmitted: 'Score opgeslagen',
+    leaderboardFailedSubmitted: 'Je close call staat nu ook op het bord.',
     leaderboardHint: 'Pas beschikbaar nadat je hebt gewonnen.',
+    leaderboardFailedHint: 'Ook een bijna-miss kan een plekje op het bord krijgen.',
     leaderboardAttempts: 'pogingen',
     leaderboardError: 'Scorebord kon niet worden bijgewerkt.',
     joinBoardCta: 'Naar scorebord',
     joinBoardTitle: 'Op het scorebord van vandaag?',
     joinBoardText: 'Wil je op het scorebord? Vul dan nu je naam in.',
     joinBoardCongrats: 'Gefeliciteerd! Zet je naam erbij en maak het officieel.',
+    joinBoardLostTitle: 'Zo dicht erbij.',
+    joinBoardLostText: 'Je hebt het woord niet gehaald, maar het bord wil je poging alsnog zien.',
+    joinBoardLostCongrats: 'Lastige ronde. Mooie poging, mooie energie.',
+    resultWon: 'Gewonnen',
+    resultFailed: 'Bijna',
     myScoresTitle: 'Score spotlight',
     myScoresSearchPlaceholder: 'Zoek of kies een speler',
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
@@ -431,7 +445,7 @@ function DailyWordPage() {
 
 
   useEffect(() => {
-    if (game.status === 'won' && !scoreSubmitted) {
+    if ((game.status === 'won' || game.status === 'lost') && !scoreSubmitted) {
       setShowJoinPopup(true);
     }
   }, [game.status, scoreSubmitted]);
@@ -780,7 +794,7 @@ function DailyWordPage() {
 
   const submitScore = async (event) => {
     event.preventDefault();
-    if (game.status !== 'won' || scoreSubmitted) return;
+    if ((game.status !== 'won' && game.status !== 'lost') || scoreSubmitted) return;
 
     const typedName = scoreName.trim();
     if (nameResolution && !nameChoice) {
@@ -809,7 +823,8 @@ function DailyWordPage() {
           dateKey,
           language,
           attempts: game.guesses.length,
-          durationMs: Number.isInteger(game.durationMs) ? game.durationMs : null
+          durationMs: game.status === 'lost' ? null : (Number.isInteger(game.durationMs) ? game.durationMs : null),
+          status: game.status === 'lost' ? 'failed' : 'won'
         })
       });
 
@@ -851,6 +866,8 @@ function DailyWordPage() {
       minute: '2-digit'
     });
   };
+
+  const formatResultLabel = (result) => (result === 'failed' ? copy[language].resultFailed : copy[language].resultWon);
 
   const submitChat = async (event) => {
     event.preventDefault();
@@ -994,6 +1011,7 @@ function DailyWordPage() {
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">👑</span>
                 <span className="yesterday-winner-name">{monthlyWorldRecord.name}</span>
+                <span className={`score-badge ${monthlyWorldRecord.result === 'failed' ? 'failed' : 'won'}`}>{formatResultLabel(monthlyWorldRecord.result)}</span>
                 <span className="yesterday-winner-score">{monthlyWorldRecord.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(monthlyWorldRecord.durationMs)} <strong>({copy[language].worldRecord})</strong></span>
               </div>
             ) : (
@@ -1007,6 +1025,7 @@ function DailyWordPage() {
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">🏆</span>
                 <span className="yesterday-winner-name">{dailyTopper.name}</span>
+                <span className={`score-badge ${dailyTopper.result === 'failed' ? 'failed' : 'won'}`}>{formatResultLabel(dailyTopper.result)}</span>
                 <span className="yesterday-winner-score">{dailyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(dailyTopper.durationMs)}</span>
               </div>
             ) : (
@@ -1030,6 +1049,7 @@ function DailyWordPage() {
                         <li key={`${day.dateKey}-${entry.name}-${entry.submittedAt || index}`}>
                           <span className="weekly-rank">#{index + 1}</span>
                           <span className="weekly-name">{entry.name}</span>
+                          <span className={`score-badge ${entry.result === 'failed' ? 'failed' : 'won'}`}>{formatResultLabel(entry.result)}</span>
                           <span className="weekly-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
                         </li>
                       ))}
@@ -1046,7 +1066,7 @@ function DailyWordPage() {
           )}
 
 
-          {game.status === 'won' && !scoreSubmitted && (
+          {(game.status === 'won' || game.status === 'lost') && !scoreSubmitted && (
             <div className="leaderboard-join-wrap">
               <button type="button" className="leaderboard-join-btn" onClick={() => setShowJoinPopup(true)}>
                 {copy[language].joinBoardCta}
@@ -1055,7 +1075,11 @@ function DailyWordPage() {
           )}
 
           {(game.status !== 'won' || scoreSubmitted) && (
-            <p className="daily-tip">{game.status !== 'won' ? copy[language].leaderboardHint : copy[language].leaderboardSubmitted}</p>
+            <p className="daily-tip">
+              {game.status === 'lost'
+                ? (scoreSubmitted ? copy[language].leaderboardFailedSubmitted : copy[language].leaderboardFailedHint)
+                : (game.status !== 'won' ? copy[language].leaderboardHint : copy[language].leaderboardSubmitted)}
+            </p>
           )}
 
 
@@ -1124,15 +1148,15 @@ function DailyWordPage() {
       </div>
 
 
-      {showJoinPopup && game.status === 'won' && !scoreSubmitted && (
-        <div className="join-popup" role="dialog" aria-modal="true" aria-label={copy[language].joinBoardTitle}>
+      {showJoinPopup && game.status !== 'playing' && !scoreSubmitted && (
+        <div className="join-popup" role="dialog" aria-modal="true" aria-label={game.status === 'lost' ? copy[language].joinBoardLostTitle : copy[language].joinBoardTitle}>
           <div className="join-popup-inner">
             <button type="button" className="join-popup-close" onClick={() => setShowJoinPopup(false)} aria-label="Close" disabled={leaderboardLoading}>✕</button>
             <div className="join-popup-body">
               <p className="join-popup-kicker">Word-Lee</p>
-              <h3>{copy[language].joinBoardTitle}</h3>
-              <p className="join-popup-lead">{copy[language].joinBoardText}</p>
-              <p className="join-popup-congrats">{copy[language].joinBoardCongrats}</p>
+              <h3>{game.status === 'lost' ? copy[language].joinBoardLostTitle : copy[language].joinBoardTitle}</h3>
+              <p className="join-popup-lead">{game.status === 'lost' ? copy[language].joinBoardLostText : copy[language].joinBoardText}</p>
+              <p className="join-popup-congrats">{game.status === 'lost' ? copy[language].joinBoardLostCongrats : copy[language].joinBoardCongrats}</p>
               <form className={`leaderboard-form ${leaderboardLoading ? 'is-loading' : ''}`} onSubmit={submitScore} aria-busy={leaderboardLoading}>
                 <label htmlFor="leaderboard-name">{copy[language].leaderboardNameLabel}</label>
                 <div className="leaderboard-form-row">

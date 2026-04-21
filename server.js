@@ -438,6 +438,10 @@ function leaderboardNamesKey(dateKey, language) {
   return `wordlee:names:${dateKey}:${language}`;
 }
 
+function leaderboardHistoryKey(language, nameKey) {
+  return `wordlee:user:${language}:${nameKey}`;
+}
+
 function compositeScore(attempts, durationMs, submittedAt) {
   const safeDuration = Number.isInteger(durationMs) && durationMs >= 0
     ? Math.min(durationMs, Math.floor((SCORE_FACTOR - 1) / DURATION_MULTIPLIER))
@@ -528,8 +532,44 @@ async function getTop3(dateKey, language) {
   return members.map((member, index) => ({
     name: (Array.isArray(names) ? names[index] : null) || member,
     attempts: decodeAttempts(scores[index]),
-    ...decodeScoreMeta(scores[index])
+    ...decodeScoreMeta(scores[index]),
+    result: decodeScoreMeta(scores[index]).durationMs === null ? 'failed' : 'won'
   }));
+}
+
+async function getHistory(language, nameKey) {
+  const key = leaderboardHistoryKey(language, nameKey);
+  const raw = await kvCommand(['HGETALL', key]);
+  const entries = Array.isArray(raw)
+    ? raw.reduce((acc, value, index) => {
+        if (index % 2 === 0) acc.push([value, raw[index + 1]]);
+        return acc;
+      }, [])
+    : Object.entries(raw || {});
+
+  return entries
+    .map(([dateKey, value]) => {
+      try {
+        const record = JSON.parse(String(value || '{}'));
+        return {
+          dateKey: normalizeDateKey(dateKey) || dateKey,
+          name: String(record.name || '').trim(),
+          attempts: Number.isInteger(record.attempts) ? record.attempts : null,
+          durationMs: Number.isInteger(record.durationMs) ? record.durationMs : null,
+          submittedAt: Number.isInteger(record.submittedAt) ? record.submittedAt : null,
+          result: record.result === 'failed' ? 'failed' : 'won',
+          isPR: Boolean(record.isPR)
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      const aTime = Number.isInteger(a.submittedAt) ? a.submittedAt : 0;
+      const bTime = Number.isInteger(b.submittedAt) ? b.submittedAt : 0;
+      return bTime - aTime || String(b.dateKey).localeCompare(String(a.dateKey));
+    });
 }
 
 async function getPlayers(language, query = '') {
@@ -862,6 +902,7 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
     const language = normalizeLanguage(req.body?.language);
     const attempts = Number(req.body?.attempts);
     const durationMs = req.body?.durationMs === null || req.body?.durationMs === undefined ? null : Number(req.body?.durationMs);
+    const status = req.body?.status === 'failed' ? 'failed' : 'won';
 
     if (!name || name.length < 2) {
       return res.status(400).json({ error: 'Vul een geldige naam in (minimaal 2 tekens).' });
@@ -883,6 +924,7 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
     const nameKey = name.toLowerCase();
     const key = leaderboardKey(dateKey, language);
     const namesKey = leaderboardNamesKey(dateKey, language);
+    const historyKey = leaderboardHistoryKey(language, nameKey);
 
     const [existingScoreRaw] = await kvPipeline([
       ['ZSCORE', key, nameKey]
@@ -892,26 +934,57 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
     const existingMeta = existingScoreRaw ? decodeScoreMeta(existingScoreRaw) : { durationMs: null };
 
     if (
-        existingAttempts === null ||
-        attempts < existingAttempts ||
-        (attempts === existingAttempts &&
-          (existingMeta.durationMs === null || (durationMs !== null && durationMs < existingMeta.durationMs)))
-      ) {
-        const score = compositeScore(attempts, durationMs, now);
+      existingAttempts === null ||
+      attempts < existingAttempts ||
+      (attempts === existingAttempts &&
+        (existingMeta.durationMs === null || (durationMs !== null && durationMs < existingMeta.durationMs)))
+    ) {
+      const score = compositeScore(attempts, durationMs, now);
       await kvPipeline([
         ['ZADD', key, String(score), nameKey],
         ['HSET', namesKey, nameKey, name]
       ]);
     }
 
+    await kvPipeline([
+      ['HSET', historyKey, dateKey, JSON.stringify({
+        name,
+        attempts,
+        durationMs,
+        submittedAt: now,
+        result: status,
+        isPR: false
+      })]
+    ]);
+
     const top3 = await getTop3(dateKey, language);
-    return res.json({ ok: true, dateKey, language, top3 });
+    return res.json({ ok: true, dateKey, language, top3, result: status });
   } catch (error) {
     console.error('Leaderboard POST error:', error);
     if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {
       return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
     }
     return res.status(500).json({ error: 'Kon score niet opslaan.' });
+  }
+});
+
+app.get('/api/wordlee/history', async (req, res) => {
+  try {
+    const language = normalizeLanguage(req.query.language);
+    const name = normalizeName(req.query.name);
+
+    if (!name || name.length < 2) {
+      return res.json({ language, name, records: [] });
+    }
+
+    const records = await getHistory(language, name.toLowerCase());
+    return res.json({ language, name, records });
+  } catch (error) {
+    console.error('History GET error:', error);
+    if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {
+      return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
+    }
+    return res.status(500).json({ error: 'Kon spelhistorie niet ophalen.' });
   }
 });
 

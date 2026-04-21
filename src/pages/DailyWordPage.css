@@ -286,7 +286,7 @@
   padding: 0.58rem 0.64rem;
   background: linear-gradient(120deg, rgba(201, 154, 106, 0.22), rgba(255, 255, 255, 0.08));
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 0.5rem;
 }
@@ -342,7 +342,7 @@
 
 .weekly-day-list li {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   gap: 0.45rem;
   align-items: center;
   border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
@@ -517,6 +517,33 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--muted);
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.4rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.score-badge.won {
+  color: #4f915d;
+  background: color-mix(in srgb, #4f915d 14%, transparent);
+  border-color: color-mix(in srgb, #4f915d 38%, transparent);
+}
+
+.score-badge.failed {
+  color: #b46f3e;
+  background: color-mix(in srgb, #b46f3e 14%, transparent);
+  border-color: color-mix(in srgb, #b46f3e 38%, transparent);
 }
 
 .daily-footer-brand h2 {
@@ -1052,7 +1079,7 @@
 
 .my-scores-list li {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto auto;
   gap: 0.5rem;
   align-items: center;
   border: 1px solid var(--border);
