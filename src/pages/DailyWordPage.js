@@ -296,9 +296,45 @@ function DailyWordPage() {
   const [showPlayerDropdown, setShowPlayerDropdown] = useState(false);
   const [clockNow, setClockNow] = useState(() => Date.now());
   const [nameChoice, setNameChoice] = useState('');
+  const [gameLanguage, setGameLanguage] = useState(language);
+  const [debouncedMyScoresQuery, setDebouncedMyScoresQuery] = useState('');
 
   const dateKey = useMemo(() => getTodayKey(), []);
-  const gameStorageKeyRef = useRef(buildStorageKey(language, dateKey));
+  const guessRequestVersionRef = useRef(0);
+  const validationCacheRef = useRef({ en: new Map(), nl: new Map() });
+  const currentGuessRef = useRef(currentGuess);
+  const gameRef = useRef(null);
+  const isCheckingGuessRef = useRef(isCheckingGuess);
+  const submitGuessRef = useRef(null);
+
+  useEffect(() => () => {
+    guessRequestVersionRef.current += 1;
+  }, []);
+
+  useEffect(() => {
+    currentGuessRef.current = currentGuess;
+  }, [currentGuess]);
+
+  useEffect(() => {
+    gameRef.current = game;
+  });
+
+  useEffect(() => {
+    isCheckingGuessRef.current = isCheckingGuess;
+  }, [isCheckingGuess]);
+
+  useEffect(() => {
+    submitGuessRef.current = submitGuess;
+  });
+
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      setDebouncedMyScoresQuery(myScoresQuery.trim());
+    }, 220);
+
+    return () => window.clearTimeout(timerId);
+  }, [myScoresQuery]);
+
   const dailySeoJsonLd = useMemo(() => {
     const canonical = `${siteSeo.siteUrl}/word-lee`;
     return {
@@ -360,7 +396,8 @@ function DailyWordPage() {
 
   useEffect(() => {
     const nextState = getInitialState(language, dateKey);
-    gameStorageKeyRef.current = buildStorageKey(language, dateKey);
+    guessRequestVersionRef.current += 1;
+    setGameLanguage(language);
     setGame(nextState);
     setCurrentGuess('');
     setPendingGuess('');
@@ -378,8 +415,9 @@ function DailyWordPage() {
   }, [language, dateKey]);
 
   useEffect(() => {
-    localStorage.setItem(gameStorageKeyRef.current, JSON.stringify(game));
-  }, [game]);
+    if (gameLanguage !== language) return;
+    localStorage.setItem(buildStorageKey(language, dateKey), JSON.stringify(game));
+  }, [game, gameLanguage, language, dateKey]);
 
   useEffect(() => {
     if (game.status !== 'playing' || !Number.isInteger(game.startedAt)) return undefined;
@@ -400,10 +438,11 @@ function DailyWordPage() {
 
   useEffect(() => {
     const onKeyDown = (event) => {
-      if (game.status !== 'playing' || isCheckingGuess) return;
+      const activeGame = gameRef.current;
+      if (activeGame.status !== 'playing' || isCheckingGuessRef.current) return;
 
       if (event.key === 'Enter') {
-        submitGuess();
+        submitGuessRef.current?.();
         return;
       }
 
@@ -414,7 +453,7 @@ function DailyWordPage() {
         return;
       }
 
-      if (LETTER_INPUT_REGEX.test(event.key) && currentGuess.length < WORD_RULES.WORD_LENGTH) {
+      if (LETTER_INPUT_REGEX.test(event.key) && currentGuessRef.current.length < WORD_RULES.WORD_LENGTH) {
         const nextChar = normalizeGuessChar(event.key);
         if (nextChar.length !== 1 || !/^[a-z]$/.test(nextChar)) return;
         setError('');
@@ -425,15 +464,17 @@ function DailyWordPage() {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  });
+  }, []);
 
   useEffect(() => {
+    let cancelled = false;
     const loadLeaderboard = async () => {
       setLeaderboardLoading(true);
       setLeaderboardError('');
       try {
         const todayResponse = await fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}`);
         const todayData = await safeJson(todayResponse);
+        if (cancelled) return;
         if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
         setLeaderboard(Array.isArray(todayData.top3) ? todayData.top3 : []);
 
@@ -446,6 +487,7 @@ function DailyWordPage() {
           const top = Array.isArray(monthlyData[index]?.top3) ? monthlyData[index].top3[0] : null;
           if (top) monthlyCandidates.push({ ...top, dateKey: monthDateKeys[index] });
         });
+        if (cancelled) return;
 
         monthlyCandidates.sort((a, b) => {
           const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
@@ -462,6 +504,7 @@ function DailyWordPage() {
           weekDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`))
         );
         const weeklyData = await Promise.all(weeklyResponses.map((response) => safeJson(response)));
+        if (cancelled) return;
 
         const weekRows = weekDateKeys
           .map((key, index) => {
@@ -478,37 +521,50 @@ function DailyWordPage() {
 
         setWeeklyTopDays(weekRows);
       } catch (err) {
+        if (cancelled) return;
         setLeaderboardError(err.message || copy[language].leaderboardError);
         setWeeklyTopDays([]);
       } finally {
+        if (cancelled) return;
         setLeaderboardLoading(false);
       }
     };
 
     loadLeaderboard();
+    return () => {
+      cancelled = true;
+    };
   }, [language, dateKey, monthDateKeys]);
 
 
   useEffect(() => {
+    let cancelled = false;
     const loadPlayers = async () => {
       try {
         const response = await fetch(`/api/wordlee/players?language=${language}`);
         const data = await safeJson(response);
+        if (cancelled) return;
         if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
         setPlayerOptions(Array.isArray(data.players) ? data.players : []);
       } catch {
+        if (cancelled) return;
         setPlayerOptions([]);
       }
     };
 
     loadPlayers();
+    return () => {
+      cancelled = true;
+    };
   }, [language]);
 
   useEffect(() => {
+    let cancelled = false;
     const loadMyScores = async () => {
-      const name = myScoresQuery.trim();
+      const name = debouncedMyScoresQuery;
       if (name.length < 2) {
         setMyScores([]);
+        setMyScoresLoading(false);
         return;
       }
 
@@ -516,17 +572,23 @@ function DailyWordPage() {
       try {
         const response = await fetch(`/api/wordlee/history?name=${encodeURIComponent(name)}&language=${language}`);
         const data = await safeJson(response);
+        if (cancelled) return;
         if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
         setMyScores(Array.isArray(data.records) ? data.records : []);
       } catch {
+        if (cancelled) return;
         setMyScores([]);
       } finally {
+        if (cancelled) return;
         setMyScoresLoading(false);
       }
     };
 
     loadMyScores();
-  }, [language, myScoresQuery]);
+    return () => {
+      cancelled = true;
+    };
+  }, [language, debouncedMyScoresQuery]);
 
 
   const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
@@ -599,6 +661,25 @@ function DailyWordPage() {
     return score;
   }, [game]);
 
+  const validateGuessWord = async (guessLanguage, guessWord) => {
+    const cache = validationCacheRef.current[guessLanguage];
+    const cached = cache.get(guessWord);
+    if (cached) return cached;
+
+    const request = validateWord(guessLanguage, guessWord)
+      .then((result) => {
+        cache.set(guessWord, Promise.resolve(result));
+        return result;
+      })
+      .catch((err) => {
+        cache.delete(guessWord);
+        throw err;
+      });
+
+    cache.set(guessWord, request);
+    return request;
+  };
+
   const submitGuess = async () => {
     if (game.status !== 'playing' || isCheckingGuess) return;
 
@@ -615,47 +696,67 @@ function DailyWordPage() {
     setPendingGuess(normalizedGuess);
     setCurrentGuess('');
 
+    const requestVersion = guessRequestVersionRef.current + 1;
+    guessRequestVersionRef.current = requestVersion;
+    const requestLanguage = language;
+    const requestAnswer = answer;
+    const requestGame = game;
+
     try {
-      const data = await validateWord(language, normalizedGuess);
+      const data = await validateGuessWord(requestLanguage, normalizedGuess);
+      if (guessRequestVersionRef.current !== requestVersion) return;
 
       if (!data?.valid) {
         setPendingGuess('');
         setCurrentGuess(normalizedGuess);
-        setError(copy[language].invalidWord);
-        setShakeRow(game.guesses.length);
-        setInvalidRow(game.guesses.length);
+        setError(copy[requestLanguage].invalidWord);
+        setShakeRow(requestGame.guesses.length);
+        setInvalidRow(requestGame.guesses.length);
         setTimeout(() => {
-          setShakeRow(-1);
-          setInvalidRow(-1);
+          if (guessRequestVersionRef.current === requestVersion) {
+            setShakeRow(-1);
+            setInvalidRow(-1);
+          }
         }, 380);
         return;
       }
 
-      const nextEvaluation = evaluateGuess(normalizedGuess, answer);
-      const nextGuesses = [...game.guesses, normalizedGuess];
-      const nextEvaluations = [...game.evaluations, nextEvaluation];
+      const nextEvaluation = evaluateGuess(normalizedGuess, requestAnswer);
+      const nextGuesses = [...requestGame.guesses, normalizedGuess];
+      const nextEvaluations = [...requestGame.evaluations, nextEvaluation];
 
       let status = 'playing';
-      if (normalizedGuess === answer) status = 'won';
-      if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && normalizedGuess !== answer) status = 'lost';
+      if (normalizedGuess === requestAnswer) status = 'won';
+      if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && normalizedGuess !== requestAnswer) status = 'lost';
 
-      const startedAt = Number.isInteger(game.startedAt) ? game.startedAt : Date.now();
+      const startedAt = Number.isInteger(requestGame.startedAt) ? requestGame.startedAt : Date.now();
       const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);
 
       setInvalidRow(-1);
       setPendingGuess('');
       setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status, startedAt, durationMs });
       setPopRow(nextGuesses.length - 1);
-      setTimeout(() => setPopRow(-1), 460);
+      setTimeout(() => {
+        if (guessRequestVersionRef.current === requestVersion) {
+          setPopRow(-1);
+        }
+      }, 460);
       setError('');
     } catch (err) {
+      if (guessRequestVersionRef.current !== requestVersion) return;
       setPendingGuess('');
       setCurrentGuess(normalizedGuess);
-      setError(err.message || copy[language].wordValidationError);
-      setShakeRow(game.guesses.length);
-      setTimeout(() => setShakeRow(-1), 380);
+      setError(err.message || copy[requestLanguage].wordValidationError);
+      setShakeRow(requestGame.guesses.length);
+      setTimeout(() => {
+        if (guessRequestVersionRef.current === requestVersion) {
+          setShakeRow(-1);
+        }
+      }, 380);
     } finally {
-      setIsCheckingGuess(false);
+      if (guessRequestVersionRef.current === requestVersion) {
+        setIsCheckingGuess(false);
+      }
     }
   };
 

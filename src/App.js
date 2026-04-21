@@ -769,16 +769,28 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => {
+    let rafId = 0;
+
+    const updateScrollProgress = () => {
       const total = document.body.scrollHeight - window.innerHeight;
       const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
       setScrollProgress(Math.min(100, Math.max(0, progress)));
       document.documentElement.style.setProperty('--scrollY', `${window.scrollY}px`);
     };
 
+    const onScroll = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateScrollProgress);
+    };
+
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   useEffect(() => {
