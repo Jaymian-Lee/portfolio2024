@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
 import Seo from '../components/Seo';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
+import { validateWord } from '../utils/wordValidation';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import MainFooter from '../components/MainFooter';
 import { buildAiContext } from '../utils/aiContext';
@@ -263,6 +264,7 @@ function DailyWordPage() {
     return detectBrowserLanguage();
   });
   const [currentGuess, setCurrentGuess] = useState('');
+  const [pendingGuess, setPendingGuess] = useState('');
   const [shakeRow, setShakeRow] = useState(-1);
   const [invalidRow, setInvalidRow] = useState(-1);
   const [popRow, setPopRow] = useState(-1);
@@ -296,6 +298,7 @@ function DailyWordPage() {
   const [nameChoice, setNameChoice] = useState('');
 
   const dateKey = useMemo(() => getTodayKey(), []);
+  const gameStorageKeyRef = useRef(buildStorageKey(language, dateKey));
   const dailySeoJsonLd = useMemo(() => {
     const canonical = `${siteSeo.siteUrl}/word-lee`;
     return {
@@ -357,8 +360,10 @@ function DailyWordPage() {
 
   useEffect(() => {
     const nextState = getInitialState(language, dateKey);
+    gameStorageKeyRef.current = buildStorageKey(language, dateKey);
     setGame(nextState);
     setCurrentGuess('');
+    setPendingGuess('');
     setError('');
     setShakeRow(-1);
     setInvalidRow(-1);
@@ -373,8 +378,8 @@ function DailyWordPage() {
   }, [language, dateKey]);
 
   useEffect(() => {
-    localStorage.setItem(buildStorageKey(language, dateKey), JSON.stringify(game));
-  }, [language, dateKey, game]);
+    localStorage.setItem(gameStorageKeyRef.current, JSON.stringify(game));
+  }, [game]);
 
   useEffect(() => {
     if (game.status !== 'playing' || !Number.isInteger(game.startedAt)) return undefined;
@@ -607,13 +612,15 @@ function DailyWordPage() {
     }
 
     setIsCheckingGuess(true);
+    setPendingGuess(normalizedGuess);
+    setCurrentGuess('');
 
     try {
-      const response = await fetch(`/api/wordlee/validate-word?language=${language}&word=${encodeURIComponent(normalizedGuess)}`);
-      const data = await safeJson(response);
-      if (!response.ok) throw new Error(data?.error || copy[language].wordValidationError);
+      const data = await validateWord(language, normalizedGuess);
 
       if (!data?.valid) {
+        setPendingGuess('');
+        setCurrentGuess(normalizedGuess);
         setError(copy[language].invalidWord);
         setShakeRow(game.guesses.length);
         setInvalidRow(game.guesses.length);
@@ -636,12 +643,14 @@ function DailyWordPage() {
       const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);
 
       setInvalidRow(-1);
+      setPendingGuess('');
       setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status, startedAt, durationMs });
       setPopRow(nextGuesses.length - 1);
       setTimeout(() => setPopRow(-1), 460);
-      setCurrentGuess('');
       setError('');
     } catch (err) {
+      setPendingGuess('');
+      setCurrentGuess(normalizedGuess);
       setError(err.message || copy[language].wordValidationError);
       setShakeRow(game.guesses.length);
       setTimeout(() => setShakeRow(-1), 380);
@@ -816,12 +825,12 @@ function DailyWordPage() {
         <section className="daily-grid" aria-label="Word grid">
           {Array.from({ length: WORD_RULES.MAX_GUESSES }).map((_, rowIndex) => {
             const savedGuess = game.guesses[rowIndex] || '';
-            const liveGuess = rowIndex === game.guesses.length ? currentGuess : '';
+            const liveGuess = rowIndex === game.guesses.length ? (pendingGuess || currentGuess) : '';
             const letters = (savedGuess || liveGuess).padEnd(WORD_RULES.WORD_LENGTH).split('');
 
             return (
               <div
-                className={`daily-row ${rowIndex === shakeRow ? 'shake' : ''} ${rowIndex === popRow ? 'pop' : ''} ${rowIndex === invalidRow ? 'invalid' : ''}`}
+                className={`daily-row ${rowIndex === shakeRow ? 'shake' : ''} ${rowIndex === popRow ? 'pop' : ''} ${rowIndex === invalidRow ? 'invalid' : ''} ${rowIndex === game.guesses.length && isCheckingGuess ? 'pending' : ''}`}
                 key={`row-${rowIndex}`}
               >
                 {letters.map((char, colIndex) => {

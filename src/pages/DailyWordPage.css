@@ -151,6 +151,13 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
+:root[data-theme='dark'] .daily-row.pending .tile,
+.daily-row.pending .tile {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+  opacity: 0.92;
+}
+
 :root[data-theme='dark'] .daily-row.invalid .tile {
   background: linear-gradient(180deg, rgba(138, 54, 54, 0.98), rgba(115, 43, 43, 0.98));
   border-color: rgba(191, 101, 101, 0.92);
