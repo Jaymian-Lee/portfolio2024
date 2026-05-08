@@ -865,8 +865,13 @@ function DailyWordPage() {
     });
   };
 
-  const shouldShowResultBadge = (result) => result === 'failed';
-  const formatResultLabel = (result) => (result === 'failed' ? copy[language].resultFailed : '');
+  const getResultStatus = (record) => {
+    if (record?.result === 'failed') return 'failed';
+    if (record?.result === 'won') return 'won';
+    return Number(record?.attempts) >= WORD_RULES.MAX_GUESSES ? 'failed' : 'won';
+  };
+  const shouldShowResultBadge = (record) => getResultStatus(record) === 'failed';
+  const formatResultLabel = (record) => (getResultStatus(record) === 'failed' ? copy[language].resultFailed : '');
 
   const submitChat = async (event) => {
     event.preventDefault();
@@ -1010,8 +1015,8 @@ function DailyWordPage() {
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">👑</span>
                 <span className="yesterday-winner-name">{monthlyWorldRecord.name}</span>
-                {shouldShowResultBadge(monthlyWorldRecord.result) && (
-                  <span className="score-badge failed">{formatResultLabel(monthlyWorldRecord.result)}</span>
+                {shouldShowResultBadge(monthlyWorldRecord) && (
+                  <span className="score-badge failed">{formatResultLabel(monthlyWorldRecord)}</span>
                 )}
                 <span className="yesterday-winner-score">{monthlyWorldRecord.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(monthlyWorldRecord.durationMs)} <strong>({copy[language].worldRecord})</strong></span>
               </div>
@@ -1026,8 +1031,8 @@ function DailyWordPage() {
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">🏆</span>
                 <span className="yesterday-winner-name">{dailyTopper.name}</span>
-                {shouldShowResultBadge(dailyTopper.result) && (
-                  <span className="score-badge failed">{formatResultLabel(dailyTopper.result)}</span>
+                {shouldShowResultBadge(dailyTopper) && (
+                  <span className="score-badge failed">{formatResultLabel(dailyTopper)}</span>
                 )}
                 <span className="yesterday-winner-score">{dailyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(dailyTopper.durationMs)}</span>
               </div>
@@ -1052,8 +1057,8 @@ function DailyWordPage() {
                         <li key={`${day.dateKey}-${entry.name}-${entry.submittedAt || index}`}>
                           <span className="weekly-rank">#{index + 1}</span>
                           <span className="weekly-name">{entry.name}</span>
-                          {shouldShowResultBadge(entry.result) && (
-                            <span className="score-badge failed">{formatResultLabel(entry.result)}</span>
+                          {shouldShowResultBadge(entry) && (
+                            <span className="score-badge failed">{formatResultLabel(entry)}</span>
                           )}
                           <span className="weekly-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
                         </li>
@@ -1138,8 +1143,8 @@ function DailyWordPage() {
                 {myScores.map((record) => (
                   <li key={`${record.dateKey}-${record.submittedAt || 0}`}>
                     <span className="my-scores-date">{formatDateTime(record)}</span>
-                    {shouldShowResultBadge(record.result) && (
-                      <span className="score-badge failed">{formatResultLabel(record.result)}</span>
+                    {shouldShowResultBadge(record) && (
+                      <span className="score-badge failed">{formatResultLabel(record)}</span>
                     )}
                     <span className="my-scores-attempts">{record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}</span>
                     {record.isPR && <span className="my-scores-pr">🏆 {copy[language].myScoresPR}</span>}

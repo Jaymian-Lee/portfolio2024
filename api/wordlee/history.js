@@ -56,7 +56,8 @@ function parseHistoryMap(result) {
           dateKey,
           attempts: Number(parsed?.attempts),
           submittedAt: Number(parsed?.submittedAt),
-          durationMs: parsed?.durationMs === null || parsed?.durationMs === undefined ? null : Number(parsed?.durationMs)
+          durationMs: parsed?.durationMs === null || parsed?.durationMs === undefined ? null : Number(parsed?.durationMs),
+          result: parsed?.result === 'failed' ? 'failed' : (Number(parsed?.attempts) >= 6 ? 'failed' : 'won')
         };
       } catch {
         return null;

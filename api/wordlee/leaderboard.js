@@ -97,11 +97,24 @@ async function getTop3(dateKey, language) {
   }
 
   const names = await kvCommand(['hmget', namesKey, ...members]);
+  const historyRecords = await Promise.all(
+    members.map(async (member) => {
+      try {
+        const raw = await kvCommand(['HGET', userHistoryKey(member, language), dateKey]);
+        return raw ? JSON.parse(String(raw)) : null;
+      } catch {
+        return null;
+      }
+    })
+  );
 
   const ranked = members.map((member, index) => ({
     name: (Array.isArray(names) ? names[index] : null) || member,
     attempts: decodeAttempts(scores[index]),
-    ...decodeScoreMeta(scores[index])
+    ...decodeScoreMeta(scores[index]),
+    result: historyRecords[index]?.result === 'failed'
+      ? 'failed'
+      : (historyRecords[index]?.result === 'won' ? 'won' : (decodeAttempts(scores[index]) >= 6 ? 'failed' : 'won'))
   }));
 
   return ranked.filter((entry) => !isCheatScore(entry.attempts, entry.durationMs)).slice(0, 3);
@@ -127,6 +140,7 @@ module.exports = async (req, res) => {
       const language = normalizeLanguage(body?.language);
       const attempts = Number(body?.attempts);
       const durationMs = body?.durationMs === null || body?.durationMs === undefined ? null : Number(body?.durationMs);
+      const status = body?.status === 'failed' ? 'failed' : 'won';
 
       if (!name || name.length < 2) {
         return res.status(400).json({ error: 'Vul een geldige naam in (minimaal 2 tekens).' });
@@ -189,11 +203,11 @@ module.exports = async (req, res) => {
         'HSET',
         historyKey,
         dateKey,
-        JSON.stringify({ dateKey, language, attempts: historyAttempts, durationMs, submittedAt: now })
+        JSON.stringify({ dateKey, language, attempts: historyAttempts, durationMs, submittedAt: now, result: status })
       ]);
 
       const top3 = await getTop3(dateKey, language);
-      return res.status(200).json({ ok: true, dateKey, language, top3 });
+      return res.status(200).json({ ok: true, dateKey, language, top3, result: status });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

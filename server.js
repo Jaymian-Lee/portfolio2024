@@ -528,12 +528,24 @@ async function getTop3(dateKey, language) {
   }
 
   const names = await kvCommand(['hmget', namesKey, ...members]);
+  const historyRecords = await Promise.all(
+    members.map(async (member) => {
+      try {
+        const raw = await kvCommand(['HGET', leaderboardHistoryKey(language, member), dateKey]);
+        return raw ? JSON.parse(String(raw)) : null;
+      } catch {
+        return null;
+      }
+    })
+  );
 
   return members.map((member, index) => ({
     name: (Array.isArray(names) ? names[index] : null) || member,
     attempts: decodeAttempts(scores[index]),
     ...decodeScoreMeta(scores[index]),
-    result: decodeScoreMeta(scores[index]).durationMs === null ? 'failed' : 'won'
+    result: historyRecords[index]?.result === 'failed'
+      ? 'failed'
+      : (historyRecords[index]?.result === 'won' ? 'won' : (decodeAttempts(scores[index]) >= 6 ? 'failed' : 'won'))
   }));
 }
 
