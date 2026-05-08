@@ -100,8 +100,7 @@ const copy = {
     joinBoardLostTitle: 'So close.',
     joinBoardLostText: 'You did not crack the word, but the board still wants to meet your attempt.',
     joinBoardLostCongrats: 'Tough round. Nice try, nice vibe.',
-    resultWon: 'Won',
-    resultFailed: 'Close call',
+    resultFailed: 'Lost it',
     myScoresTitle: 'Score spotlight',
     myScoresSearchPlaceholder: 'Search or pick a player',
     myScoresEmpty: 'No scores saved yet for this name.',
@@ -173,8 +172,7 @@ const copy = {
     joinBoardLostTitle: 'Zo dicht erbij.',
     joinBoardLostText: 'Je hebt het woord niet gehaald, maar het bord wil je poging alsnog zien.',
     joinBoardLostCongrats: 'Lastige ronde. Mooie poging, mooie energie.',
-    resultWon: 'Gewonnen',
-    resultFailed: 'Bijna',
+    resultFailed: 'Net niet',
     myScoresTitle: 'Score spotlight',
     myScoresSearchPlaceholder: 'Zoek of kies een speler',
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
@@ -823,7 +821,7 @@ function DailyWordPage() {
           dateKey,
           language,
           attempts: game.guesses.length,
-          durationMs: game.status === 'lost' ? null : (Number.isInteger(game.durationMs) ? game.durationMs : null),
+          durationMs: Number.isInteger(game.durationMs) ? game.durationMs : null,
           status: game.status === 'lost' ? 'failed' : 'won'
         })
       });
@@ -867,7 +865,8 @@ function DailyWordPage() {
     });
   };
 
-  const formatResultLabel = (result) => (result === 'failed' ? copy[language].resultFailed : copy[language].resultWon);
+  const shouldShowResultBadge = (result) => result === 'failed';
+  const formatResultLabel = (result) => (result === 'failed' ? copy[language].resultFailed : '');
 
   const submitChat = async (event) => {
     event.preventDefault();
@@ -1011,7 +1010,9 @@ function DailyWordPage() {
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">👑</span>
                 <span className="yesterday-winner-name">{monthlyWorldRecord.name}</span>
-                <span className={`score-badge ${monthlyWorldRecord.result === 'failed' ? 'failed' : 'won'}`}>{formatResultLabel(monthlyWorldRecord.result)}</span>
+                {shouldShowResultBadge(monthlyWorldRecord.result) && (
+                  <span className="score-badge failed">{formatResultLabel(monthlyWorldRecord.result)}</span>
+                )}
                 <span className="yesterday-winner-score">{monthlyWorldRecord.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(monthlyWorldRecord.durationMs)} <strong>({copy[language].worldRecord})</strong></span>
               </div>
             ) : (
@@ -1025,7 +1026,9 @@ function DailyWordPage() {
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">🏆</span>
                 <span className="yesterday-winner-name">{dailyTopper.name}</span>
-                <span className={`score-badge ${dailyTopper.result === 'failed' ? 'failed' : 'won'}`}>{formatResultLabel(dailyTopper.result)}</span>
+                {shouldShowResultBadge(dailyTopper.result) && (
+                  <span className="score-badge failed">{formatResultLabel(dailyTopper.result)}</span>
+                )}
                 <span className="yesterday-winner-score">{dailyTopper.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(dailyTopper.durationMs)}</span>
               </div>
             ) : (
@@ -1049,7 +1052,9 @@ function DailyWordPage() {
                         <li key={`${day.dateKey}-${entry.name}-${entry.submittedAt || index}`}>
                           <span className="weekly-rank">#{index + 1}</span>
                           <span className="weekly-name">{entry.name}</span>
-                          <span className={`score-badge ${entry.result === 'failed' ? 'failed' : 'won'}`}>{formatResultLabel(entry.result)}</span>
+                          {shouldShowResultBadge(entry.result) && (
+                            <span className="score-badge failed">{formatResultLabel(entry.result)}</span>
+                          )}
                           <span className="weekly-score">{entry.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(entry.durationMs)}</span>
                         </li>
                       ))}
@@ -1133,6 +1138,9 @@ function DailyWordPage() {
                 {myScores.map((record) => (
                   <li key={`${record.dateKey}-${record.submittedAt || 0}`}>
                     <span className="my-scores-date">{formatDateTime(record)}</span>
+                    {shouldShowResultBadge(record.result) && (
+                      <span className="score-badge failed">{formatResultLabel(record.result)}</span>
+                    )}
                     <span className="my-scores-attempts">{record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}</span>
                     {record.isPR && <span className="my-scores-pr">🏆 {copy[language].myScoresPR}</span>}
                   </li>
