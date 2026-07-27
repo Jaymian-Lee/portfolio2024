@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FloatingUtilityBar from './FloatingUtilityBar';
-import { getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
+import { getLanguageSwitchPath, getLocaleFromPathname } from '../utils/locale';
 
 const detectBrowserTheme = () => {
   return 'dark';
@@ -30,9 +30,9 @@ export default function SiteChrome({ children }) {
         onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-        askLabel="Home"
-        askAriaLabel="Home"
-        onAsk={() => { window.location.href = localizePath('/', language); }}
+        askLabel={language === 'nl' ? 'Mail' : 'Email'}
+        askAriaLabel={language === 'nl' ? 'Stuur een e-mail' : 'Send an email'}
+        onAsk={() => { window.location.href = 'mailto:info@jaymian-lee.nl'; }}
       />
 
       {children}

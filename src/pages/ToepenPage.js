@@ -422,7 +422,7 @@ function ToepenPage() {
 
   const winnerName = game?.finished ? game.players.find((p) => p.id === game.winnerId)?.name : null;
 
-  const askLabel = language === 'nl' ? 'Vragen?' : 'Questions?';
+  const askLabel = language === 'nl' ? 'Mail' : 'Email';
   const t = copy[language] || copy.en;
   const toePenSeoJsonLd = useMemo(() => {
     const canonical = `${siteSeo.siteUrl}${canonicalPath}`;
@@ -640,7 +640,7 @@ function ToepenPage() {
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
         askLabel={askLabel}
-        onAsk={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onAsk={() => { window.location.href = 'mailto:info@jaymian-lee.nl'; }}
         askAriaLabel={askLabel}
       />
     </main>

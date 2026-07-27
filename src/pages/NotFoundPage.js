@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Seo from '../components/Seo';
+import SiteChrome from '../components/SiteChrome';
 import { getLocaleFromPathname, localizePath } from '../utils/locale';
 import './NotFoundPage.css';
 
@@ -10,7 +11,8 @@ export default function NotFoundPage() {
   const isNl = language === 'nl';
 
   return (
-    <main className="not-found-page ui-page">
+    <SiteChrome>
+      <main className="not-found-page ui-page">
       <Seo
         title={isNl ? '404 | Pagina niet gevonden' : '404 | Page not found'}
         description={isNl ? 'Deze pagina bestaat niet of is verplaatst.' : 'This page does not exist or has moved.'}
@@ -23,6 +25,7 @@ export default function NotFoundPage() {
         <h1 id="not-found-title">{isNl ? 'Deze pagina bestaat niet.' : 'This page does not exist.'}</h1>
         <Link to={localizePath('/', language)}>{isNl ? 'Terug naar de homepage' : 'Back to the homepage'}</Link>
       </section>
-    </main>
+      </main>
+    </SiteChrome>
   );
 }

@@ -228,9 +228,9 @@ export default function LabPage() {
         onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-        askLabel={t.home}
-        askAriaLabel={t.home}
-        onAsk={() => { window.location.href = localizePath('/', language); }}
+        askLabel={language === 'nl' ? 'Mail' : 'Email'}
+        askAriaLabel={language === 'nl' ? 'Stuur een e-mail' : 'Send an email'}
+        onAsk={() => { window.location.href = 'mailto:info@jaymian-lee.nl'; }}
       />
 
       <main className="lab-main ui-container">

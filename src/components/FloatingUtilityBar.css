@@ -264,6 +264,12 @@
     justify-content: space-between;
   }
 
+  /* Keep the contact icon and its label together instead of pinning them to
+     opposite sides of the full-width utility card. */
+  .fud-ask {
+    justify-content: flex-start;
+  }
+
   .fud-language-toggle,
   .fud-theme-toggle {
     margin-left: auto;

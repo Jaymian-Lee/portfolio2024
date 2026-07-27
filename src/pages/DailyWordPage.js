@@ -1286,9 +1286,9 @@ function DailyWordPage() {
         onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-        askLabel={copy[language].askMe}
-        onAsk={() => setIsChatOpen((prev) => !prev)}
-        askAriaLabel={copy[language].askTitle}
+        askLabel={language === 'nl' ? 'Mail' : 'Email'}
+        onAsk={() => { window.location.href = 'mailto:info@jaymian-lee.nl'; }}
+        askAriaLabel={language === 'nl' ? 'Stuur een e-mail' : 'Send an email'}
       />
     </main>
   );

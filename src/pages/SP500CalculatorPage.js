@@ -381,9 +381,9 @@ export default function SP500CalculatorPage() {
         onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-        askLabel={language === 'nl' ? 'Vragen?' : 'Questions?'}
-        onAsk={() => {}}
-        askAriaLabel={language === 'nl' ? 'Open chat' : 'Open chat'}
+        askLabel={language === 'nl' ? 'Mail' : 'Email'}
+        onAsk={() => { window.location.href = 'mailto:info@jaymian-lee.nl'; }}
+        askAriaLabel={language === 'nl' ? 'Stuur een e-mail' : 'Send an email'}
       />
       <main className="sp500-page ui-container">
       <section className="sp500-hero">

@@ -87,7 +87,7 @@ export default function ProjectCasePage() {
         onToggleLanguage={toggleLanguage}
         theme={theme}
         onToggleTheme={toggleTheme}
-        askLabel={isNl ? 'Mail' : 'Mail'}
+        askLabel={isNl ? 'Mail' : 'Email'}
         askAriaLabel={t.ask}
         onAsk={() => { window.location.href = 'mailto:info@jaymian-lee.nl'; }}
         wordLee={{ href: localizePath('/word-lee', language), label: 'Word-Lee', hint: isNl ? 'Daily challenge' : 'Daily challenge' }}
