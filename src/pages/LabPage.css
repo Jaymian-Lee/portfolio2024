@@ -63,6 +63,7 @@
 }
 
 .lab-category-icon {
+  position: relative;
   display: grid;
   width: 2.5rem;
   height: 2.5rem;
@@ -70,6 +71,13 @@
   color: #151515;
   background: var(--lime);
   border-radius: var(--radius);
+}
+
+.lab-category-icon > .animated-icon {
+  position: absolute;
+  inset: 0;
+  display: block;
+  margin: auto;
 }
 
 .lab-category-header p,
