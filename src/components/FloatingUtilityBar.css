@@ -250,6 +250,16 @@
     color: var(--muted);
   }
 
+  .fud-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .fud-language-toggle,
+  .fud-theme-toggle {
+    margin-left: auto;
+  }
+
   .fud-wordlee {
     align-items: flex-start;
     flex-direction: column;

@@ -10,7 +10,7 @@ const projects = [
   {
     name: 'Corthex',
     url: 'https://corthex.app',
-    image: '/projects/corthex-app.jpg',
+    image: '/projects/corthex-app.png',
     logo: 'https://www.google.com/s2/favicons?domain=corthex.app&sz=256',
     monogram: 'C',
     number: '01',
@@ -52,8 +52,8 @@ const projects = [
   {
     name: 'Slecto',
     url: null,
-    image: null,
-    logo: null,
+    image: '/projects/slecto-app.png',
+    logo: 'https://slecto.app/_next/image?url=%2Fbrand%2Fslecto-icon.png&w=48&q=75',
     monogram: 'S',
     number: '04',
     type: 'Digital product',
@@ -66,7 +66,7 @@ const projects = [
   {
     name: 'Botforger',
     url: 'https://botforger.com',
-    image: '/projects/botforger-com.jpg',
+    image: '/projects/botforger-com.png',
     logo: 'https://www.google.com/s2/favicons?domain=botforger.com&sz=256',
     monogram: 'B',
     number: '05',
@@ -192,7 +192,7 @@ function App() {
         url: siteSeo.siteUrl,
         description: 'Selected projects in AI, ecommerce and product engineering by Jaymian-Lee Reinartz.',
         language: isNl ? 'nl-NL' : 'en-US',
-        image: `${siteSeo.siteUrl}/jay-portrait.jpg`
+        image: `${siteSeo.siteUrl}/jay-portrait.png`
       })
     ]
   }), [isNl]);
@@ -204,7 +204,7 @@ function App() {
         description="Selected work in AI systems, ecommerce and product engineering by Jaymian-Lee Reinartz."
         canonicalPath="/"
         language={language}
-        image={`${siteSeo.siteUrl}/jay-portrait.jpg`}
+        image={`${siteSeo.siteUrl}/jay-portrait.png`}
         imageAlt="Portrait of Jaymian-Lee Reinartz"
         jsonLd={jsonLd}
       />
@@ -229,7 +229,7 @@ function App() {
           </div>
 
           <div className="portrait-orbit">
-            <img src="/jay-portrait.jpg" alt="Jaymian-Lee Reinartz" width="1050" height="1400" fetchPriority="high" />
+            <img src="/jay-portrait.png" alt="Jaymian-Lee Reinartz" width="1066" height="1600" fetchPriority="high" />
             <span className="orbit-label orbit-label-one">BUILD</span>
             <span className="orbit-label orbit-label-two">SHIP</span>
           </div>
@@ -279,15 +279,16 @@ function App() {
                 {project.url ? (
                   <a className="project-visual" href={project.url} target="_blank" rel="noreferrer" aria-label={`${isNl ? 'Open' : 'Open'} ${project.name}`}>
                     <span className="project-logo" aria-hidden="true">
-                      <span className="project-monogram">{project.monogram}</span>
-                      {project.logo && <img src={project.logo} alt="" onError={(event) => { event.currentTarget.hidden = true; }} />}
+                      {project.logo ? <img src={project.logo} alt="" /> : <span className="project-monogram">{project.monogram}</span>}
                     </span>
                     <span className="visual-arrow"><AnimatedIcon name="arrow-right" size={19} /></span>
                     <span className="visual-no">{project.number}</span>
                   </a>
                 ) : (
                   <div className="project-visual" aria-hidden="true">
-                    <span className="project-logo"><span className="project-monogram">{project.monogram}</span></span>
+                    <span className="project-logo">
+                      {project.logo ? <img src={project.logo} alt="" /> : <span className="project-monogram">{project.monogram}</span>}
+                    </span>
                     <span className="visual-no">{project.number}</span>
                   </div>
                 )}
