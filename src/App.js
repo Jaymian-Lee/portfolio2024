@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
 import FloatingUtilityBar from './components/FloatingUtilityBar';
 import AnimatedIcon from './components/AnimatedIcon';
 import Seo from './components/Seo';
@@ -140,14 +141,15 @@ const activeProjects = projects.filter((project) => !archivedProjectNames.has(pr
 const archivedProjects = projects.filter((project) => archivedProjectNames.has(project.name));
 
 const socials = [
-  { label: 'GitHub', url: 'https://github.com/Jaymian-Lee' },
-  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
-  { label: 'Instagram', url: 'https://www.instagram.com/jaymianlee_/' }
+  { label: 'GitHub', handle: '@Jaymian-Lee', url: 'https://github.com/Jaymian-Lee', nl: 'Code, experimenten en de bouwstenen achter mijn producten.', en: 'Code, experiments and the building blocks behind my products.' },
+  { label: 'LinkedIn', handle: 'Jaymian-Lee Reinartz', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/', nl: 'Updates over productontwikkeling, AI en de dingen die ik aan het maken ben.', en: 'Updates on product work, AI and the things I am building.' },
+  { label: 'Instagram', handle: '@jaymianlee_', url: 'https://www.instagram.com/jaymianlee_/', nl: 'Een kijkje achter de schermen, van idee naar release.', en: 'A look behind the scenes, from idea to release.' }
 ];
 
 function App() {
   const [theme, setTheme] = useState('dark');
   const [language, setLanguage] = useState('nl');
+  const [activeView, setActiveView] = useState('work');
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('portfolio-theme');
@@ -230,8 +232,6 @@ function App() {
 
           <div className="portrait-orbit">
             <img src="/jay-portrait.png" alt="Jaymian-Lee Reinartz" width="1066" height="1600" fetchPriority="high" />
-            <span className="orbit-label orbit-label-one">BUILD</span>
-            <span className="orbit-label orbit-label-two">SHIP</span>
           </div>
 
           <div className="identity-copy">
@@ -267,8 +267,28 @@ function App() {
               <h2 id="project-title">{isNl ? 'Kan niet bestaat niet.' : 'Nothing is impossible.'}</h2>
               <p>{isNl ? 'Een kleine selectie van producten die ik heb gebouwd, vormgegeven of verder ontwikkel.' : 'A focused selection of products I have built, shaped or continue to develop.'}</p>
             </div>
+            <button
+              type="button"
+              className="project-view-toggle"
+              onClick={() => setActiveView((view) => (view === 'work' ? 'socials' : 'work'))}
+              aria-pressed={activeView === 'socials'}
+              aria-controls="project-content"
+            >
+              <AnimatedIcon name={activeView === 'work' ? 'plus' : 'arrow-left'} size={15} />
+              {activeView === 'work' ? (isNl ? 'Bekijk mijn socials' : 'View my socials') : (isNl ? 'Terug naar werk' : 'Back to work')}
+            </button>
           </header>
 
+          <AnimatePresence mode="wait" initial={false}>
+          {activeView === 'work' ? (
+            <motion.div
+              id="project-content"
+              key="work"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.28, ease: 'easeOut' }}
+            >
           <div className="project-list">
             {activeProjects.map((project, index) => (
               <article
@@ -329,6 +349,37 @@ function App() {
               ))}
             </ul>
           </section>
+
+            </motion.div>
+          ) : (
+            <motion.section
+              id="project-content"
+              key="socials"
+              className="socials-showcase"
+              aria-label={isNl ? 'Sociale profielen' : 'Social profiles'}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.28, ease: 'easeOut' }}
+            >
+              <p className="socials-intro">{isNl ? 'Volg het proces' : 'Follow the process'}</p>
+              <div className="socials-list">
+                {socials.map((social, index) => (
+                  <a className="social-row" key={social.label} href={social.url} target="_blank" rel="noreferrer">
+                    <span className="social-number">0{index + 1}</span>
+                    <span className="social-copy"><strong>{social.label}</strong><small>{social.handle}</small></span>
+                    <span className="social-description">{isNl ? social.nl : social.en}</span>
+                    <AnimatedIcon name="arrow-right" size={22} />
+                  </a>
+                ))}
+              </div>
+              <a className="socials-mail" href="mailto:info@jaymian-lee.nl">
+                <AnimatedIcon name="mail" size={19} />
+                {isNl ? 'Liever direct contact? Stuur me een mail.' : 'Prefer a direct line? Send me an email.'}
+              </a>
+            </motion.section>
+          )}
+          </AnimatePresence>
 
           <footer className="portfolio-footer">
             <p>© {new Date().getFullYear()} Jaymian-Lee Reinartz</p>

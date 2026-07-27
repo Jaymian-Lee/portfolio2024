@@ -480,7 +480,7 @@ export default function SP500CalculatorPage() {
   }, [language]);
 
   return (
-    <div className="sp500-shell">
+    <div className="sp500-shell ui-page">
       <Seo
         title={language === 'nl'
           ? 'S&P 500 Calculator Nederland | Rendement berekenen met historische data'
@@ -506,7 +506,7 @@ export default function SP500CalculatorPage() {
         onAsk={() => {}}
         askAriaLabel={language === 'nl' ? 'Open chat' : 'Open chat'}
       />
-      <main className="sp500-page">
+      <main className="sp500-page ui-container">
       <section className="sp500-hero">
         <div className="sp500-top-nav">
           <Link to="/" className="sp500-back-link">{t.back}</Link>

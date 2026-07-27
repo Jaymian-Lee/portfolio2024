@@ -907,7 +907,7 @@ function DailyWordPage() {
   };
 
   return (
-    <main className="daily-page">
+    <main className="daily-page ui-page">
       <Seo
         title={language === 'nl' ? 'Word-Lee | Dagelijkse woordgame' : 'Word-Lee | Daily word game'}
         description={language === 'nl'
@@ -922,7 +922,7 @@ function DailyWordPage() {
         jsonLd={dailySeoJsonLd}
       />
 
-      <div className="daily-wrap">
+      <div className="daily-wrap ui-container">
         <header className="daily-header">
           <Link to="/" className="daily-back" aria-label={copy[language].back}>
             <span className="daily-back-arrow" aria-hidden="true">←</span>

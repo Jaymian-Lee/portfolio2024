@@ -168,8 +168,8 @@ export default function StreamChatPage() {
         jsonLd={pageJsonLd}
       />
 
-      <main className="stream-shell">
-        <section className="stream-card">
+      <main className="stream-shell ui-page">
+        <section className="stream-card ui-panel">
           <p className="stream-kicker">Stream Chat</p>
           <h1>Gecombineerde live chat</h1>
           <p>Zet platformen aan of uit en bekijk alle berichten in 1 feed.</p>

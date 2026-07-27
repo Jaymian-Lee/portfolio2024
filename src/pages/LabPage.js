@@ -162,7 +162,7 @@ export default function LabPage() {
   }, [language]);
 
   return (
-    <div className="lab-page-shell">
+    <div className="lab-page-shell ui-page">
       <Seo
         title={language === 'nl' ? 'The Lab | Experimentele subprojecten' : 'The Lab | Experimental subprojects'}
         description={language === 'nl'
@@ -187,7 +187,7 @@ export default function LabPage() {
         onAsk={() => { window.location.href = '/'; }}
       />
 
-      <main className="lab-main">
+      <main className="lab-main ui-container">
         <Link to="/" className="lab-back-link">{t.back}</Link>
 
         <header className="lab-hero">

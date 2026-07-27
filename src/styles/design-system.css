@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Poppins:wght@400;500;600;700&display=swap');
+
+/*
+ * Shared visual language
+ * Keep brand colours, type and corner treatment here. Existing page styles can
+ * use either the portfolio tokens (--ink, --paper) or the compatible aliases
+ * (--text, --surface) while the site continues to look like one product.
+ */
+:root {
+  --ink: #17191d;
+  --paper: #f3f1eb;
+  --soft-paper: #e7e5dd;
+  --line: rgba(23, 25, 29, 0.16);
+  --muted: #575751;
+  --signal: #315cf5;
+  --lime: #ceff3c;
+  --font-display: 'Bungee', Impact, sans-serif;
+  --font-body: 'Poppins', Arial, sans-serif;
+  --radius: 8px;
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--signal) 38%, transparent);
+
+  /* Compatibility aliases for the standalone tools and games. */
+  --bg: var(--paper);
+  --bg-soft: var(--soft-paper);
+  --text: var(--ink);
+  --surface: color-mix(in srgb, var(--paper) 88%, var(--soft-paper));
+  --surface-strong: var(--paper);
+  --border: var(--line);
+  --accent: var(--signal);
+  --button: var(--lime);
+  --button-text: #151515;
+  --panel-alt: var(--soft-paper);
+  --shadow-soft: 0 14px 32px rgba(18, 20, 24, 0.12);
+}
+
+:root[data-theme='dark'] {
+  --ink: #efeee9;
+  --paper: #151618;
+  --soft-paper: #202124;
+  --line: rgba(239, 238, 233, 0.16);
+  --muted: #c4c3bc;
+  --signal: #88a3ff;
+  --lime: #d9ff58;
+  --surface: color-mix(in srgb, var(--paper) 78%, var(--soft-paper));
+  --surface-strong: #202124;
+  --button-text: #151515;
+  --shadow-soft: 0 14px 32px rgba(0, 0, 0, 0.26);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-body);
+}
+
+button,
+input,
+select,
+textarea {
+  border-radius: var(--radius);
+}
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ui-page {
+  min-height: 100svh;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 95% 0%, color-mix(in srgb, var(--signal) 10%, transparent), transparent 28rem),
+    var(--paper);
+}
+
+.ui-container {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.ui-page :is(h1, h2, h3) {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.03;
+}
+
+.ui-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.ui-button,
+.ui-button-secondary,
+.ui-back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.58rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: 700 0.78rem/1 var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.ui-button {
+  color: var(--button-text);
+  background: var(--button);
+}
+
+.ui-button-secondary,
+.ui-back-link {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+.ui-button:hover,
+.ui-button-secondary:hover,
+.ui-back-link:hover {
+  transform: translateY(-2px);
+  border-color: var(--signal);
+}
+
+.ui-kicker,
+.ui-tag {
+  font: 600 0.68rem/1.3 var(--font-body);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.ui-kicker { color: var(--signal); }
+
+.ui-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+}
+
+/* Legacy page classes intentionally inherit the same 8px material system. */
+:where(
+  .lab-card, .toepen-card, .toepen-names li, .toepen-scores li, .history-list article,
+  .stream-card, .stream-panel, .stream-message, .stream-user-hover-card,
+  .sp500-live-strip, .sp500-controls-panel, .calc-input-card, .sp500-future-card,
+  .sp500-card, .comparison-item, .scenario-item, .chart-hover-readout,
+  .daily-back, .daily-timer, .tile, .keyboard button, .daily-ask-card,
+  .daily-leaderboard, .daily-player-card, .daily-history-card
+) {
+  border-radius: var(--radius) !important;
+}
+
+:where(.lab-back-link, .toepen-back, .daily-back, .sp500-back-link, .stream-top-nav a) {
+  border-radius: var(--radius) !important;
+}
+
+@media (max-width: 640px) {
+  .ui-container { width: min(100% - 1.5rem, 1180px); }
+}

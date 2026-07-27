@@ -398,7 +398,7 @@ function ToepenPage() {
   }, [language]);
 
   return (
-    <main className="toepen-page">
+    <main className="toepen-page ui-page">
       <Seo
         title={language === 'nl' ? 'Toepen scorebord' : 'Toepen scoreboard'}
         description={language === 'nl'
@@ -413,7 +413,7 @@ function ToepenPage() {
         jsonLd={toePenSeoJsonLd}
       />
 
-      <div className="toepen-wrap">
+      <div className="toepen-wrap ui-container">
         <header className="toepen-header">
           <Link to="/" className="toepen-back">{t.back}</Link>
           <h1>{t.title}</h1>

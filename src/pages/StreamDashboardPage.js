@@ -36,8 +36,8 @@ export default function StreamDashboardPage() {
         jsonLd={pageJsonLd}
       />
 
-    <main className="stream-shell">
-      <section className="stream-card">
+    <main className="stream-shell ui-page">
+      <section className="stream-card ui-panel">
         <p className="stream-kicker">Stream Dashboard</p>
         <h1>Live stream hub</h1>
         <p>
