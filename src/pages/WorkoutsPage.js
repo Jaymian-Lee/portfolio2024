@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit"; // Fixed the import path
+import AnimatedIcon from "../components/AnimatedIcon";
 import { saveWorkout, loadWorkouts } from "../utils/workoutData";
 
 const WorkoutsPage = () => {
@@ -245,7 +243,7 @@ const WorkoutsPage = () => {
             placeholder="New exercise name"
           />
           <button onClick={addNewExercise}>
-            <AddIcon />
+            <AnimatedIcon name="plus" size={19} />
           </button>
         </div>
       </div>
@@ -374,13 +372,13 @@ const WorkoutsPage = () => {
                     onClick={() => startEditExercise(exercise)}
                     className="edit-button"
                   >
-                    <EditIcon />
+                    <AnimatedIcon name="pencil" size={19} />
                   </button>
                   <button
                     onClick={() => deleteExercise(exercise.id)}
                     className="delete-button"
                   >
-                    ×
+                    <AnimatedIcon name="x" size={19} />
                   </button>
                 </div>
               </>
@@ -395,7 +393,7 @@ const WorkoutsPage = () => {
             placeholder="New exercise name"
           />
           <button onClick={addNewExercise}>
-            <AddIcon />
+            <AnimatedIcon name="plus" size={19} />
           </button>
         </div>
       </div>
@@ -769,7 +767,7 @@ const WorkoutsPage = () => {
         }}
         className="back-button"
       >
-        <ArrowBackIcon style={{ fontSize: 40 }} />
+        <AnimatedIcon name="arrow-left" size={40} />
       </button>
 
       <div className="content">

@@ -31,6 +31,10 @@
   box-shadow: var(--shadow-soft);
 }
 
+.stream-card > .lab-tool-back {
+  margin-bottom: 1.25rem;
+}
+
 .stream-kicker {
   margin: 0;
   font-size: 0.8rem;
@@ -55,7 +59,9 @@
 
 .stream-btn,
 .stream-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
   margin-top: 0.8rem;
   color: var(--button-text);
   background: var(--button);

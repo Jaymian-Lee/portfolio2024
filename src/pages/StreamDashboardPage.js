@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SiteChrome from '../components/SiteChrome';
 import PlatformIcon from '../components/PlatformIcon';
+import AnimatedIcon from '../components/AnimatedIcon';
+import LabBackLink from '../components/LabBackLink';
 import Seo from '../components/Seo';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { getAlternateLocalePaths, getLocaleFromPathname, localizePath } from '../utils/locale';
@@ -17,12 +19,12 @@ export default function StreamDashboardPage() {
     title: 'Stream-dashboard', description: 'Live-hub voor multichat, streamstatus en platformmonitoring.',
     kicker: 'Stream-dashboard', heading: 'Live-streamhub', lead: 'Beheer straks alles rond je stream vanaf één plek.',
     chatTitle: 'Multichat', chatText: 'Combineer Twitch-, TikTok- en YouTube-chat in één overzicht en kies per platform wat je ziet.',
-    openChat: 'Open chatdashboard', status: 'Status', ready: 'voorbereid', back: 'Terug naar home'
+    openChat: 'Open chatdashboard', status: 'Status', ready: 'voorbereid', back: 'Terug naar The Lab'
   } : {
     title: 'Stream Dashboard', description: 'Live hub for multi-chat, stream status, and platform monitoring.',
     kicker: 'Stream Dashboard', heading: 'Live stream hub', lead: 'Manage everything around your stream from one place.',
     chatTitle: 'Multi-chat', chatText: 'Combine Twitch, TikTok, and YouTube chat in one view and choose what each platform shows.',
-    openChat: 'Open chat dashboard', status: 'Status', ready: 'ready', back: 'Back to home'
+    openChat: 'Open chat dashboard', status: 'Status', ready: 'ready', back: 'Back to The Lab'
   }), [isNl]);
   const pageJsonLd = useMemo(() => ({
     '@context': 'https://schema.org',
@@ -57,6 +59,7 @@ export default function StreamDashboardPage() {
 
     <main className="stream-shell ui-page">
       <section className="stream-card ui-panel">
+        <LabBackLink to={localizePath('/lab', language)}>{t.back}</LabBackLink>
         <p className="stream-kicker">{t.kicker}</p>
         <h1>{t.heading}</h1>
         <p>{t.lead}</p>
@@ -66,7 +69,7 @@ export default function StreamDashboardPage() {
             <h2>{t.chatTitle}</h2>
             <p>{t.chatText}</p>
             <Link className="stream-btn" to={localizePath('/stream/chat', language)}>
-              {t.openChat}
+              {t.openChat} <AnimatedIcon name="arrow-right" size={17} />
             </Link>
           </article>
 
@@ -78,12 +81,6 @@ export default function StreamDashboardPage() {
               <li><span className="platform-symbol"><PlatformIcon platform="youtube" /></span> YouTube: {t.ready}</li>
             </ul>
           </article>
-        </div>
-
-        <div className="stream-actions">
-          <Link className="stream-link" to={localizePath('/', language)}>
-            {t.back}
-          </Link>
         </div>
       </section>
     </main>

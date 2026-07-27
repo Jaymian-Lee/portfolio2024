@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SiteChrome from '../components/SiteChrome';
 import PlatformIcon from '../components/PlatformIcon';
+import AnimatedIcon from '../components/AnimatedIcon';
+import LabBackLink from '../components/LabBackLink';
 import Seo from '../components/Seo';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { getAlternateLocalePaths, getLocaleFromPathname, localizePath } from '../utils/locale';
@@ -189,6 +191,7 @@ export default function StreamChatPage() {
 
       <main className="stream-shell ui-page">
         <section className="stream-card ui-panel">
+          <LabBackLink to={localizePath('/lab', language)}>{isNl ? 'Terug naar The Lab' : 'Back to The Lab'}</LabBackLink>
           <p className="stream-kicker">{t.title}</p>
           <h1>{t.heading}</h1>
           <p>{t.lead}</p>
@@ -238,8 +241,8 @@ export default function StreamChatPage() {
           {lastError && <p className="stream-error">{lastError}</p>}
 
           <div className="stream-actions">
-            <Link className="stream-link" to={localizePath('/stream', language)}>{t.backDashboard}</Link>
-            <Link className="stream-link" to={localizePath('/', language)}>{t.backHome}</Link>
+            <Link className="stream-link" to={localizePath('/stream', language)}><AnimatedIcon name="arrow-left" size={16} />{t.backDashboard}</Link>
+            <Link className="stream-link" to={localizePath('/', language)}><AnimatedIcon name="arrow-left" size={16} />{t.backHome}</Link>
           </div>
         </section>
       </main>

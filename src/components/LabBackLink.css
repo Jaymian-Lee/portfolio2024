@@ -1,0 +1,26 @@
+.lab-tool-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 2.7rem;
+  padding: .52rem .78rem;
+  border: 1px solid var(--line, var(--border));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface, var(--soft-paper)) 82%, transparent);
+  color: var(--ink, var(--text));
+  font: 700 .8rem/1 'Poppins', sans-serif;
+  text-decoration: none;
+  transition: color .2s ease, border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.lab-tool-back:hover,
+.lab-tool-back:focus-visible {
+  transform: translateX(-.18rem);
+  border-color: var(--signal, var(--accent));
+  background: var(--lime, var(--surface-strong));
+  color: #151515;
+}
+
+.lab-tool-back .animated-icon {
+  flex: 0 0 auto;
+}

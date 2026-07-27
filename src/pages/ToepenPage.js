@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import LabBackLink from '../components/LabBackLink';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './ToepenPage.css';
@@ -89,7 +90,7 @@ const TAUNTS = {
 
 const copy = {
   nl: {
-    back: '← Terug naar The Lab',
+    back: 'Terug naar The Lab',
     title: 'Toepen scorebord',
     subtitle: 'LocalStorage only, zonder database.',
     setup: 'Setup',
@@ -139,7 +140,7 @@ const copy = {
     }
   },
   en: {
-    back: '← Back to The Lab',
+    back: 'Back to The Lab',
     title: 'Toepen scoreboard',
     subtitle: 'LocalStorage only, no database.',
     setup: 'Setup',
@@ -466,7 +467,7 @@ function ToepenPage() {
 
       <div className="toepen-wrap ui-container">
         <header className="toepen-header">
-          <Link to={localizePath('/lab', language)} className="toepen-back">{t.back}</Link>
+          <LabBackLink to={localizePath('/lab', language)}>{t.back}</LabBackLink>
           <h1>{t.title}</h1>
           <p>{t.subtitle}</p>
         </header>

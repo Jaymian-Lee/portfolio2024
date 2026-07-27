@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import AnimatedIcon from '../components/AnimatedIcon';
+import LabBackLink from '../components/LabBackLink';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './LabPage.css';
@@ -12,22 +14,34 @@ const detectBrowserTheme = () => {
 
 const copy = {
   nl: {
-    back: '← Terug naar home',
+    back: 'Terug naar home',
     kicker: 'Experimental Space',
     title: 'The Lab.',
     lead: 'Alle subprojecten op één logische plek. Hier staan experiments, tools en speelse builds.',
     sectionTitle: 'Subprojecten',
     open: 'Open project',
-    home: 'Home'
+    home: 'Home',
+    categories: {
+      games: { title: 'Games', description: 'Kleine speelse experiments en dagelijkse challenges.', icon: 'gamepad' },
+      scoreboards: { title: 'Scoreboards', description: 'Duidelijke scorekeepers voor kaartavonden.', icon: 'trophy' },
+      calculators: { title: 'Calculators', description: 'Scenario-tools die cijfers inzichtelijk maken.', icon: 'calculator' },
+      streaming: { title: 'Streaming', description: 'Tools voor live status, chat en moderatie.', icon: 'radio' }
+    }
   },
   en: {
-    back: '← Back to home',
+    back: 'Back to home',
     kicker: 'Experimental Space',
     title: 'The Lab.',
     lead: 'All sub projects in one clear place. This is where experiments, tools, and playful builds live.',
     sectionTitle: 'Sub projects',
     open: 'Open project',
-    home: 'Home'
+    home: 'Home',
+    categories: {
+      games: { title: 'Games', description: 'Playful experiments and daily challenges.', icon: 'gamepad' },
+      scoreboards: { title: 'Scoreboards', description: 'Clear scorekeepers for card game nights.', icon: 'trophy' },
+      calculators: { title: 'Calculators', description: 'Scenario tools that make numbers easier to understand.', icon: 'calculator' },
+      streaming: { title: 'Streaming', description: 'Tools for live status, chat and moderation.', icon: 'radio' }
+    }
   }
 };
 
@@ -36,6 +50,7 @@ const projects = {
       {
         name: 'Word-Lee',
         path: '/word-lee',
+        category: 'games',
         badge: 'Word Game',
         description: 'Dagelijkse woordchallenge met leaderboard, wereldrecord en snelle rounds.',
         tags: ['React', 'Game', 'Realtime ranking']
@@ -43,6 +58,7 @@ const projects = {
     {
       name: 'Stream Dashboard',
       path: '/stream',
+      category: 'streaming',
       badge: 'Streaming Tool',
       description: 'Live dashboard voor streamstatus, quick controls en realtime monitoring.',
       tags: ['Dashboard', 'Realtime', 'Web']
@@ -50,6 +66,7 @@ const projects = {
     {
       name: 'Stream Chat',
       path: '/stream/chat',
+      category: 'streaming',
       badge: 'Chat Utility',
       description: 'Losse chat-view voor stream interactie over meerdere platformen.',
       tags: ['Chat', 'Multi-platform', 'Live']
@@ -57,6 +74,7 @@ const projects = {
     {
       name: 'Toepen Scoreboard',
       path: '/toepen',
+      category: 'scoreboards',
       badge: 'Card Game Utility',
       description: 'Snel score bijhouden voor Toepen met simpele invoer en duidelijk overzicht.',
       tags: ['Utility', 'Local first', 'Game night']
@@ -64,6 +82,7 @@ const projects = {
     {
       name: 'Pesten Scoreboard',
       path: '/pesten',
+      category: 'scoreboards',
       badge: 'Card Game Utility',
       description: 'Flexibele scorekeeper voor Pesten, afgestemd op jullie eigen huisregels.',
       tags: ['Utility', 'Local first', 'Game night']
@@ -71,6 +90,7 @@ const projects = {
     {
       name: 'S&P 500 Calculator',
       path: '/sp500-calculator',
+      category: 'calculators',
       badge: 'Finance Tool',
       description: 'Rekent scenario’s door met historische groei en heldere visualisatie.',
       tags: ['Finance', 'Calculator', 'Data viz']
@@ -80,6 +100,7 @@ const projects = {
       {
         name: 'Word-Lee',
         path: '/word-lee',
+        category: 'games',
         badge: 'Word Game',
         description: 'Daily word challenge with leaderboard, world record, and quick rounds.',
         tags: ['React', 'Game', 'Realtime ranking']
@@ -87,6 +108,7 @@ const projects = {
     {
       name: 'Stream Dashboard',
       path: '/stream',
+      category: 'streaming',
       badge: 'Streaming Tool',
       description: 'Live dashboard for stream status, quick controls, and realtime monitoring.',
       tags: ['Dashboard', 'Realtime', 'Web']
@@ -94,6 +116,7 @@ const projects = {
     {
       name: 'Stream Chat',
       path: '/stream/chat',
+      category: 'streaming',
       badge: 'Chat Utility',
       description: 'Standalone chat view for stream interaction across platforms.',
       tags: ['Chat', 'Multi-platform', 'Live']
@@ -101,6 +124,7 @@ const projects = {
     {
       name: 'Toepen Scoreboard',
       path: '/toepen',
+      category: 'scoreboards',
       badge: 'Card Game Utility',
       description: 'Simple Toepen scoreboard for game nights with fast input.',
       tags: ['Utility', 'Local first', 'Game night']
@@ -108,6 +132,7 @@ const projects = {
     {
       name: 'Pesten Scoreboard',
       path: '/pesten',
+      category: 'scoreboards',
       badge: 'Card Game Utility',
       description: 'Flexible Pesten scorekeeper built around your own house rules.',
       tags: ['Utility', 'Local first', 'Game night']
@@ -115,12 +140,15 @@ const projects = {
     {
       name: 'S&P 500 Calculator',
       path: '/sp500-calculator',
+      category: 'calculators',
       badge: 'Finance Tool',
       description: 'Runs long-term scenarios with historical growth and clear charts.',
       tags: ['Finance', 'Calculator', 'Data viz']
     }
   ]
 };
+
+const categoryOrder = ['games', 'scoreboards', 'calculators', 'streaming'];
 
 export default function LabPage() {
   const [theme, setTheme] = useState('dark');
@@ -148,6 +176,13 @@ export default function LabPage() {
 
   const t = copy[language] || copy.en;
   const labProjects = useMemo(() => projects[language] || projects.en, [language]);
+  const labCategories = useMemo(() => (
+    categoryOrder.map((category) => ({
+      id: category,
+      ...t.categories[category],
+      projects: labProjects.filter((project) => project.category === category)
+    })).filter((category) => category.projects.length > 0)
+  ), [labProjects, t.categories]);
   const labSeoJsonLd = useMemo(() => {
     const canonical = `${siteSeo.siteUrl}${canonicalPath}`;
     return {
@@ -199,7 +234,7 @@ export default function LabPage() {
       />
 
       <main className="lab-main ui-container">
-        <Link to={localizePath('/', language)} className="lab-back-link">{t.back}</Link>
+        <LabBackLink to={localizePath('/', language)}>{t.back}</LabBackLink>
 
         <header className="lab-hero">
           <p className="lab-kicker">{t.kicker}</p>
@@ -208,21 +243,33 @@ export default function LabPage() {
         </header>
 
         <section className="lab-section" aria-label={t.sectionTitle}>
-          <div className="lab-grid">
-            {labProjects.map((project) => (
-              <article className="lab-card" key={project.name}>
-                <p className="lab-card-badge">{project.badge}</p>
-                <h2>{project.name}</h2>
-                <p>{project.description}</p>
-                <div className="lab-tags" aria-label="Project tags">
-                  {project.tags.map((tag) => (
-                    <span className="lab-tag" key={`${project.name}-${tag}`}>{tag}</span>
-                  ))}
+          {labCategories.map((category, categoryIndex) => (
+            <section className="lab-category" key={category.id} aria-labelledby={`lab-category-${category.id}`}>
+              <header className="lab-category-header">
+                <span className="lab-category-icon" aria-hidden="true"><AnimatedIcon name={category.icon} size={21} /></span>
+                <div>
+                  <p>{String(categoryIndex + 1).padStart(2, '0')} / {category.projects.length} {category.projects.length === 1 ? 'tool' : 'tools'}</p>
+                  <h2 id={`lab-category-${category.id}`}>{category.title}</h2>
+                  <span>{category.description}</span>
                 </div>
-                <Link to={localizePath(project.path, language)} className="lab-open-link">{t.open} →</Link>
-              </article>
-            ))}
-          </div>
+              </header>
+              <div className="lab-grid">
+                {category.projects.map((project) => (
+                  <article className="lab-card" key={project.name}>
+                    <p className="lab-card-badge">{project.badge}</p>
+                    <h3>{project.name}</h3>
+                    <p>{project.description}</p>
+                    <div className="lab-tags" aria-label="Project tags">
+                      {project.tags.map((tag) => (
+                        <span className="lab-tag" key={`${project.name}-${tag}`}>{tag}</span>
+                      ))}
+                    </div>
+                    <Link to={localizePath(project.path, language)} className="lab-open-link">{t.open} <AnimatedIcon name="arrow-right" size={17} /></Link>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
         </section>
       </main>
     </div>

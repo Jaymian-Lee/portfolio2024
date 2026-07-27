@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
 import Seo from '../components/Seo';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
 import { validateWord } from '../utils/wordValidation';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import AnimatedIcon from '../components/AnimatedIcon';
+import LabBackLink from '../components/LabBackLink';
 import { buildAiContext } from '../utils/aiContext';
 import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './DailyWordPage.css';
@@ -45,7 +47,7 @@ const copy = {
   en: {
     title: 'Word-Lee',
     subtitle: 'One fun word every day.',
-    back: 'Back to portfolio',
+    back: 'Back to The Lab',
     howTo: 'Guess the 5 letter word in 6 tries.',
     oneRoundRule: 'You can only play 1 full round per day per language.',
     placeholder: 'Type with keyboard or tap below',
@@ -121,7 +123,7 @@ const copy = {
   nl: {
     title: 'Word-Lee',
     subtitle: 'Elke dag een leuk woord.',
-    back: 'Terug naar portfolio',
+    back: 'Terug naar The Lab',
     howTo: 'Raad het woord van 5 letters in 6 pogingen.',
     oneRoundRule: 'Je kunt per taal maar 1 volledige ronde per dag spelen.',
     placeholder: 'Typ met toetsenbord of tik hieronder',
@@ -928,10 +930,7 @@ function DailyWordPage() {
 
       <div className="daily-wrap ui-container">
         <header className="daily-header">
-          <Link to={localizePath('/', language)} className="daily-back" aria-label={copy[language].back}>
-            <span className="daily-back-arrow" aria-hidden="true">←</span>
-            <span>{copy[language].back}</span>
-          </Link>
+          <LabBackLink to={localizePath('/lab', language)}>{copy[language].back}</LabBackLink>
         </header>
 
         <section className="daily-hero">
@@ -1023,7 +1022,7 @@ function DailyWordPage() {
             </div>
             {monthlyWorldRecord ? (
               <div className="yesterday-winner-card">
-                <span className="winner-crown" aria-hidden="true">👑</span>
+                <span className="winner-crown" aria-hidden="true"><AnimatedIcon name="trophy" size={17} /></span>
                 <span className="yesterday-winner-name">{monthlyWorldRecord.name}</span>
                 {shouldShowResultBadge(monthlyWorldRecord) && (
                   <span className="score-badge failed">{formatResultLabel(monthlyWorldRecord)}</span>
@@ -1045,7 +1044,7 @@ function DailyWordPage() {
             </div>
             {dailyTopper ? (
               <div className="yesterday-winner-card">
-                <span className="winner-crown" aria-hidden="true">🏆</span>
+                <span className="winner-crown" aria-hidden="true"><AnimatedIcon name="trophy" size={17} /></span>
                 <span className="yesterday-winner-name">{dailyTopper.name}</span>
                 {shouldShowResultBadge(dailyTopper) && (
                   <span className="score-badge failed">{formatResultLabel(dailyTopper)}</span>
@@ -1164,7 +1163,7 @@ function DailyWordPage() {
                       <span className="score-badge failed">{formatResultLabel(record)}</span>
                     )}
                     <span className="my-scores-attempts">{record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}</span>
-                    {record.isPR && <span className="my-scores-pr">🏆 {copy[language].myScoresPR}</span>}
+                    {record.isPR && <span className="my-scores-pr"><AnimatedIcon name="trophy" size={15} />{copy[language].myScoresPR}</span>}
                   </li>
                 ))}
               </ul>
@@ -1181,7 +1180,7 @@ function DailyWordPage() {
       {showJoinPopup && game.status !== 'playing' && !scoreSubmitted && (
         <div className="join-popup" role="dialog" aria-modal="true" aria-label={game.status === 'lost' ? copy[language].joinBoardLostTitle : copy[language].joinBoardTitle}>
           <div className="join-popup-inner">
-            <button type="button" className="join-popup-close" onClick={() => setShowJoinPopup(false)} aria-label="Close" disabled={leaderboardLoading}>✕</button>
+            <button type="button" className="join-popup-close" onClick={() => setShowJoinPopup(false)} aria-label="Close" disabled={leaderboardLoading}><AnimatedIcon name="x" size={17} /></button>
             <div className="join-popup-body">
               <p className="join-popup-kicker">Word-Lee</p>
               <h3>{game.status === 'lost' ? copy[language].joinBoardLostTitle : copy[language].joinBoardTitle}</h3>
@@ -1254,7 +1253,7 @@ function DailyWordPage() {
               <p className="daily-chat-subtitle">{copy[language].askSubtitle}</p>
             </div>
             <button type="button" className="daily-chat-close" onClick={() => setIsChatOpen(false)} aria-label="Close">
-              ✕
+              <AnimatedIcon name="x" size={17} />
             </button>
           </header>
 

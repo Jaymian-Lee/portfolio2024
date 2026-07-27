@@ -323,7 +323,8 @@
 }
 
 .winner-crown {
-  font-size: 1.05rem;
+  display: inline-flex;
+  color: #b9853f;
 }
 
 .yesterday-winner-name {
@@ -1224,6 +1225,9 @@
 }
 
 .my-scores-pr {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.78rem;
   color: #b9853f;
   font-weight: 700;

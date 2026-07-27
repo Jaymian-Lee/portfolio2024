@@ -16,6 +16,9 @@
 }
 
 .sp500-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   color: var(--muted);
   text-decoration: none;
   font-weight: 600;
@@ -158,6 +161,7 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  gap: 0.4rem;
   justify-content: center;
   cursor: pointer;
 }

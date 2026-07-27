@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import AnimatedIcon from '../components/AnimatedIcon';
+import LabBackLink from '../components/LabBackLink';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './SP500CalculatorPage.css';
@@ -32,7 +34,7 @@ const SP500_ANNUAL_RETURNS = [
 
 const uiCopy = {
   nl: {
-    back: '← Terug naar home',
+    back: 'Terug naar The Lab',
     heroKicker: 'S&P 500 calculator voor Nederland',
     heroTitle: 'Bereken je potentiële S&P 500 rendement met historische data',
     heroSub: 'Gebaseerd op echte historische percentages, met slimme scenario\'s, visuele grafiek en duidelijke output.',
@@ -46,14 +48,14 @@ const uiCopy = {
     goal: 'Doelvermogen (€ optioneel)',
     calc: 'Bereken',
     reset: 'Reset',
-    learnMore: 'Meer leren over S&P 500 beleggen ↓',
+    learnMore: 'Meer leren over S&P 500 beleggen',
     futureAt: 'Verwachte totaalwaarde op',
     duration: 'Looptijd vanaf nu',
     scenarioTitle: 'Scenario uitkomst',
     compareTitle: 'Scenario vergelijking'
   },
   en: {
-    back: '← Back to home',
+    back: 'Back to The Lab',
     heroKicker: 'S&P 500 calculator',
     heroTitle: 'Estimate your potential S&P 500 return with historical data',
     heroSub: 'Based on historical percentages, smart scenarios, visual charting, and clear output.',
@@ -67,7 +69,7 @@ const uiCopy = {
     goal: 'Target amount (€ optional)',
     calc: 'Calculate',
     reset: 'Reset',
-    learnMore: 'Learn more about S&P 500 investing ↓',
+    learnMore: 'Learn more about S&P 500 investing',
     futureAt: 'Projected total value at age',
     duration: 'Time horizon from now',
     scenarioTitle: 'Scenario outcomes',
@@ -385,9 +387,7 @@ export default function SP500CalculatorPage() {
       />
       <main className="sp500-page ui-container">
       <section className="sp500-hero">
-        <div className="sp500-top-nav">
-          <Link to={localizePath('/', language)} className="sp500-back-link">{t.back}</Link>
-        </div>
+        <div className="sp500-top-nav"><LabBackLink to={localizePath('/lab', language)}>{t.back}</LabBackLink></div>
         <p className="sp500-kicker">{t.heroKicker}</p>
         <h1>{t.heroTitle}</h1>
         <p className="sp500-subtitle">{t.heroSub}</p>
@@ -511,7 +511,7 @@ export default function SP500CalculatorPage() {
           >
             {t.reset}
           </button>
-          <a href="#faq-sp500" className="sim-cta-secondary">{t.learnMore}</a>
+          <a href="#faq-sp500" className="sim-cta-secondary">{t.learnMore} <AnimatedIcon name="arrow-down" size={17} /></a>
         </article>
 
         <article className="sp500-future-card">

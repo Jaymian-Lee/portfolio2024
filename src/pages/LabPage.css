@@ -12,17 +12,8 @@
   padding: 3.2rem 1.25rem 3.5rem;
 }
 
-.lab-back-link {
-  display: inline-flex;
-  align-items: center;
+.lab-main > .lab-tool-back {
   margin-bottom: 1.15rem;
-  color: var(--muted, #6f6259);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.lab-back-link:hover {
-  color: var(--accent, #67401d);
 }
 
 .lab-hero {
@@ -57,6 +48,58 @@
   gap: 1rem;
 }
 
+.lab-category + .lab-category {
+  margin-top: 3.2rem;
+}
+
+.lab-category-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .85rem;
+  align-items: start;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.lab-category-icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  color: #151515;
+  background: var(--lime);
+  border-radius: var(--radius);
+}
+
+.lab-category-header p,
+.lab-category-header h2,
+.lab-category-header span {
+  margin: 0;
+}
+
+.lab-category-header p {
+  color: var(--signal, var(--accent));
+  font: 700 .66rem/1 'Poppins', sans-serif;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.lab-category-header h2 {
+  margin-top: .25rem;
+  color: var(--text);
+  font: 400 clamp(1.35rem, 2.5vw, 2.1rem)/1 'Bungee', Impact, sans-serif;
+}
+
+.lab-category-header span {
+  display: block;
+  max-width: 54ch;
+  margin-top: .35rem;
+  color: var(--muted, #6f6259);
+  font-size: .88rem;
+  line-height: 1.55;
+}
+
 .lab-card {
   background: linear-gradient(180deg, color-mix(in srgb, var(--surface-strong) 84%, transparent), color-mix(in srgb, var(--surface) 88%, transparent));
   border: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
@@ -76,14 +119,10 @@
   box-shadow: 0 24px 54px rgba(43, 29, 18, 0.14);
 }
 
-.lab-card h2 {
+.lab-card h3 {
   margin: 0;
   font-size: 1.4rem;
   letter-spacing: -0.02em;
-}
-
-.lab-card:nth-child(1) {
-  border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
 }
 
 .lab-card p {
@@ -132,8 +171,7 @@
     grid-template-columns: 1fr;
   }
 
-  .lab-card,
-  .lab-card:nth-child(1) {
+  .lab-card {
     grid-column: auto;
     min-height: 0;
   }

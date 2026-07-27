@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
+import AnimatedIcon from '../components/AnimatedIcon';
+import LabBackLink from '../components/LabBackLink';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './ToepenPage.css';
@@ -21,7 +23,7 @@ const initialState = () => ({ setupNames: [], targetScore: 10, game: null });
 
 const copy = {
   nl: {
-    back: '← Terug naar The Lab', title: 'Pesten scorebord', subtitle: 'LocalStorage only, zonder database.',
+    back: 'Terug naar The Lab', title: 'Pesten scorebord', subtitle: 'LocalStorage only, zonder database.',
     setup: 'Setup', targetScore: 'Eindscore (bij deze score lig je eruit)', addName: 'Naam toevoegen', namePlaceholder: 'Bijv. Jay', add: 'Toevoegen', remove: 'Verwijder', startGame: 'Start spel', resetAll: 'Alles resetten',
     runningGame: 'Lopend spel', endScore: 'Eindscore', winner: 'Winnaar', active: 'Actief', score: 'Score', eliminated: 'Uitgeschakeld', place: 'plaats', newGame: 'Nieuw spel opzetten', history: 'Historie (laatste 25)', noHistory: 'Nog geen afgeronde spellen.', ask: 'Vragen?',
     guide: {
@@ -42,7 +44,7 @@ const copy = {
         { card: '7', title: 'Zeven blijft kleven', text: 'Je mag nog een kaart spelen.' },
         { card: '8', title: 'Acht wacht', text: 'De volgende speler slaat een beurt over.' },
         { card: 'J', title: 'Boer kiest kleur', text: 'Een boer mag vaak altijd; de speler kiest de kleur waarmee verder wordt gespeeld.' },
-        { card: '🃏', title: 'Joker', text: 'De volgende speler legt een joker terug of pakt vaak vijf kaarten. Dit aantal is een huisregel.' }
+        { card: 'joker', title: 'Joker', text: 'De volgende speler legt een joker terug of pakt vaak vijf kaarten. Dit aantal is een huisregel.' }
       ],
       scoreTitle: 'Stand bijhouden',
       steps: [
@@ -56,7 +58,7 @@ const copy = {
     }
   },
   en: {
-    back: '← Back to The Lab', title: 'Pesten scoreboard', subtitle: 'LocalStorage only, no database.',
+    back: 'Back to The Lab', title: 'Pesten scoreboard', subtitle: 'LocalStorage only, no database.',
     setup: 'Setup', targetScore: 'End score (at this score you are out)', addName: 'Add name', namePlaceholder: 'e.g. Jay', add: 'Add', remove: 'Remove', startGame: 'Start game', resetAll: 'Reset all',
     runningGame: 'Current game', endScore: 'End score', winner: 'Winner', active: 'Active', score: 'Score', eliminated: 'Eliminated', place: 'place', newGame: 'Set up new game', history: 'History (last 25)', noHistory: 'No finished games yet.', ask: 'Questions?',
     guide: {
@@ -77,7 +79,7 @@ const copy = {
         { card: '7', title: 'Play again', text: 'You may immediately play another card.' },
         { card: '8', title: 'Wait', text: 'The next player skips a turn.' },
         { card: 'J', title: 'Jack chooses suit', text: 'A jack is often playable at any time; the player chooses the suit that continues.' },
-        { card: '🃏', title: 'Joker', text: 'The next player plays another joker or often draws five cards. The amount is a house rule.' }
+        { card: 'joker', title: 'Joker', text: 'The next player plays another joker or often draws five cards. The amount is a house rule.' }
       ],
       scoreTitle: 'Keeping score',
       steps: [
@@ -180,7 +182,7 @@ export default function PestenPage() {
     <main className="toepen-page ui-page">
       <Seo title={`${t.title} | Jaymian-Lee Reinartz`} description={isNl ? 'Lokaal Pesten scorebord met flexibele eindscore, snelle invoer en spelhistorie.' : 'Local Pesten scoreboard with a flexible end score, quick input, and game history.'} canonicalPath={canonicalPath} language={language} alternatePaths={alternatePaths} defaultLocalePath={alternatePaths.en} image={`${siteSeo.siteUrl}/jay.png`} imageAlt={isNl ? 'Pesten scorebord van Jaymian-Lee Reinartz' : 'Pesten scoreboard by Jaymian-Lee Reinartz'} jsonLd={pageJsonLd} />
       <div className="toepen-wrap ui-container">
-        <header className="toepen-header"><Link to={localizePath('/lab', language)} className="toepen-back">{t.back}</Link><h1>{t.title}</h1><p>{t.subtitle}</p></header>
+        <header className="toepen-header"><LabBackLink to={localizePath('/lab', language)}>{t.back}</LabBackLink><h1>{t.title}</h1><p>{t.subtitle}</p></header>
         <section className="toepen-card">
           <h2>{t.setup}</h2>
           <label className="toepen-label" htmlFor="pesten-target-score">{t.targetScore}</label>
@@ -192,7 +194,7 @@ export default function PestenPage() {
         </section>
         {game && <section className="toepen-card"><h2>{t.runningGame}</h2><p>{t.endScore}: <strong>{game.targetScore}</strong></p>{game.finished ? <p className="winner">{t.winner}: <strong>{winnerName}</strong></p> : <p>{t.active}: {activePlayers.map((player) => player.name).join(', ')}</p>}<ul className="toepen-scores">{game.players.map((player) => <li key={player.id} className={player.eliminated ? 'out' : ''}><div className="toepen-score-badge" aria-label={`${t.score} ${player.score}`}>{player.score}</div><div className="toepen-player-main"><strong>{player.name}</strong>{player.eliminated && <p>{t.eliminated} ({t.place} {player.place})</p>}</div><div className="toepen-score-actions"><button type="button" disabled={game.finished || player.eliminated || player.score === 0} onClick={() => changeScore(player.id, -1)}>−1</button><button type="button" disabled={game.finished || player.eliminated} onClick={() => changeScore(player.id, 1)}>+1</button></div></li>)}</ul><button type="button" className="ghost" onClick={() => setState((previous) => ({ ...previous, game: null }))}>{t.newGame}</button></section>}
         <section className="toepen-card"><h2>{t.history}</h2>{history.length === 0 ? <p>{t.noHistory}</p> : <div className="history-list">{history.map((item) => <article key={item.id}><p><strong>{new Date(item.finishedAt).toLocaleString(isNl ? 'nl-NL' : 'en-US')}</strong> · {t.endScore} {item.targetScore}</p><ol>{item.results.map((row) => <li key={`${item.id}-${row.name}`}>#{row.place} {row.name} ({row.score})</li>)}</ol></article>)}</div>}</section>
-        <details className="toepen-guide"><summary><span className="toepen-guide-summary-copy"><small>{t.guide.eyebrow}</small><strong>{t.guide.title}</strong></span><span className="toepen-guide-toggle" aria-hidden="true">+</span></summary><div className="toepen-guide-body"><p className="toepen-guide-lead">{t.guide.lead}</p><div className="toepen-guide-basics"><section><h2>{t.guide.roundsTitle}</h2><p>{t.guide.roundsText}</p></section><section><h2>{t.guide.rulesTitle}</h2><p>{t.guide.rulesText}</p></section></div><section className="toepen-guide-score"><h2>{t.guide.gameTitle}</h2><ol className="toepen-guide-steps">{t.guide.gameSteps.map((step, index) => <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol></section><section className="toepen-guide-actions" aria-label={t.guide.rulesTitle}>{t.guide.actions.map((action) => <article key={action.card}><span>{action.card}</span><div><h3>{action.title}</h3><p>{action.text}</p></div></article>)}</section><section className="toepen-guide-score"><h2>{t.guide.scoreTitle}</h2><ol className="toepen-guide-steps">{t.guide.steps.map((step, index) => <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol></section><aside className="toepen-guide-example"><p>{t.guide.exampleTitle}</p><strong>7 + 3 = 10</strong><span>{t.guide.exampleText}</span></aside><p className="toepen-guide-note">{t.guide.note}</p></div></details>
+        <details className="toepen-guide"><summary><span className="toepen-guide-summary-copy"><small>{t.guide.eyebrow}</small><strong>{t.guide.title}</strong></span><span className="toepen-guide-toggle" aria-hidden="true"><AnimatedIcon name="plus" size={18} /></span></summary><div className="toepen-guide-body"><p className="toepen-guide-lead">{t.guide.lead}</p><div className="toepen-guide-basics"><section><h2>{t.guide.roundsTitle}</h2><p>{t.guide.roundsText}</p></section><section><h2>{t.guide.rulesTitle}</h2><p>{t.guide.rulesText}</p></section></div><section className="toepen-guide-score"><h2>{t.guide.gameTitle}</h2><ol className="toepen-guide-steps">{t.guide.gameSteps.map((step, index) => <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol></section><section className="toepen-guide-actions" aria-label={t.guide.rulesTitle}>{t.guide.actions.map((action) => <article key={action.card}><span>{action.card === 'joker' ? <AnimatedIcon name="sparkles" size={18} /> : action.card}</span><div><h3>{action.title}</h3><p>{action.text}</p></div></article>)}</section><section className="toepen-guide-score"><h2>{t.guide.scoreTitle}</h2><ol className="toepen-guide-steps">{t.guide.steps.map((step, index) => <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol></section><aside className="toepen-guide-example"><p>{t.guide.exampleTitle}</p><strong>7 + 3 = 10</strong><span>{t.guide.exampleText}</span></aside><p className="toepen-guide-note">{t.guide.note}</p></div></details>
       </div>
       <FloatingUtilityBar language={language} onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, isNl ? 'en' : 'nl', location.search, location.hash))} theme={theme} onToggleTheme={() => setTheme((previous) => previous === 'dark' ? 'light' : 'dark')} askLabel={t.ask} askAriaLabel={t.ask} onAsk={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
     </main>

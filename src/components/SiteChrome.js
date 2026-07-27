@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FloatingUtilityBar from './FloatingUtilityBar';
 import { getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 
@@ -23,12 +23,6 @@ export default function SiteChrome({ children }) {
     localStorage.setItem('portfolio-theme', theme);
   }, [theme]);
 
-  const t = useMemo(() => ({
-    home: 'Home',
-    stream: 'Stream',
-    chat: 'Chat'
-  }), []);
-
   return (
     <>
       <FloatingUtilityBar
@@ -36,16 +30,10 @@ export default function SiteChrome({ children }) {
         onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-        askLabel={t.home}
-        askAriaLabel={t.home}
+        askLabel="Home"
+        askAriaLabel="Home"
         onAsk={() => { window.location.href = localizePath('/', language); }}
       />
-
-      <nav className="stream-top-nav" aria-label="Site navigatie">
-        <Link to={localizePath('/', language)}>{t.home}</Link>
-        <Link to={localizePath('/stream', language)}>{t.stream}</Link>
-        <Link to={localizePath('/stream/chat', language)}>{t.chat}</Link>
-      </nav>
 
       {children}
     </>
