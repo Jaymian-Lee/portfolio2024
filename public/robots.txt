@@ -2,5 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://jaymian-lee.nl/sitemap.xml
-# AI-friendly summary: https://jaymian-lee.nl/llms.txt
+Sitemap: https://www.jaymian-lee.nl/sitemap.xml
+# AI-friendly summary: https://www.jaymian-lee.nl/llms.txt

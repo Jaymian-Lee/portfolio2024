@@ -49,13 +49,18 @@
       "/lab",
       "/word-lee",
       "/toepen",
+      "/pesten",
       "/stream",
       "/stream/chat",
-      "/services/ai-automation",
-      "/services/ecommerce-development",
-      "/services/prestashop-modules",
-      "/services/wordpress-plugins",
-      "/services/seo-ai-seo"
+      "/sp500-calculator",
+      "/nl",
+      "/nl/lab",
+      "/nl/word-lee",
+      "/nl/toepen",
+      "/nl/pesten",
+      "/nl/stream",
+      "/nl/stream/chat",
+      "/nl/sp500-calculator"
     ]
   },
   "eslintConfig": {

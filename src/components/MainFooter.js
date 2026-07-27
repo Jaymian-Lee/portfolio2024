@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
+import { localizePath } from '../utils/locale';
 
 const footerQuickLinks = [
   { label: 'Services', href: '/#services' },
@@ -21,8 +22,8 @@ const footerProjects = [
   { label: 'Vizualy Prints', href: 'https://vizualyprints.com' },
   { label: 'Refacthor', href: 'https://refacthor.nl' },
   { label: 'MartijnKozijn.nl', href: 'https://martijnkozijn.nl' },
-  { label: 'The Lab', href: 'https://jaymian-lee.nl/lab' },
-  { label: 'Word-Lee', href: 'https://jaymian-lee.nl/word-lee' },
+  { label: 'The Lab', href: 'https://www.jaymian-lee.nl/lab' },
+  { label: 'Word-Lee', href: 'https://www.jaymian-lee.nl/word-lee' },
 ];
 
 const footerConnect = [
@@ -84,7 +85,7 @@ export default function MainFooter({ language = 'en', twitchLive = null }) {
             <ul>
               {footerQuickLinks.map((item) => (
                 <li key={`quick-${item.label}`}>
-                  <a href={item.href}>{item.label}</a>
+                  <a href={item.href === '/lab' ? localizePath(item.href, language) : item.href}>{item.label}</a>
                 </li>
               ))}
             </ul>
@@ -120,7 +121,7 @@ export default function MainFooter({ language = 'en', twitchLive = null }) {
             <p className="footer-kicker">{t.footerWordleeTitle}</p>
             <h3>Daily challenge</h3>
             <p>{t.footerWordleeText}</p>
-            <Link to="/word-lee" className="footer-wordly-cta">
+            <Link to={localizePath('/word-lee', language)} className="footer-wordly-cta">
               {t.footerWordleeCta}
             </Link>
           </section>

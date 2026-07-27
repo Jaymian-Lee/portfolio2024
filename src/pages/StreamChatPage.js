@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import SiteChrome from '../components/SiteChrome';
 import PlatformIcon from '../components/PlatformIcon';
 import Seo from '../components/Seo';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
+import { getAlternateLocalePaths, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './StreamPages.css';
 
 const DEFAULT_FILTERS = {
@@ -64,6 +65,22 @@ async function fetchJsonWithFallback(urls) {
 }
 
 export default function StreamChatPage() {
+  const location = useLocation();
+  const language = getLocaleFromPathname(location.pathname);
+  const isNl = language === 'nl';
+  const canonicalPath = localizePath('/stream/chat', language);
+  const alternatePaths = getAlternateLocalePaths(canonicalPath);
+  const t = useMemo(() => (isNl ? {
+    title: 'Streamchat', description: 'Gecombineerde live-chat voor Twitch-, TikTok- en YouTube-streamberichten.',
+    heading: 'Gecombineerde live-chat', lead: 'Zet platformen aan of uit en bekijk alle berichten in één feed.',
+    connected: 'verbonden', disconnected: 'niet verbonden', filters: 'Chatfilters', noMessages: 'Nog geen berichten voor de geselecteerde platformen.',
+    backDashboard: 'Terug naar stream-dashboard', backHome: 'Terug naar home'
+  } : {
+    title: 'Stream Chat', description: 'Combined live chat view for Twitch, TikTok, and YouTube stream messages.',
+    heading: 'Combined live chat', lead: 'Turn platforms on or off and see every message in one feed.',
+    connected: 'connected', disconnected: 'disconnected', filters: 'Chat filters', noMessages: 'No messages for the selected platforms yet.',
+    backDashboard: 'Back to stream dashboard', backHome: 'Back to home'
+  }), [isNl]);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [messages, setMessages] = useState([]);
   const [lastError, setLastError] = useState('');
@@ -78,18 +95,18 @@ export default function StreamChatPage() {
     '@graph': [
       createWebsiteSchema({ language: ['en', 'nl'] }),
       createWebPageSchema({
-        name: 'Stream Chat',
-        url: `${siteSeo.siteUrl}/stream/chat`,
-        description: 'Combined live chat view for Twitch, TikTok, and YouTube stream messages.',
-        language: 'en-US'
+        name: t.title,
+        url: `${siteSeo.siteUrl}${canonicalPath}`,
+        description: t.description,
+        language: isNl ? 'nl-NL' : 'en-US'
       }),
       createBreadcrumbSchema([
-        { name: 'Home', item: siteSeo.siteUrl },
-        { name: 'Stream Dashboard', item: `${siteSeo.siteUrl}/stream` },
-        { name: 'Stream Chat', item: `${siteSeo.siteUrl}/stream/chat` }
+        { name: 'Home', item: `${siteSeo.siteUrl}${localizePath('/', language)}` },
+        { name: isNl ? 'Stream-dashboard' : 'Stream Dashboard', item: `${siteSeo.siteUrl}${localizePath('/stream', language)}` },
+        { name: t.title, item: `${siteSeo.siteUrl}${canonicalPath}` }
       ])
     ]
-  }), []);
+  }), [canonicalPath, isNl, language, t]);
 
   useEffect(() => {
     let stop = false;
@@ -159,10 +176,12 @@ export default function StreamChatPage() {
   return (
     <SiteChrome>
       <Seo
-        title="Stream Chat | Jaymian-Lee Reinartz"
-        description="Combined live chat view for Twitch, TikTok, and YouTube stream messages."
-        canonicalPath="/stream/chat"
-        language="en"
+        title={`${t.title} | Jaymian-Lee Reinartz`}
+        description={t.description}
+        canonicalPath={canonicalPath}
+        language={language}
+        alternatePaths={alternatePaths}
+        defaultLocalePath={alternatePaths.en}
         image={`${siteSeo.siteUrl}/jay.png`}
         imageAlt="Stream chat overview for Jaymian-Lee Reinartz"
         jsonLd={pageJsonLd}
@@ -170,26 +189,26 @@ export default function StreamChatPage() {
 
       <main className="stream-shell ui-page">
         <section className="stream-card ui-panel">
-          <p className="stream-kicker">Stream Chat</p>
-          <h1>Gecombineerde live chat</h1>
-          <p>Zet platformen aan of uit en bekijk alle berichten in 1 feed.</p>
+          <p className="stream-kicker">{t.title}</p>
+          <h1>{t.heading}</h1>
+          <p>{t.lead}</p>
 
           <div className="stream-status-row">
             <span className={`stream-status-pill ${(config?.platforms?.twitch?.connected) ? 'ok' : 'warn'}`}>
               <span className="platform-symbol"><PlatformIcon platform="twitch" /></span>
-              Twitch {config?.platforms?.twitch?.connected ? 'connected' : 'niet verbonden'}
+              Twitch {config?.platforms?.twitch?.connected ? t.connected : t.disconnected}
             </span>
             <span className={`stream-status-pill ${(config?.platforms?.tiktok?.connected) ? 'ok' : 'warn'}`}>
               <span className="platform-symbol"><PlatformIcon platform="tiktok" /></span>
-              TikTok {config?.platforms?.tiktok?.connected ? 'connected' : 'niet verbonden'}
+              TikTok {config?.platforms?.tiktok?.connected ? t.connected : t.disconnected}
             </span>
             <span className={`stream-status-pill ${(config?.platforms?.youtube?.connected) ? 'ok' : 'warn'}`}>
               <span className="platform-symbol"><PlatformIcon platform="youtube" /></span>
-              YouTube {config?.platforms?.youtube?.connected ? 'connected' : 'niet verbonden'}
+              YouTube {config?.platforms?.youtube?.connected ? t.connected : t.disconnected}
             </span>
           </div>
 
-          <div className="stream-filters" role="group" aria-label="Chat filters">
+          <div className="stream-filters" role="group" aria-label={t.filters}>
             {Object.keys(DEFAULT_FILTERS).map((platform) => (
               <label key={platform} className="stream-filter">
                 <input type="checkbox" checked={filters[platform]} onChange={() => toggle(platform)} />
@@ -199,7 +218,7 @@ export default function StreamChatPage() {
           </div>
 
           <div className="stream-chat-feed" role="log" aria-live="polite">
-            {messages.length === 0 && <p className="stream-muted">Nog geen berichten voor de geselecteerde platformen.</p>}
+            {messages.length === 0 && <p className="stream-muted">{t.noMessages}</p>}
 
             {messages.map((message) => (
               <article key={message.id} className={`stream-message platform-${message.platform}`}>
@@ -209,7 +228,7 @@ export default function StreamChatPage() {
                     <strong>{message.author}</strong>
                     <UserHoverCard message={message} />
                   </div>
-                  <time>{new Date(message.timestamp).toLocaleTimeString('nl-NL')}</time>
+                  <time>{new Date(message.timestamp).toLocaleTimeString(isNl ? 'nl-NL' : 'en-US')}</time>
                 </header>
                 <p>{message.text}</p>
               </article>
@@ -219,8 +238,8 @@ export default function StreamChatPage() {
           {lastError && <p className="stream-error">{lastError}</p>}
 
           <div className="stream-actions">
-            <Link className="stream-link" to="/stream">Terug naar stream dashboard</Link>
-            <Link className="stream-link" to="/">Terug naar home</Link>
+            <Link className="stream-link" to={localizePath('/stream', language)}>{t.backDashboard}</Link>
+            <Link className="stream-link" to={localizePath('/', language)}>{t.backHome}</Link>
           </div>
         </section>
       </main>

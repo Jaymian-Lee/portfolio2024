@@ -1,0 +1,52 @@
+.subpage-brand {
+  position: fixed;
+  top: 0.9rem;
+  right: 1rem;
+  z-index: 75;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.48rem;
+  min-height: 2.45rem;
+  padding: 0.32rem 0.58rem 0.32rem 0.34rem;
+  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+  color: var(--text);
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.subpage-brand:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.subpage-brand img {
+  display: block;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 6px;
+}
+
+.subpage-brand span {
+  font-family: 'Bungee', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.025em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@media (max-width: 840px) {
+  .subpage-brand {
+    top: 0.72rem;
+    right: 0.72rem;
+    min-height: 2.2rem;
+  }
+
+  .subpage-brand span {
+    font-size: 0.62rem;
+  }
+}

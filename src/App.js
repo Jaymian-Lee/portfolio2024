@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import FloatingUtilityBar from './components/FloatingUtilityBar';
 import AnimatedIcon from './components/AnimatedIcon';
 import Seo from './components/Seo';
-import { createPersonSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from './data/seo';
+import { createItemListSchema, createPersonSchema, createProfessionalServiceSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from './data/seo';
+import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from './utils/locale';
 import './App.css';
 
-const projects = [
+const projectData = [
   {
     name: 'Corthex',
     url: 'https://corthex.app',
@@ -15,8 +16,8 @@ const projects = [
     logo: 'https://www.google.com/s2/favicons?domain=corthex.app&sz=256',
     monogram: 'C',
     number: '01',
+    timeline: { start: '2026', end: 'ongoing' },
     type: 'AI knowledge platform',
-    year: 'Building · 2026',
     summary: 'AI workspaces and capable assistants, grounded in a team’s own knowledge.',
     tags: ['Product', 'AI systems', 'Co-founder'],
     tone: 'blue',
@@ -29,22 +30,22 @@ const projects = [
     logo: 'https://www.google.com/s2/favicons?domain=vizualy.nl&sz=256',
     monogram: 'V',
     number: '02',
+    timeline: { start: '2026', end: 'ongoing' },
     type: 'Renovation visualizer',
-    year: '2025',
     summary: 'A visual decision tool for façades, materials, and before-and-after possibilities.',
-    tags: ['Computer vision', 'Dashboard', 'UX'],
+    tags: ['Computer vision', 'Dashboard', 'Founder'],
     tone: 'sun',
     note: 'Visual workflows, made practical'
   },
   {
     name: 'MartijnKozijn.nl',
     url: 'https://martijnkozijn.nl',
-    image: '/projects/martijnkozijn-nl.jpg',
+    image: '/projects/martijnkozijn-hero.png',
     logo: 'https://www.google.com/s2/favicons?domain=martijnkozijn.nl&sz=256',
     monogram: 'MK',
     number: '03',
+    timeline: { start: '2023', end: 'ongoing' },
     type: 'Ecommerce architecture',
-    year: 'Ongoing',
     summary: 'A faster, more maintainable buying experience for windows and doors.',
     tags: ['PrestaShop', 'Ecommerce', 'Lead developer'],
     tone: 'mint',
@@ -57,10 +58,10 @@ const projects = [
     logo: 'https://slecto.app/_next/image?url=%2Fbrand%2Fslecto-icon.png&w=48&q=75',
     monogram: 'S',
     number: '04',
+    timeline: { start: '2026', end: 'ongoing' },
     type: 'Digital product',
-    year: 'In ontwikkeling',
     summary: 'A new digital product currently taking shape from the ground up.',
-    tags: ['Product', 'Development', 'In progress'],
+    tags: ['Product', 'Development', 'Founder'],
     tone: 'orange',
     note: 'More soon'
   },
@@ -71,8 +72,8 @@ const projects = [
     logo: 'https://www.google.com/s2/favicons?domain=botforger.com&sz=256',
     monogram: 'B',
     number: '05',
+    timeline: { start: '2025', end: '2026' },
     type: 'No-code chatbot builder',
-    year: '2025–2026',
     summary: 'The product foundation for no-code AI chatbots and useful automation.',
     tags: ['SaaS', 'Automation', 'Founder'],
     tone: 'purple',
@@ -85,8 +86,8 @@ const projects = [
     logo: 'https://www.google.com/s2/favicons?domain=mintventory.com&sz=256',
     monogram: 'M',
     number: '06',
+    timeline: { start: '2026', end: '2026' },
     type: 'Collector platform',
-    year: 'Building',
     summary: 'Inventory, scanning, grading and discovery for serious trading-card collectors.',
     tags: ['Mobile flow', 'Data', 'Product'],
     tone: 'rose',
@@ -99,8 +100,8 @@ const projects = [
     logo: 'https://www.google.com/s2/favicons?domain=twigsie.com&sz=256',
     monogram: 'T',
     number: '07',
+    timeline: { start: '2025', end: '2026' },
     type: 'Plant ecommerce',
-    year: '2025',
     summary: 'A gentle ecommerce experience for plant cuttings, care and first-time growers.',
     tags: ['Ecommerce', 'Content', 'Design system'],
     tone: 'green',
@@ -109,16 +110,29 @@ const projects = [
   {
     name: 'Refacthor',
     url: 'https://refacthor.nl',
-    image: '/projects/refacthor-site-screenshot.png',
+    image: '/projects/refacthor-hero.png',
     logo: 'https://www.google.com/s2/favicons?domain=refacthor.nl&sz=256',
     monogram: 'R',
     number: '08',
+    timeline: { start: '2026', end: 'ongoing' },
     type: 'Digital product studio',
-    year: 'Ongoing',
     summary: 'The studio where strategy, engineering and conversion-minded delivery come together.',
-    tags: ['Strategy', 'Web', 'Owner'],
+    tags: ['Strategy', 'Web', 'Founder'],
     tone: 'blue',
     note: 'The practice behind the work'
+  },
+  {
+    name: 'Woonproblemen',
+    url: 'https://woonproblemen.nl',
+    image: '/projects/woonproblemen-hero.png',
+    logo: 'https://woonproblemen.nl/wp-content/uploads/2026/01/Woonproblemen-cartoon.png',
+    monogram: 'W',
+    timeline: { start: '2026', end: 'ongoing' },
+    type: 'WordPress SEO experiment',
+    summary: 'A custom WordPress module that writes topic-led blog pages to test Search Console signals, indexing and organic rankings.',
+    tags: ['WordPress', 'SEO automation', 'Search Console'],
+    tone: 'blue',
+    note: 'Testing search performance'
   },
   {
     name: 'Vizualy Prints',
@@ -127,8 +141,8 @@ const projects = [
     logo: 'https://www.google.com/s2/favicons?domain=vizualyprints.com&sz=256',
     monogram: 'VP',
     number: '09',
+    timeline: { start: '2025', end: '2026' },
     type: 'Poster ecommerce',
-    year: '2025',
     summary: 'A clearer route from visual inspiration to a confident, checkout-ready choice.',
     tags: ['Ecommerce', 'Conversion', 'Content'],
     tone: 'sun',
@@ -136,9 +150,19 @@ const projects = [
   }
 ];
 
+// Keep portfolio work ordered from newest launch to oldest everywhere it is rendered.
+// A stable sort retains the curated order for projects that launched in the same year.
+const projects = projectData
+  .sort((first, second) => Number(second.timeline.start) - Number(first.timeline.start))
+  .map((project, index) => ({
+    ...project,
+    number: String(index + 1).padStart(2, '0')
+  }));
+
 const archivedProjectNames = new Set(['Mintventory', 'Twigsie', 'Vizualy Prints']);
 const activeProjects = projects.filter((project) => !archivedProjectNames.has(project.name));
 const archivedProjects = projects.filter((project) => archivedProjectNames.has(project.name));
+const formatProjectTimeline = ({ start, end }) => `${start} — ${end}`;
 
 const socials = [
   { label: 'GitHub', handle: '@Jaymian-Lee', url: 'https://github.com/Jaymian-Lee', nl: 'Code, experimenten en de bouwstenen achter mijn producten.', en: 'Code, experiments and the building blocks behind my products.' },
@@ -150,14 +174,16 @@ const socials = [
 
 function App() {
   const [theme, setTheme] = useState('dark');
-  const [language, setLanguage] = useState('nl');
   const [activeView, setActiveView] = useState('work');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const language = getLocaleFromPathname(location.pathname);
+  const canonicalPath = localizePath('/', language);
+  const alternatePaths = getAlternateLocalePaths(canonicalPath);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('portfolio-theme');
-    const storedLanguage = localStorage.getItem('portfolio-language');
     setTheme(storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : 'dark');
-    setLanguage(storedLanguage === 'en' || storedLanguage === 'nl' ? storedLanguage : 'nl');
   }, []);
 
   useEffect(() => {
@@ -167,47 +193,46 @@ function App() {
     localStorage.setItem('portfolio-language', language);
   }, [language, theme]);
 
-  useEffect(() => {
-    const scriptId = 'corthex-chat-widget';
-    const existingScript = document.getElementById(scriptId);
-
-    if (existingScript) return undefined;
-
-    const widgetScript = document.createElement('script');
-    widgetScript.id = scriptId;
-    widgetScript.src = 'https://www.corthex.app/widget.js';
-    widgetScript.dataset.botId = '57ac4b69-39d1-4b57-a530-244604877cbc';
-    widgetScript.async = true;
-    document.body.appendChild(widgetScript);
-
-    return () => {
-      widgetScript.remove();
-    };
-  }, []);
-
   const isNl = language === 'nl';
+  const toggleProjectView = () => {
+    setActiveView((view) => (view === 'work' ? 'socials' : 'work'));
+  };
+
+  const toggleProjectViewFromIntro = () => {
+    toggleProjectView();
+    window.setTimeout(() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  };
+
   const jsonLd = useMemo(() => ({
     '@context': 'https://schema.org',
     '@graph': [
       createPersonSchema(),
       createWebsiteSchema({ language: ['nl', 'en'] }),
+      createProfessionalServiceSchema(),
       createWebPageSchema({
         name: 'Jaymian-Lee Reinartz — Project portfolio',
-        url: siteSeo.siteUrl,
+        url: `${siteSeo.siteUrl}${canonicalPath}`,
         description: 'Selected projects in AI, ecommerce and product engineering by Jaymian-Lee Reinartz.',
         language: isNl ? 'nl-NL' : 'en-US',
         image: `${siteSeo.siteUrl}/jay-portrait.png`
+      }),
+      createItemListSchema({
+        name: isNl ? 'Projecten van Jaymian-Lee Reinartz' : 'Projects by Jaymian-Lee Reinartz',
+        url: `${siteSeo.siteUrl}${canonicalPath}#projects`,
+        items: activeProjects.map(({ name, url }) => ({ name, url }))
       })
     ]
-  }), [isNl]);
+  }), [canonicalPath, isNl]);
 
   return (
     <div className="portfolio-shell">
       <Seo
         title="Jaymian-Lee Reinartz — Building useful digital products"
         description="Selected work in AI systems, ecommerce and product engineering by Jaymian-Lee Reinartz."
-        canonicalPath="/"
+        canonicalPath={canonicalPath}
         language={language}
+        alternatePaths={alternatePaths}
+        defaultLocalePath={alternatePaths.en}
         image={`${siteSeo.siteUrl}/jay-portrait.png`}
         imageAlt="Portrait of Jaymian-Lee Reinartz"
         jsonLd={jsonLd}
@@ -216,13 +241,13 @@ function App() {
       <a className="skip-link" href="#projects">{isNl ? 'Naar projecten' : 'Skip to projects'}</a>
       <FloatingUtilityBar
         language={language}
-        onToggleLanguage={() => setLanguage((value) => (value === 'nl' ? 'en' : 'nl'))}
+        onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'nl' ? 'en' : 'nl', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((value) => (value === 'dark' ? 'light' : 'dark'))}
         askLabel={isNl ? 'Mail' : 'Email'}
         askAriaLabel={isNl ? 'Stuur een e-mail' : 'Send an email'}
         onAsk={() => { window.location.href = 'mailto:info@jaymian-lee.nl'; }}
-        wordLee={{ label: 'Word-Lee', hint: isNl ? 'Daily challenge' : 'Daily challenge' }}
+        wordLee={{ label: 'Word-Lee', hint: isNl ? 'Daily challenge' : 'Daily challenge', href: localizePath('/word-lee', language) }}
       />
 
       <main className="portfolio-layout">
@@ -233,12 +258,12 @@ function App() {
           </div>
 
           <div className="portrait-orbit">
-            <img src="/jay-portrait.png" alt="Jaymian-Lee Reinartz" width="1066" height="1600" fetchPriority="high" />
+            <img src="/jay-portrait.png" alt={isNl ? 'Portret van Jaymian-Lee Reinartz, full-stack developer' : 'Portrait of Jaymian-Lee Reinartz, full-stack developer'} width="1066" height="1600" fetchPriority="high" />
           </div>
 
           <div className="identity-copy">
-            <p className="identity-kicker">Jaymian-Lee Reinartz</p>
-            <h1>{isNl ? <>Digitale producten<br />die iets dóén.</> : <>Digital products<br />that do the work.</>}</h1>
+            <p className="identity-kicker">Full-stack developer · Limburg</p>
+            <h1>Jaymian-Lee<br />Reinartz.</h1>
             <p className="identity-motto">{isNl ? 'Kan niet bestaat niet.' : '“Impossible” is not in my vocabulary.'}</p>
             <p className="identity-summary">
               {isNl
@@ -256,15 +281,21 @@ function App() {
 
           <div className="identity-footer">
             <p>AI · Ecommerce · Product engineering</p>
-            <nav aria-label="Social links">
-              {socials.map((social) => <a key={social.label} href={social.url} target="_blank" rel="noreferrer">{social.label}</a>)}
-            </nav>
+            <button
+              type="button"
+              className="footer-social-action"
+              onClick={toggleProjectViewFromIntro}
+              aria-pressed={activeView === 'socials'}
+              aria-controls="project-content"
+            >
+              <AnimatedIcon name={activeView === 'work' ? 'plus' : 'x'} size={14} />
+              {activeView === 'work' ? (isNl ? 'Bekijk mijn socials' : 'View my socials') : (isNl ? 'Terug naar werk' : 'Back to work')}
+            </button>
           </div>
         </aside>
 
         <section className="project-area" id="projects" aria-labelledby="project-title">
           <header className="project-header">
-            <p className="eyebrow-line"><span>{isNl ? 'Geselecteerd werk' : 'Selected work'}</span><span>2024—26</span></p>
             <div className="project-heading-row">
               <h2 id="project-title">{isNl ? 'Kan niet bestaat niet.' : 'Nothing is impossible.'}</h2>
               <p>{isNl ? 'Een kleine selectie van producten die ik heb gebouwd, vormgegeven of verder ontwikkel.' : 'A focused selection of products I have built, shaped or continue to develop.'}</p>
@@ -272,7 +303,7 @@ function App() {
             <button
               type="button"
               className="project-view-toggle"
-              onClick={() => setActiveView((view) => (view === 'work' ? 'socials' : 'work'))}
+              onClick={toggleProjectView}
               aria-pressed={activeView === 'socials'}
               aria-controls="project-content"
             >
@@ -315,7 +346,7 @@ function App() {
                   </div>
                 )}
                 <div className="project-info">
-                  <div className="project-meta"><span>{project.type}</span><span>{project.year}</span></div>
+                  <div className="project-meta"><span>{project.type}</span><span>{formatProjectTimeline(project.timeline)}</span></div>
                   <h3>{project.url ? <a href={project.url} target="_blank" rel="noreferrer">{project.name}</a> : project.name}</h3>
                   <p className="project-summary">{project.summary}</p>
                   <div className="project-bottom">
@@ -331,8 +362,8 @@ function App() {
             <p>{isNl ? 'Tussen projecten door' : 'Between projects'}</p>
             <h2>{isNl ? 'Ik experimenteer ook in het openbaar.' : 'I also experiment in public.'}</h2>
             <div>
-              <Link to="/lab">{isNl ? 'Open mijn Lab' : 'Open the Lab'} <AnimatedIcon name="arrow-right" size={17} /></Link>
-              <Link to="/word-lee">Word-Lee <AnimatedIcon name="gamepad" size={17} /></Link>
+              <Link to={localizePath('/lab', language)}>{isNl ? 'Open mijn Lab' : 'Open the Lab'} <AnimatedIcon name="arrow-right" size={17} /></Link>
+              <Link to={localizePath('/word-lee', language)}>Word-Lee <AnimatedIcon name="gamepad" size={17} /></Link>
             </div>
           </section>
 
@@ -346,7 +377,7 @@ function App() {
                 <li key={project.name}>
                   <span className="archive-mark">↘</span>
                   <span><strong>{project.name}</strong><small>{project.type}</small></span>
-                  <em>{isNl ? 'Gearchiveerd' : 'Archived'}</em>
+                  <em>{formatProjectTimeline(project.timeline)} · {isNl ? 'Gearchiveerd' : 'Archived'}</em>
                 </li>
               ))}
             </ul>

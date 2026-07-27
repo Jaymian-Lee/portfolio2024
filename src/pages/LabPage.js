@@ -1,15 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
-import MainFooter from '../components/MainFooter';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
+import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './LabPage.css';
-
-const detectBrowserLanguage = () => {
-  const lang = (navigator.language || '').toLowerCase();
-  return lang.startsWith('nl') ? 'nl' : 'en';
-};
 
 const detectBrowserTheme = () => {
   return 'dark';
@@ -67,6 +62,13 @@ const projects = {
       tags: ['Utility', 'Local first', 'Game night']
     },
     {
+      name: 'Pesten Scoreboard',
+      path: '/pesten',
+      badge: 'Card Game Utility',
+      description: 'Flexibele scorekeeper voor Pesten, afgestemd op jullie eigen huisregels.',
+      tags: ['Utility', 'Local first', 'Game night']
+    },
+    {
       name: 'S&P 500 Calculator',
       path: '/sp500-calculator',
       badge: 'Finance Tool',
@@ -104,6 +106,13 @@ const projects = {
       tags: ['Utility', 'Local first', 'Game night']
     },
     {
+      name: 'Pesten Scoreboard',
+      path: '/pesten',
+      badge: 'Card Game Utility',
+      description: 'Flexible Pesten scorekeeper built around your own house rules.',
+      tags: ['Utility', 'Local first', 'Game night']
+    },
+    {
       name: 'S&P 500 Calculator',
       path: '/sp500-calculator',
       badge: 'Finance Tool',
@@ -115,14 +124,15 @@ const projects = {
 
 export default function LabPage() {
   const [theme, setTheme] = useState('dark');
-  const [language, setLanguage] = useState('en');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const language = getLocaleFromPathname(location.pathname);
+  const canonicalPath = localizePath('/lab', language);
+  const alternatePaths = getAlternateLocalePaths(canonicalPath);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('portfolio-theme');
-    const savedLanguage = localStorage.getItem('portfolio-language');
-
     setTheme(savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : detectBrowserTheme());
-    setLanguage(savedLanguage === 'en' || savedLanguage === 'nl' ? savedLanguage : detectBrowserLanguage());
   }, []);
 
   useEffect(() => {
@@ -139,7 +149,7 @@ export default function LabPage() {
   const t = copy[language] || copy.en;
   const labProjects = useMemo(() => projects[language] || projects.en, [language]);
   const labSeoJsonLd = useMemo(() => {
-    const canonical = `${siteSeo.siteUrl}/lab`;
+    const canonical = `${siteSeo.siteUrl}${canonicalPath}`;
     return {
       '@context': 'https://schema.org',
       '@graph': [
@@ -158,7 +168,7 @@ export default function LabPage() {
         ])
       ]
     };
-  }, [language]);
+  }, [canonicalPath, language]);
 
   return (
     <div className="lab-page-shell ui-page">
@@ -167,8 +177,10 @@ export default function LabPage() {
         description={language === 'nl'
           ? 'Bekijk The Lab: een overzicht van experimentele tools, games en utilities zoals Word-Lee, Stream Dashboard, Stream Chat, Toepen en de S&P 500 calculator.'
           : 'Explore The Lab: an overview of experimental tools, games, and utilities such as Word-Lee, Stream Dashboard, Stream Chat, Toepen, and the S&P 500 calculator.'}
-        canonicalPath="/lab"
+        canonicalPath={canonicalPath}
         language={language}
+        alternatePaths={alternatePaths}
+        defaultLocalePath={alternatePaths.en}
         image={`${siteSeo.siteUrl}/jay.png`}
         imageAlt={language === 'nl'
           ? 'The Lab overzichtspagina met experimentele projecten van Jaymian-Lee Reinartz'
@@ -178,16 +190,16 @@ export default function LabPage() {
 
       <FloatingUtilityBar
         language={language}
-        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
         askLabel={t.home}
         askAriaLabel={t.home}
-        onAsk={() => { window.location.href = '/'; }}
+        onAsk={() => { window.location.href = localizePath('/', language); }}
       />
 
       <main className="lab-main ui-container">
-        <Link to="/" className="lab-back-link">{t.back}</Link>
+        <Link to={localizePath('/', language)} className="lab-back-link">{t.back}</Link>
 
         <header className="lab-hero">
           <p className="lab-kicker">{t.kicker}</p>
@@ -207,14 +219,12 @@ export default function LabPage() {
                     <span className="lab-tag" key={`${project.name}-${tag}`}>{tag}</span>
                   ))}
                 </div>
-                <Link to={project.path} className="lab-open-link">{t.open} →</Link>
+                <Link to={localizePath(project.path, language)} className="lab-open-link">{t.open} →</Link>
               </article>
             ))}
           </div>
         </section>
       </main>
-
-      <MainFooter language={language} />
     </div>
   );
 }

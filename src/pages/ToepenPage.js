@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
-import MainFooter from '../components/MainFooter';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
+import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './ToepenPage.css';
 
 const STORAGE_STATE_KEY = 'toepen-state-v1';
@@ -109,7 +109,26 @@ const copy = {
     place: 'plaats',
     newGame: 'Nieuw spel opzetten',
     history: 'Historie (laatste 25)',
-    noHistory: 'Nog geen afgeronde spellen.'
+    noHistory: 'Nog geen afgeronde spellen.',
+    guide: {
+      eyebrow: 'Handleiding',
+      title: 'Zo werken Toepen en dit scorebord.',
+      lead: 'Toepen is een kaartspel vol slagen, bluf en strafpunten. Dit bord bewaart de stand; jullie bepalen zelf welke huisregels aan tafel gelden.',
+      roundsTitle: 'De basis in één minuut',
+      roundsText: 'Speel met 2 tot 8 spelers en een pak van 32 kaarten. Iedereen krijgt vier kaarten. Volg kleur als je kunt; de hoogste kaart in de gevraagde kleur wint de slag. De winnaar van de vierde slag wint de hand.',
+      orderTitle: 'Kaartvolgorde',
+      orderText: 'Van sterk naar zwak: 10, 9, 8, 7, aas, heer, vrouw, boer.',
+      scoreTitle: 'Score bijhouden',
+      steps: [
+        { title: 'Kies de eindscore', text: 'Standaard is 10. Wie die score bereikt, ligt uit het spel.' },
+        { title: 'Voeg alle spelers toe', text: 'Typ een naam, kies Toevoegen en start zodra er minstens twee spelers klaarstaan.' },
+        { title: 'Verwerk elke hand', text: 'Klik +1 voor iedere strafpunt die iemand krijgt. Gebruik −1 meteen als je een punt te veel hebt ingevoerd.' },
+        { title: 'Laat het bord rangschikken', text: 'Bij de eindscore markeert het bord een speler automatisch als uitgeschakeld. De laatste actieve speler wint.' }
+      ],
+      exampleTitle: 'Voorbeeld',
+      exampleText: 'De eindscore is 10. Jay staat op 8 en krijgt na een hand 2 strafpunten: tik twee keer op +1. Jay komt op 10 en ligt eruit. Iemand op 3 die één strafpunt krijgt, eindigt gewoon op 4.',
+      note: 'Tip: spreken jullie een andere toep- of pasregel af? Geen probleem — voer alleen het uiteindelijke aantal strafpunten van de hand in. De laatste 25 afgeronde spellen blijven alleen op dit apparaat bewaard.'
+    }
   },
   en: {
     back: '← Back to portfolio',
@@ -132,7 +151,26 @@ const copy = {
     place: 'place',
     newGame: 'Set up new game',
     history: 'History (last 25)',
-    noHistory: 'No finished games yet.'
+    noHistory: 'No finished games yet.',
+    guide: {
+      eyebrow: 'Guide',
+      title: 'How Toepen and this scoreboard work.',
+      lead: 'Toepen is a trick-taking card game built around bluffing and penalty points. This board tracks the score while your table keeps its own house rules.',
+      roundsTitle: 'The basics in one minute',
+      roundsText: 'Play with 2 to 8 players and a 32-card deck. Everyone receives four cards. Follow suit whenever possible; the highest card in the led suit wins the trick. The winner of the fourth trick wins the hand.',
+      orderTitle: 'Card order',
+      orderText: 'Strongest to weakest: 10, 9, 8, 7, ace, king, queen, jack.',
+      scoreTitle: 'Keeping score',
+      steps: [
+        { title: 'Choose the end score', text: 'The default is 10. Reaching that score eliminates a player.' },
+        { title: 'Add every player', text: 'Type a name, choose Add, then start once at least two players are ready.' },
+        { title: 'Log each hand', text: 'Press +1 for every penalty point a player receives. Use −1 immediately if you entered one too many.' },
+        { title: 'Let the board rank the game', text: 'At the end score, a player is automatically marked eliminated. The last active player wins.' }
+      ],
+      exampleTitle: 'Example',
+      exampleText: 'The end score is 10. Jay is on 8 and receives 2 penalty points after a hand: press +1 twice. Jay reaches 10 and is eliminated. A player on 3 who receives one penalty simply moves to 4.',
+      note: 'Tip: do you play with a different toep or pass rule? That is fine — only enter the final number of penalty points from the hand. The last 25 finished games are saved on this device only.'
+    }
   }
 };
 
@@ -148,11 +186,6 @@ const getTauntForPlayer = (name, score, language) => {
   return set[index].replaceAll('{name}', name);
 };
 
-const detectBrowserLanguage = () => {
-  const lang = (navigator.language || '').toLowerCase();
-  return lang.startsWith('nl') ? 'nl' : 'en';
-};
-
 const detectBrowserTheme = () => {
   return 'dark';
 };
@@ -161,11 +194,11 @@ function ToepenPage() {
   const [nameInput, setNameInput] = useState('');
   const [state, setState] = useState(createInitialState);
   const [history, setHistory] = useState([]);
-  const [language, setLanguage] = useState(() => {
-    const saved = localStorage.getItem('portfolio-language');
-    if (saved === 'en' || saved === 'nl') return saved;
-    return detectBrowserLanguage();
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const language = getLocaleFromPathname(location.pathname);
+  const canonicalPath = localizePath('/toepen', language);
+  const alternatePaths = getAlternateLocalePaths(canonicalPath);
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('portfolio-theme');
     if (saved === 'dark' || saved === 'light') return saved;
@@ -375,7 +408,7 @@ function ToepenPage() {
   const askLabel = language === 'nl' ? 'Vragen?' : 'Questions?';
   const t = copy[language] || copy.en;
   const toePenSeoJsonLd = useMemo(() => {
-    const canonical = `${siteSeo.siteUrl}/toepen`;
+    const canonical = `${siteSeo.siteUrl}${canonicalPath}`;
     return {
       '@context': 'https://schema.org',
       '@graph': [
@@ -394,7 +427,7 @@ function ToepenPage() {
         ])
       ]
     };
-  }, [language]);
+  }, [canonicalPath, language]);
 
   return (
     <main className="toepen-page ui-page">
@@ -403,8 +436,10 @@ function ToepenPage() {
         description={language === 'nl'
           ? 'Toepen scorebord met localStorage-only opslag, snelle score-invoer en een complete spelgeschiedenis voor game nights.'
           : 'Toepen scoreboard with localStorage-only storage, fast score entry, and full game history for game nights.'}
-        canonicalPath="/toepen"
+        canonicalPath={canonicalPath}
         language={language}
+        alternatePaths={alternatePaths}
+        defaultLocalePath={alternatePaths.en}
         image={`${siteSeo.siteUrl}/jay.png`}
         imageAlt={language === 'nl'
           ? 'Toepen scorebord van Jaymian-Lee Reinartz'
@@ -414,7 +449,7 @@ function ToepenPage() {
 
       <div className="toepen-wrap ui-container">
         <header className="toepen-header">
-          <Link to="/" className="toepen-back">{t.back}</Link>
+          <Link to={localizePath('/', language)} className="toepen-back">{t.back}</Link>
           <h1>{t.title}</h1>
           <p>{t.subtitle}</p>
         </header>
@@ -534,19 +569,54 @@ function ToepenPage() {
             </div>
           )}
         </section>
+
+        <details className="toepen-guide">
+          <summary>
+            <span className="toepen-guide-summary-copy"><small>{t.guide.eyebrow}</small><strong>{t.guide.title}</strong></span>
+            <span className="toepen-guide-toggle" aria-hidden="true">+</span>
+          </summary>
+          <div className="toepen-guide-body">
+            <p className="toepen-guide-lead">{t.guide.lead}</p>
+            <div className="toepen-guide-basics">
+              <section>
+                <h2>{t.guide.roundsTitle}</h2>
+                <p>{t.guide.roundsText}</p>
+              </section>
+              <section>
+                <h2>{t.guide.orderTitle}</h2>
+                <p>{t.guide.orderText}</p>
+                <div className="toepen-card-order" aria-label={t.guide.orderTitle}>
+                  {['10', '9', '8', '7', 'A', 'K', 'Q', 'J'].map((card) => <span key={card}>{card}</span>)}
+                </div>
+              </section>
+            </div>
+            <section className="toepen-guide-score">
+              <h2>{t.guide.scoreTitle}</h2>
+              <ol className="toepen-guide-steps">
+                {t.guide.steps.map((step, index) => (
+                  <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>
+                ))}
+              </ol>
+            </section>
+            <aside className="toepen-guide-example">
+              <p>{t.guide.exampleTitle}</p>
+              <strong>8 + 2 = 10</strong>
+              <span>{t.guide.exampleText}</span>
+            </aside>
+            <p className="toepen-guide-note">{t.guide.note}</p>
+          </div>
+        </details>
       </div>
 
       <FloatingUtilityBar
         language={language}
-        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
         askLabel={askLabel}
         onAsk={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         askAriaLabel={askLabel}
       />
-
-      <MainFooter language={language} />
     </main>
   );
 }

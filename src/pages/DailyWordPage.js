@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { DAILY_WORDS } from '../data/dailyWords';
 import Seo from '../components/Seo';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
 import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
 import { validateWord } from '../utils/wordValidation';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
-import MainFooter from '../components/MainFooter';
 import { buildAiContext } from '../utils/aiContext';
+import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './DailyWordPage.css';
 
 const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
@@ -67,14 +67,18 @@ const copy = {
     askThinking: 'Thinking...',
     askError: 'The assistant is temporarily unavailable.',
     askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Word-Lee.',
-    leaderboardTitle: 'Daily top 3',
-    leaderboardSubtitle: 'Today\'s fastest solves',
-    yesterdayWinnerTitle: 'World record of this month',
-    dailyTopperTitle: 'Topper of the day',
-    weeklyTopppersTitle: 'Top performers of this week',
-    weeklyTopppersSubtitle: 'Scoreboard from Monday to Sunday',
-    yesterdayWinnerEmpty: 'No world record yet this month.',
-    leaderboardEmpty: 'No scores yet today. Be the first.',
+    leaderboardTitle: 'Word-Lee records',
+    leaderboardSubtitle: 'Fastest completed rounds. Fewer guesses wins; time breaks ties.',
+    yesterdayWinnerTitle: 'Month record',
+    dailyTopperTitle: 'Today\'s leader',
+    weeklyTopppersTitle: 'This week',
+    weeklyTopppersSubtitle: 'Monday to Sunday',
+    yesterdayWinnerEmpty: 'No completed rounds this month yet.',
+    leaderboardEmpty: 'No completed rounds today yet.',
+    weeklyEmpty: 'No completed rounds have been logged this week.',
+    leaderboardLoading: 'Loading latest records…',
+    leaderboardLocked: 'Finish today\'s round to add your best result.',
+    leaderboardSaved: 'Your result is safely on the board.',
     leaderboardNameLabel: 'Your name',
     leaderboardNamePlaceholder: 'Type your name',
     leaderboardNameExists: 'That name already exists as',
@@ -139,14 +143,18 @@ const copy = {
     askThinking: 'Even denken...',
     askError: 'De assistent is tijdelijk niet beschikbaar.',
     askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Word-Lee.',
-    leaderboardTitle: 'Top 3 van vandaag',
-    leaderboardSubtitle: 'Snelste oplossingen van vandaag',
-    yesterdayWinnerTitle: 'Wereldrecord van deze maand',
-    dailyTopperTitle: 'Topper van de dag',
-    weeklyTopppersTitle: 'Toppers van deze week',
-    weeklyTopppersSubtitle: 'Scorebord van maandag tot zondag',
-    yesterdayWinnerEmpty: 'Nog geen wereldrecord deze maand.',
-    leaderboardEmpty: 'Nog geen scores vandaag. Jij kan de eerste zijn.',
+    leaderboardTitle: 'Word-Lee records',
+    leaderboardSubtitle: 'Snelste afgeronde rondes. Minder pogingen wint; tijd breekt de gelijke stand.',
+    yesterdayWinnerTitle: 'Maandrecord',
+    dailyTopperTitle: 'Koploper van vandaag',
+    weeklyTopppersTitle: 'Deze week',
+    weeklyTopppersSubtitle: 'Maandag t/m zondag',
+    yesterdayWinnerEmpty: 'Deze maand zijn er nog geen rondes afgerond.',
+    leaderboardEmpty: 'Vandaag is er nog geen ronde afgerond.',
+    weeklyEmpty: 'Deze week zijn er nog geen rondes afgerond.',
+    leaderboardLoading: 'Nieuwste records laden…',
+    leaderboardLocked: 'Rond de dagelijkse challenge af om je beste resultaat toe te voegen.',
+    leaderboardSaved: 'Je resultaat staat op het scorebord.',
     leaderboardNameLabel: 'Jouw naam',
     leaderboardNamePlaceholder: 'Vul je naam in',
     leaderboardNameExists: 'Die naam bestaat al als',
@@ -259,21 +267,16 @@ const getScoreNameKey = (language, dateKey) => `wordlee-score-name:${language}:$
 const getScoreSubmittedKey = (language, dateKey) => `wordlee-score-submitted:${language}:${dateKey}`;
 
 
-const detectBrowserLanguage = () => {
-  const lang = (navigator.language || '').toLowerCase();
-  return lang.startsWith('nl') ? 'nl' : 'en';
-};
-
 const detectBrowserTheme = () => {
   return 'dark';
 };
 
 function DailyWordPage() {
-  const [language, setLanguage] = useState(() => {
-    const saved = localStorage.getItem('portfolio-language');
-    if (saved === 'en' || saved === 'nl') return saved;
-    return detectBrowserLanguage();
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const language = getLocaleFromPathname(location.pathname);
+  const canonicalPath = localizePath('/word-lee', language);
+  const alternatePaths = getAlternateLocalePaths(canonicalPath);
   const [currentGuess, setCurrentGuess] = useState('');
   const [pendingGuess, setPendingGuess] = useState('');
   const [shakeRow, setShakeRow] = useState(-1);
@@ -347,7 +350,7 @@ function DailyWordPage() {
   }, [myScoresQuery]);
 
   const dailySeoJsonLd = useMemo(() => {
-    const canonical = `${siteSeo.siteUrl}/word-lee`;
+    const canonical = `${siteSeo.siteUrl}${canonicalPath}`;
     return {
       '@context': 'https://schema.org',
       '@graph': [
@@ -375,7 +378,7 @@ function DailyWordPage() {
         }
       ]
     };
-  }, [language]);
+  }, [canonicalPath, language]);
   const monthDateKeys = useMemo(() => {
     const base = new Date(`${dateKey}T00:00:00`);
     const year = base.getFullYear();
@@ -912,8 +915,10 @@ function DailyWordPage() {
         description={language === 'nl'
           ? 'Speel Word-Lee, een dagelijkse 5-letter woordgame met leaderboard, local-first opslag en een AI assistent voor vragen over Jaymian-Lee en zijn portfolio.'
           : 'Play Word-Lee, a daily 5-letter word game with a leaderboard, local-first storage, and an AI assistant for questions about Jaymian-Lee and the portfolio.'}
-        canonicalPath="/word-lee"
+        canonicalPath={canonicalPath}
         language={language}
+        alternatePaths={alternatePaths}
+        defaultLocalePath={alternatePaths.en}
         image={`${siteSeo.siteUrl}/jay.png`}
         imageAlt={language === 'nl'
           ? 'Word-Lee dagelijkse woordgame van Jaymian-Lee Reinartz'
@@ -923,7 +928,7 @@ function DailyWordPage() {
 
       <div className="daily-wrap ui-container">
         <header className="daily-header">
-          <Link to="/" className="daily-back" aria-label={copy[language].back}>
+          <Link to={localizePath('/', language)} className="daily-back" aria-label={copy[language].back}>
             <span className="daily-back-arrow" aria-hidden="true">←</span>
             <span>{copy[language].back}</span>
           </Link>
@@ -1003,13 +1008,19 @@ function DailyWordPage() {
 
 
       <div className="leaderboard-spotlight">
-<section className="leaderboard" aria-label={copy[language].leaderboardTitle}>
+        <section className="leaderboard" aria-label={copy[language].leaderboardTitle}>
           <h2>{copy[language].leaderboardTitle}</h2>
           <p className="leaderboard-subtitle">{copy[language].leaderboardSubtitle}</p>
 
 
-          <div className="yesterday-winner" aria-label={copy[language].yesterdayWinnerTitle}>
-            <p className="yesterday-winner-title">{copy[language].yesterdayWinnerTitle}</p>
+          <div className="record-block" aria-label={copy[language].yesterdayWinnerTitle}>
+            <div className="record-heading">
+              <div>
+                <p className="record-eyebrow">{copy[language].yesterdayWinnerTitle}</p>
+                <h3>{language === 'nl' ? 'Snelste ronde deze maand' : 'Fastest round this month'}</h3>
+              </div>
+              <span className="record-badge">{copy[language].worldRecord}</span>
+            </div>
             {monthlyWorldRecord ? (
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">👑</span>
@@ -1024,8 +1035,14 @@ function DailyWordPage() {
             )}
           </div>
 
-          <div className="yesterday-winner" aria-label={copy[language].dailyTopperTitle}>
-            <p className="yesterday-winner-title">{copy[language].dailyTopperTitle}</p>
+          <div className="record-block" aria-label={copy[language].dailyTopperTitle}>
+            <div className="record-heading">
+              <div>
+                <p className="record-eyebrow">{copy[language].dailyTopperTitle}</p>
+                <h3>{language === 'nl' ? 'Snelste ronde van vandaag' : 'Fastest round today'}</h3>
+              </div>
+              <span className="record-period">{language === 'nl' ? 'Vandaag' : 'Today'}</span>
+            </div>
             {dailyTopper ? (
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true">🏆</span>
@@ -1041,11 +1058,15 @@ function DailyWordPage() {
           </div>
 
 
-          <div className="weekly-topppers" aria-label={copy[language].weeklyTopppersTitle}>
-            <p className="yesterday-winner-title">{copy[language].weeklyTopppersTitle}</p>
-            <p className="leaderboard-subtitle weekly-topppers-subtitle">{copy[language].weeklyTopppersSubtitle}</p>
+          <div className="record-block weekly-topppers" aria-label={copy[language].weeklyTopppersTitle}>
+            <div className="record-heading">
+              <div>
+                <p className="record-eyebrow">{copy[language].weeklyTopppersTitle}</p>
+                <h3>{copy[language].weeklyTopppersSubtitle}</h3>
+              </div>
+            </div>
             {weeklyTopDays.length === 0 ? (
-              <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
+              <p className="daily-tip">{copy[language].weeklyEmpty}</p>
             ) : (
               <div className="weekly-topppers-grid">
                 {weeklyTopDays.map((day) => (
@@ -1069,10 +1090,7 @@ function DailyWordPage() {
             )}
           </div>
 
-          {leaderboardLoading && <p className="daily-tip">Loading...</p>}
-          {!leaderboardLoading && leaderboard.length === 0 && (
-            <p className="daily-tip">{copy[language].leaderboardEmpty}</p>
-          )}
+          {leaderboardLoading && <p className="leaderboard-status-note">{copy[language].leaderboardLoading}</p>}
 
 
           {(game.status === 'won' || game.status === 'lost') && !scoreSubmitted && (
@@ -1084,10 +1102,10 @@ function DailyWordPage() {
           )}
 
           {(game.status !== 'won' || scoreSubmitted) && (
-            <p className="daily-tip">
+            <p className="leaderboard-status-note">
               {game.status === 'lost'
                 ? (scoreSubmitted ? copy[language].leaderboardFailedSubmitted : copy[language].leaderboardFailedHint)
-                : (game.status !== 'won' ? copy[language].leaderboardHint : copy[language].leaderboardSubmitted)}
+                : (game.status !== 'won' ? copy[language].leaderboardLocked : copy[language].leaderboardSaved)}
             </p>
           )}
 
@@ -1265,16 +1283,13 @@ function DailyWordPage() {
 
       <FloatingUtilityBar
         language={language}
-        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
         askLabel={copy[language].askMe}
         onAsk={() => setIsChatOpen((prev) => !prev)}
         askAriaLabel={copy[language].askTitle}
       />
-
-      <MainFooter language={language} />
-
     </main>
   );
 }

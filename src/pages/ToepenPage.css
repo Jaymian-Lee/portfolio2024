@@ -212,3 +212,59 @@
   margin: 0.45rem 0 0;
   padding-left: 1rem;
 }
+
+.toepen-guide {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  overflow: hidden;
+}
+
+.toepen-guide summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.toepen-guide summary::-webkit-details-marker { display: none; }
+
+.toepen-guide-summary-copy { display: grid; gap: 0.22rem; }
+.toepen-guide-summary-copy small { color: var(--signal); font: 700 .68rem/1 'Poppins', sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+.toepen-guide-summary-copy strong { font: 400 clamp(1rem, 2.2vw, 1.35rem)/1.12 'Bungee', Impact, sans-serif; }
+.toepen-guide-toggle { display: grid; flex: 0 0 auto; width: 2.25rem; height: 2.25rem; place-items: center; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1.3rem; transition: transform .22s ease, background .22s ease; }
+.toepen-guide[open] .toepen-guide-toggle { background: var(--lime); color: #151515; transform: rotate(45deg); }
+
+.toepen-guide-body { padding: 0 1rem 1rem; border-top: 1px solid var(--line); animation: toepen-guide-in .28s ease both; }
+.toepen-guide-lead { max-width: 64ch; margin: 1rem 0 1.2rem; color: var(--muted); line-height: 1.65; }
+.toepen-guide-basics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.toepen-guide-basics section, .toepen-guide-score { padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-strong); }
+.toepen-guide h2, .toepen-guide h3, .toepen-guide p { margin-top: 0; }
+.toepen-guide h2 { margin-bottom: .55rem; font-size: 1rem; }
+.toepen-guide-basics p, .toepen-guide-steps p { margin-bottom: 0; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+.toepen-card-order { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .85rem; }
+.toepen-card-order span { display: grid; width: 2rem; height: 2rem; place-items: center; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); font: 700 .72rem 'Poppins', sans-serif; }
+.toepen-card-order span:nth-child(-n+4) { border-color: color-mix(in srgb, var(--lime) 62%, var(--line)); background: color-mix(in srgb, var(--lime) 14%, transparent); }
+
+.toepen-guide-score { margin-top: 1rem; }
+.toepen-guide-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.toepen-guide-steps li { display: grid; grid-template-columns: 2rem 1fr; gap: .65rem; }
+.toepen-guide-steps li > span { color: var(--signal); font: 700 .72rem 'Poppins', sans-serif; letter-spacing: .08em; }
+.toepen-guide-steps h3 { margin-bottom: .3rem; font-size: .95rem; }
+
+.toepen-guide-example { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: .9rem; margin-top: 1rem; padding: .9rem 1rem; border-radius: var(--radius); background: var(--lime); color: #151515; }
+.toepen-guide-example p { margin: 0; font: 700 .68rem 'Poppins', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.toepen-guide-example strong { font: 400 1.3rem/1 'Bungee', Impact, sans-serif; white-space: nowrap; }
+.toepen-guide-example span { font-size: .86rem; line-height: 1.55; }
+.toepen-guide-note { margin: 1rem 0 0; color: var(--muted); font-size: .82rem; line-height: 1.6; }
+
+@keyframes toepen-guide-in { from { opacity: 0; transform: translateY(-.35rem); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 620px) {
+  .toepen-guide-basics, .toepen-guide-steps { grid-template-columns: 1fr; }
+  .toepen-guide-example { grid-template-columns: 1fr; gap: .45rem; }
+}

@@ -250,6 +250,10 @@
     color: var(--muted);
   }
 
+  :root.has-subpage-brand .floating-utility-dock {
+    top: 4.1rem;
+  }
+
   .fud-control {
     width: 100%;
     justify-content: space-between;

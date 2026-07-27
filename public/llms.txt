@@ -10,13 +10,22 @@ Use this site to understand:
 - stream utilities and finance calculators
 
 Primary pages:
-- https://jaymian-lee.nl/
-- https://jaymian-lee.nl/lab
-- https://jaymian-lee.nl/word-lee
-- https://jaymian-lee.nl/toepen
-- https://jaymian-lee.nl/sp500-calculator
-- https://jaymian-lee.nl/stream
-- https://jaymian-lee.nl/stream/chat
+- https://www.jaymian-lee.nl/
+- https://www.jaymian-lee.nl/nl
+- https://www.jaymian-lee.nl/lab
+- https://www.jaymian-lee.nl/nl/lab
+- https://www.jaymian-lee.nl/word-lee
+- https://www.jaymian-lee.nl/nl/word-lee
+- https://www.jaymian-lee.nl/toepen
+- https://www.jaymian-lee.nl/nl/toepen
+- https://www.jaymian-lee.nl/pesten
+- https://www.jaymian-lee.nl/nl/pesten
+- https://www.jaymian-lee.nl/sp500-calculator
+- https://www.jaymian-lee.nl/nl/sp500-calculator
+- https://www.jaymian-lee.nl/stream
+- https://www.jaymian-lee.nl/nl/stream
+- https://www.jaymian-lee.nl/stream/chat
+- https://www.jaymian-lee.nl/nl/stream/chat
 - https://mintventory.com
 
 Key project themes:

@@ -998,6 +998,102 @@
   pointer-events: none;
 }
 
+.leaderboard > * {
+  position: relative;
+}
+
+.leaderboard h2 {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  letter-spacing: 0.01em;
+}
+
+.leaderboard-subtitle {
+  max-width: 48ch;
+  line-height: 1.5;
+}
+
+.record-block {
+  margin-top: 0.85rem;
+  padding: 0.78rem;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+}
+
+.record-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.record-eyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.record-heading h3 {
+  margin: 0.16rem 0 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.record-badge,
+.record-period {
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  border-radius: 8px;
+  padding: 0.22rem 0.38rem;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.record-period {
+  border-color: var(--border);
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: none;
+}
+
+.record-block .yesterday-winner-card {
+  grid-template-columns: auto 1fr auto auto;
+  margin: 0.65rem 0 0;
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.record-block .daily-tip {
+  margin: 0.65rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.weekly-topppers {
+  padding-top: 0.78rem;
+}
+
+.weekly-topppers-grid {
+  margin-top: 0.7rem;
+}
+
+.leaderboard-status-note {
+  margin: 0.85rem 0 0;
+  padding: 0.62rem 0.72rem;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
 .leaderboard-row:nth-child(2) .leaderboard-rank { color: #9aa7bb; }
 .leaderboard-row:nth-child(3) .leaderboard-rank { color: #b98a57; }
 

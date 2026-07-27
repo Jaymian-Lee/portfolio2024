@@ -57,7 +57,7 @@ function FloatingUtilityBar({
       </button>
 
       {wordLee && (
-        <a className="fud-card fud-wordlee" href="/word-lee" aria-label={`${wordLee.label}: ${wordLee.hint}`}>
+        <a className="fud-card fud-wordlee" href={wordLee.href || '/word-lee'} aria-label={`${wordLee.label}: ${wordLee.hint}`}>
           <span className="wordlee-mark" aria-hidden="true"><i /><i /><i /><i /><i /></span>
           <span className="fud-label fud-wordlee-label">{wordLee.label}</span>
           <span className="fud-wordlee-hint">{wordLee.hint} <AnimatedIcon name="arrow-right" size={13} /></span>

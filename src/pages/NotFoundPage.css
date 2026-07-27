@@ -1,0 +1,5 @@
+.not-found-page { display: grid; min-height: 100svh; place-items: center; padding: 1.5rem; background: var(--bg, #151617); color: var(--ink, #f6f3ee); }
+.not-found-content { width: min(100%, 44rem); padding: clamp(1.5rem, 6vw, 5rem); border: 1px solid var(--line, #3a3b3c); border-radius: var(--radius, 8px); background: var(--surface, #1e2022); }
+.not-found-content p { margin: 0 0 .8rem; color: var(--signal, #cfff3c); font: 700 .8rem/1 'Poppins', sans-serif; letter-spacing: .12em; }
+.not-found-content h1 { max-width: 11ch; margin: 0 0 1.8rem; font: 400 clamp(2.2rem, 7vw, 5.5rem)/.98 'Bungee', Impact, sans-serif; }
+.not-found-content a { display: inline-flex; padding: .8rem 1rem; border-radius: var(--radius, 8px); background: var(--lime, #cfff3c); color: #101112; font: 700 .85rem 'Poppins', sans-serif; text-decoration: none; }

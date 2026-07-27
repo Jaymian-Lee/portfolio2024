@@ -1,4 +1,4 @@
-const SITE_URL = 'https://jaymian-lee.nl';
+const SITE_URL = 'https://www.jaymian-lee.nl';
 const SITE_NAME = 'Jaymian-Lee Reinartz Portfolio';
 const PERSON_NAME = 'Jaymian-Lee Reinartz';
 const PERSON_URL = `${SITE_URL}/`;
@@ -9,7 +9,7 @@ const socialLinks = [
   'https://github.com/Jaymian-Lee',
   'https://twitch.tv/jaymianlee',
   'https://www.youtube.com/@JaymianLee',
-  'https://www.instagram.com/jaymianlee_/'
+  'https://www.instagram.com/jaymianlee/'
 ];
 
 export const siteSeo = {
@@ -47,6 +47,36 @@ export const createWebsiteSchema = ({ language = ['en', 'nl'] } = {}) => ({
   inLanguage: language
 });
 
+export const createProfessionalServiceSchema = () => ({
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': `${SITE_URL}/#service`,
+  name: 'Jaymian-Lee Reinartz Development Services',
+  url: `${SITE_URL}/`,
+  founder: { '@id': `${SITE_URL}/#person` },
+  areaServed: ['Limburg', 'Netherlands', 'Europe'],
+  serviceType: [
+    'AI automation',
+    'Full stack development',
+    'Ecommerce development',
+    'Chatbot automation',
+    'Product engineering'
+  ]
+});
+
+export const createItemListSchema = ({ name, url, items }) => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name,
+  url,
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    ...(item.url ? { url: item.url } : {})
+  }))
+});
+
 export const createBreadcrumbSchema = (items) => ({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -68,4 +98,3 @@ export const createWebPageSchema = ({ name, url, description, language = 'en-US'
   image,
   isPartOf
 });
-

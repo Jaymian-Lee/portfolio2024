@@ -1,18 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
-import MainFooter from '../components/MainFooter';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
+import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from '../utils/locale';
 import './SP500CalculatorPage.css';
 
-const SITE_URL = 'https://jaymian-lee.nl';
+const SITE_URL = 'https://www.jaymian-lee.nl';
 const PAGE_PATH = '/sp500-calculator';
-
-const detectBrowserLanguage = () => {
-  const lang = (navigator.language || '').toLowerCase();
-  return lang.startsWith('nl') ? 'nl' : 'en';
-};
 
 const detectBrowserTheme = () => {
   return 'dark';
@@ -144,7 +139,11 @@ const toPath = (series, width, height, maxY) => {
 
 export default function SP500CalculatorPage() {
   const [theme, setTheme] = useState('dark');
-  const [language, setLanguage] = useState('nl');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const language = getLocaleFromPathname(location.pathname);
+  const canonicalPath = localizePath(PAGE_PATH, language);
+  const alternatePaths = getAlternateLocalePaths(canonicalPath);
   const [sp500Quote, setSp500Quote] = useState(null);
   const [quoteError, setQuoteError] = useState('');
   const [hoverYear, setHoverYear] = useState(null);
@@ -167,14 +166,11 @@ export default function SP500CalculatorPage() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('portfolio-theme');
-    const savedLanguage = localStorage.getItem('portfolio-language');
     const savedSp500 = localStorage.getItem('sp500-calculator-settings-v1');
 
     const nextTheme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : detectBrowserTheme();
-    const nextLanguage = savedLanguage === 'en' || savedLanguage === 'nl' ? savedLanguage : detectBrowserLanguage();
 
     setTheme(nextTheme);
-    setLanguage(nextLanguage);
 
     if (savedSp500) {
       try {
@@ -194,11 +190,6 @@ export default function SP500CalculatorPage() {
     localStorage.setItem('portfolio-theme', theme);
   }, [theme]);
 
-  useEffect(() => {
-    localStorage.setItem('portfolio-language', language);
-    document.documentElement.setAttribute('lang', language);
-  }, [language]);
-
   const t = uiCopy[language] || uiCopy.nl;
   const annualReturns = useMemo(() => SP500_ANNUAL_RETURNS.map((item) => item.pct / 100), []);
 
@@ -213,30 +204,13 @@ export default function SP500CalculatorPage() {
 
     const loadQuote = async () => {
       try {
-        const response = await fetch('/api/market/sp500-current');
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 4500);
+        const response = await fetch('/api/market/sp500-current', { signal: controller.signal });
+        window.clearTimeout(timeoutId);
         const data = await response.json();
         if (!response.ok || !Number.isFinite(Number(data?.value))) throw new Error(data?.error || 'API quote failed');
         setSp500Quote(data);
-        setQuoteError('');
-        return;
-      } catch {}
-
-      try {
-        const yahooProxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=1d');
-        const response = await fetch(yahooProxy);
-        const data = await response.json();
-        const meta = data?.chart?.result?.[0]?.meta || {};
-        const current = Number(meta.regularMarketPrice);
-        const prev = Number(meta.previousClose);
-        if (!Number.isFinite(current) || current <= 0) throw new Error('Proxy quote failed');
-
-        setSp500Quote({
-          symbol: 'S&P 500',
-          value: current,
-          date: new Date((meta.regularMarketTime || Date.now() / 1000) * 1000).toISOString().slice(0, 10),
-          dayChangePct: Number.isFinite(prev) && prev > 0 ? ((current - prev) / prev) * 100 : null,
-          warning: 'Koers via externe fallback bron.'
-        });
         setQuoteError('');
         return;
       } catch {}
@@ -335,7 +309,7 @@ export default function SP500CalculatorPage() {
   const bestValue = Math.max(...results.map((scenario) => scenario.finalValue), 1);
   const baseScenario = results.find((scenario) => scenario.key === 'base') || results[0];
   const sp500SeoJsonLd = useMemo(() => {
-    const canonical = `${SITE_URL}${PAGE_PATH}`;
+    const canonical = `${SITE_URL}${canonicalPath}`;
     const pageName = language === 'nl' ? 'S&P 500 Calculator Nederland' : 'S&P 500 Calculator';
     const pageDescription = language === 'nl'
       ? 'Bereken je potentiële S&P 500 rendement met historische gemiddelden, scenariovergelijking en heldere grafieken.'
@@ -366,7 +340,7 @@ export default function SP500CalculatorPage() {
         }
       ]
     };
-  }, [language]);
+  }, [canonicalPath, language]);
 
   const chartDims = {
     width: 1000,
@@ -380,104 +354,6 @@ export default function SP500CalculatorPage() {
   const plotHeight = chartDims.height - chartDims.marginTop - chartDims.marginBottom;
   const activeYear = hoverYear === null ? years : Math.min(years, Math.max(0, hoverYear));
 
-  useEffect(() => {
-    const title = language === 'nl'
-      ? 'S&P 500 Calculator Nederland, rendement berekenen met historische data'
-      : 'S&P 500 Calculator, estimate returns with historical data';
-    const description = language === 'nl'
-      ? 'Bereken je potentiële S&P 500 rendement met historische gemiddelden, scenariovergelijking en heldere grafieken. Gratis Nederlandse S&P 500 calculator.'
-      : 'Estimate potential S&P 500 returns with historical averages, scenario comparison, and visual charts.';
-    const canonical = `${SITE_URL}${PAGE_PATH}`;
-
-    document.title = title;
-
-    const ensureMeta = (selector, attrs) => {
-      let tag = document.head.querySelector(selector);
-      if (!tag) {
-        tag = document.createElement('meta');
-        Object.entries(attrs).forEach(([key, value]) => tag.setAttribute(key, value));
-        document.head.appendChild(tag);
-      }
-      return tag;
-    };
-
-    ensureMeta('meta[name="description"]', { name: 'description' }).setAttribute('content', description);
-    ensureMeta('meta[property="og:title"]', { property: 'og:title' }).setAttribute('content', title);
-    ensureMeta('meta[property="og:description"]', { property: 'og:description' }).setAttribute('content', description);
-    ensureMeta('meta[property="og:type"]', { property: 'og:type' }).setAttribute('content', 'website');
-    ensureMeta('meta[property="og:url"]', { property: 'og:url' }).setAttribute('content', canonical);
-    ensureMeta('meta[name="robots"]', { name: 'robots' }).setAttribute('content', 'index,follow,max-image-preview:large');
-    ensureMeta('meta[name="twitter:card"]', { name: 'twitter:card' }).setAttribute('content', 'summary_large_image');
-    ensureMeta('meta[name="keywords"]', { name: 'keywords' }).setAttribute('content', 's&p 500 calculator nederland,s&p 500 rendement berekenen,sp500 maandelijkse inleg,sp500 pensioen berekenen,etf rendement calculator nederlands,s&p 500 eindkapitaal berekenen');
-
-    let canonicalTag = document.head.querySelector('link[rel="canonical"]');
-    if (!canonicalTag) {
-      canonicalTag = document.createElement('link');
-      canonicalTag.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalTag);
-    }
-    canonicalTag.setAttribute('href', canonical);
-
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebPage',
-          name: 'S&P 500 Calculator Nederland',
-          url: canonical,
-          inLanguage: 'nl-NL',
-          description
-        },
-        {
-          '@type': 'SoftwareApplication',
-          name: 'S&P 500 Calculator Nederland',
-          applicationCategory: 'FinanceApplication',
-          operatingSystem: 'Web',
-          offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
-          inLanguage: 'nl-NL',
-          url: canonical
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-            { '@type': 'ListItem', position: 2, name: 'S&P 500 Calculator', item: canonical }
-          ]
-        },
-        {
-          '@type': 'FAQPage',
-          mainEntity: [
-            {
-              '@type': 'Question',
-              name: 'Welke percentages gebruikt deze S&P 500 calculator?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: 'De calculator gebruikt historische jaarrendementen van de S&P 500 om mediaan, percentielen en lange-termijn CAGR scenarios te tonen.'
-              }
-            },
-            {
-              '@type': 'Question',
-              name: 'Kan ik maandelijkse inleg berekenen?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: 'Ja, je kunt startkapitaal, maandelijkse inleg en looptijd instellen om een totaalverwachting inclusief samengesteld rendement te zien.'
-              }
-            }
-          ]
-        }
-      ]
-    };
-
-    let script = document.querySelector('script[data-sp500-jsonld="true"]');
-    if (!script) {
-      script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.setAttribute('data-sp500-jsonld', 'true');
-      document.head.appendChild(script);
-    }
-    script.textContent = JSON.stringify(jsonLd);
-  }, [language]);
-
   return (
     <div className="sp500-shell ui-page">
       <Seo
@@ -487,8 +363,10 @@ export default function SP500CalculatorPage() {
         description={language === 'nl'
           ? 'Bereken je potentiële S&P 500 rendement met historische gemiddelden, scenariovergelijking en heldere grafieken.'
           : 'Estimate potential S&P 500 returns with historical averages, scenario comparison, and visual charts.'}
-        canonicalPath="/sp500-calculator"
+        canonicalPath={canonicalPath}
         language={language}
+        alternatePaths={alternatePaths}
+        defaultLocalePath={alternatePaths.en}
         image={`${siteSeo.siteUrl}/jay.png`}
         imageAlt={language === 'nl'
           ? 'S&P 500 calculator van Jaymian-Lee Reinartz'
@@ -498,7 +376,7 @@ export default function SP500CalculatorPage() {
 
       <FloatingUtilityBar
         language={language}
-        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'nl' : 'en'))}
+        onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}
         onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
         askLabel={language === 'nl' ? 'Vragen?' : 'Questions?'}
@@ -508,7 +386,7 @@ export default function SP500CalculatorPage() {
       <main className="sp500-page ui-container">
       <section className="sp500-hero">
         <div className="sp500-top-nav">
-          <Link to="/" className="sp500-back-link">{t.back}</Link>
+          <Link to={localizePath('/', language)} className="sp500-back-link">{t.back}</Link>
         </div>
         <p className="sp500-kicker">{t.heroKicker}</p>
         <h1>{t.heroTitle}</h1>
@@ -853,7 +731,6 @@ export default function SP500CalculatorPage() {
         </p>
       </section>
       </main>
-      <MainFooter language={language} />
     </div>
   );
 }

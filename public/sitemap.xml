@@ -1,45 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://jaymian-lee.nl/</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://jaymian-lee.nl/lab</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jaymian-lee.nl/word-lee</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jaymian-lee.nl/toepen</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://jaymian-lee.nl/sp500-calculator</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jaymian-lee.nl/stream</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://jaymian-lee.nl/stream/chat</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://www.jaymian-lee.nl/</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>1.0</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>1.0</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/"/></url>
+
+  <url><loc>https://www.jaymian-lee.nl/lab</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>0.8</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/lab"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/lab"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/lab"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl/lab</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>0.8</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/lab"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/lab"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/lab"/></url>
+
+  <url><loc>https://www.jaymian-lee.nl/word-lee</loc><lastmod>2026-07-27</lastmod><changefreq>daily</changefreq><priority>0.8</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/word-lee"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/word-lee"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/word-lee"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl/word-lee</loc><lastmod>2026-07-27</lastmod><changefreq>daily</changefreq><priority>0.8</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/word-lee"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/word-lee"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/word-lee"/></url>
+
+  <url><loc>https://www.jaymian-lee.nl/toepen</loc><lastmod>2026-07-27</lastmod><changefreq>monthly</changefreq><priority>0.6</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/toepen"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/toepen"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/toepen"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl/toepen</loc><lastmod>2026-07-27</lastmod><changefreq>monthly</changefreq><priority>0.6</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/toepen"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/toepen"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/toepen"/></url>
+
+  <url><loc>https://www.jaymian-lee.nl/pesten</loc><lastmod>2026-07-27</lastmod><changefreq>monthly</changefreq><priority>0.6</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/pesten"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/pesten"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/pesten"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl/pesten</loc><lastmod>2026-07-27</lastmod><changefreq>monthly</changefreq><priority>0.6</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/pesten"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/pesten"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/pesten"/></url>
+
+  <url><loc>https://www.jaymian-lee.nl/sp500-calculator</loc><lastmod>2026-07-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/sp500-calculator"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/sp500-calculator"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/sp500-calculator"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl/sp500-calculator</loc><lastmod>2026-07-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/sp500-calculator"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/sp500-calculator"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/sp500-calculator"/></url>
+
+  <url><loc>https://www.jaymian-lee.nl/stream</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>0.6</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/stream"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/stream"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/stream"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl/stream</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>0.6</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/stream"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/stream"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/stream"/></url>
+
+  <url><loc>https://www.jaymian-lee.nl/stream/chat</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/stream/chat"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/stream/chat"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/stream/chat"/></url>
+  <url><loc>https://www.jaymian-lee.nl/nl/stream/chat</loc><lastmod>2026-07-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority><xhtml:link rel="alternate" hreflang="en" href="https://www.jaymian-lee.nl/stream/chat"/><xhtml:link rel="alternate" hreflang="nl" href="https://www.jaymian-lee.nl/nl/stream/chat"/><xhtml:link rel="alternate" hreflang="x-default" href="https://www.jaymian-lee.nl/stream/chat"/></url>
 </urlset>
