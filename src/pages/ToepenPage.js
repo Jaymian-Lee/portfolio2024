@@ -154,8 +154,7 @@ const detectBrowserLanguage = () => {
 };
 
 const detectBrowserTheme = () => {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  return prefersDark ? 'dark' : 'light';
+  return 'dark';
 };
 
 function ToepenPage() {

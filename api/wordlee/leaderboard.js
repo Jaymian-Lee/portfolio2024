@@ -1,5 +1,6 @@
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const isKvConfigured = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
 const SCORE_FACTOR = 10 ** 13;
 const DURATION_MULTIPLIER = 1000;
 const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
@@ -129,11 +130,17 @@ module.exports = async (req, res) => {
       }
 
       const language = normalizeLanguage(req.query?.language);
+      if (!isKvConfigured) {
+        return res.status(200).json({ dateKey, language, top3: [], storage: 'unavailable' });
+      }
       const top3 = await getTop3(dateKey, language);
       return res.status(200).json({ dateKey, language, top3 });
     }
 
     if (req.method === 'POST') {
+      if (!isKvConfigured) {
+        return res.status(503).json({ error: 'Scorebordopslag is nog niet geconfigureerd.' });
+      }
       const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
       const name = normalizeName(body?.name);
       const dateKey = normalizeDateKey(body?.dateKey);

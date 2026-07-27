@@ -30,7 +30,7 @@ const footerConnect = [
   { label: 'GitHub', href: 'https://github.com/Jaymian-Lee' },
   { label: 'Twitch', href: 'https://twitch.tv/jaymianlee' },
   { label: 'YouTube', href: 'https://www.youtube.com/@JaymianLee' },
-  { label: 'Instagram', href: 'https://www.instagram.com/jaymianlee_/' }
+  { label: 'Instagram', href: 'https://www.instagram.com/jaymianlee/' }
 ];
 
 const copy = {

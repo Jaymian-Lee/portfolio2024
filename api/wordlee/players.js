@@ -1,5 +1,6 @@
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const isKvConfigured = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
 
 function normalizeLanguage(language) {
   return language === 'nl' ? 'nl' : 'en';
@@ -74,6 +75,10 @@ module.exports = async (req, res) => {
   try {
     const language = normalizeLanguage(req.query?.language);
     const query = normalizeQuery(req.query?.q);
+
+    if (!isKvConfigured) {
+      return res.status(200).json({ language, players: [], storage: 'unavailable' });
+    }
 
     const all = await collectPlayerNames(language);
     const filtered = query

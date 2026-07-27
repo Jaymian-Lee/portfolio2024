@@ -143,7 +143,9 @@ const archivedProjects = projects.filter((project) => archivedProjectNames.has(p
 const socials = [
   { label: 'GitHub', handle: '@Jaymian-Lee', url: 'https://github.com/Jaymian-Lee', nl: 'Code, experimenten en de bouwstenen achter mijn producten.', en: 'Code, experiments and the building blocks behind my products.' },
   { label: 'LinkedIn', handle: 'Jaymian-Lee Reinartz', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/', nl: 'Updates over productontwikkeling, AI en de dingen die ik aan het maken ben.', en: 'Updates on product work, AI and the things I am building.' },
-  { label: 'Instagram', handle: '@jaymianlee_', url: 'https://www.instagram.com/jaymianlee_/', nl: 'Een kijkje achter de schermen, van idee naar release.', en: 'A look behind the scenes, from idea to release.' }
+  { label: 'Instagram', handle: '@jaymianlee', url: 'https://www.instagram.com/jaymianlee/', nl: 'Een persoonlijk kijkje achter de schermen, van idee naar release.', en: 'A personal look behind the scenes, from idea to release.' },
+  { label: 'YouTube', handle: '@JaymianLee', url: 'https://www.youtube.com/@JaymianLee', nl: 'Video’s, walkthroughs en de verhalen achter de builds.', en: 'Videos, walkthroughs and the stories behind the builds.' },
+  { label: 'Twitch', handle: 'twitch.tv/jaymianlee', url: 'https://twitch.tv/jaymianlee', nl: 'Live bouwen, experimenteren en praten met de community.', en: 'Live building, experimenting and talking with the community.' }
 ];
 
 function App() {

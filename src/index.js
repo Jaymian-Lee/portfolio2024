@@ -12,6 +12,9 @@ import StreamChatPage from './pages/StreamChatPage';
 import SP500CalculatorPage from './pages/SP500CalculatorPage';
 import LabPage from './pages/LabPage';
 
+const savedTheme = window.localStorage.getItem('portfolio-theme');
+document.documentElement.setAttribute('data-theme', savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark');
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

@@ -1,5 +1,6 @@
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const isKvConfigured = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
 
 function normalizeName(name) {
   return String(name || '').trim().slice(0, 24);
@@ -78,6 +79,9 @@ module.exports = async (req, res) => {
     }
 
     const language = normalizeLanguage(req.query?.language);
+    if (!isKvConfigured) {
+      return res.status(200).json({ name, language, records: [], storage: 'unavailable' });
+    }
     const memberKey = nameMemberKey(name);
     const key = userHistoryKey(memberKey, language);
 

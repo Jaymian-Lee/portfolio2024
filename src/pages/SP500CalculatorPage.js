@@ -15,8 +15,7 @@ const detectBrowserLanguage = () => {
 };
 
 const detectBrowserTheme = () => {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  return prefersDark ? 'dark' : 'light';
+  return 'dark';
 };
 
 const HISTORICAL_PERIODS = [
@@ -144,7 +143,7 @@ const toPath = (series, width, height, maxY) => {
 };
 
 export default function SP500CalculatorPage() {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
   const [language, setLanguage] = useState('nl');
   const [sp500Quote, setSp500Quote] = useState(null);
   const [quoteError, setQuoteError] = useState('');

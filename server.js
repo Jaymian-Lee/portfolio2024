@@ -467,9 +467,86 @@ function decodeScoreMeta(score) {
   };
 }
 
+const localWordleeHashes = new Map();
+const localWordleeSortedSets = new Map();
+
+function getLocalHash(key) {
+  if (!localWordleeHashes.has(key)) localWordleeHashes.set(key, new Map());
+  return localWordleeHashes.get(key);
+}
+
+function getLocalSortedSet(key) {
+  if (!localWordleeSortedSets.has(key)) localWordleeSortedSets.set(key, new Map());
+  return localWordleeSortedSets.get(key);
+}
+
+function localWordleeCommand(command) {
+  const [rawOperation, ...args] = command;
+  const operation = String(rawOperation).toUpperCase();
+
+  if (operation === 'ZADD') {
+    const [key, score, member] = args;
+    getLocalSortedSet(key).set(String(member), Number(score));
+    return 1;
+  }
+
+  if (operation === 'ZSCORE') {
+    const [key, member] = args;
+    const score = localWordleeSortedSets.get(key)?.get(String(member));
+    return score === undefined ? null : String(score);
+  }
+
+  if (operation === 'ZRANGE') {
+    const [key, rawStart, rawEnd, withScores] = args;
+    const start = Number(rawStart);
+    const end = Number(rawEnd);
+    const entries = Array.from(localWordleeSortedSets.get(key)?.entries() || []).sort((a, b) => a[1] - b[1]);
+    const selected = entries.slice(start, end === -1 ? undefined : end + 1);
+    return String(withScores).toUpperCase() === 'WITHSCORES'
+      ? selected.flatMap(([member, score]) => [member, String(score)])
+      : selected.map(([member]) => member);
+  }
+
+  if (operation === 'HSET') {
+    const [key, ...fieldValues] = args;
+    const hash = getLocalHash(key);
+    for (let index = 0; index < fieldValues.length; index += 2) {
+      hash.set(String(fieldValues[index]), String(fieldValues[index + 1]));
+    }
+    return fieldValues.length / 2;
+  }
+
+  if (operation === 'HGET') {
+    const [key, field] = args;
+    return localWordleeHashes.get(key)?.get(String(field)) ?? null;
+  }
+
+  if (operation === 'HMGET') {
+    const [key, ...fields] = args;
+    const hash = localWordleeHashes.get(key);
+    return fields.map((field) => hash?.get(String(field)) ?? null);
+  }
+
+  if (operation === 'HGETALL') {
+    return Array.from(localWordleeHashes.get(args[0])?.entries() || []).flat();
+  }
+
+  if (operation === 'HLEN') {
+    return localWordleeHashes.get(args[0])?.size || 0;
+  }
+
+  if (operation === 'SCAN') {
+    const pattern = String(args[args.findIndex((value) => String(value).toUpperCase() === 'MATCH') + 1] || '*');
+    const regex = new RegExp(`^${pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`);
+    return ['0', Array.from(localWordleeHashes.keys()).filter((key) => regex.test(key))];
+  }
+
+  throw new Error(`Unsupported local Word-Lee command: ${operation}`);
+}
+
 async function kvCommand(command) {
   if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
-    throw new Error('KV_NOT_CONFIGURED');
+    return localWordleeCommand(command);
   }
 
   const response = await fetch(`${KV_REST_API_URL}/${command.join('/')}`, {
@@ -487,7 +564,7 @@ async function kvCommand(command) {
 
 async function kvPipeline(commands) {
   if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
-    throw new Error('KV_NOT_CONFIGURED');
+    return commands.map((command) => localWordleeCommand(command));
   }
 
   const response = await fetch(`${KV_REST_API_URL}/pipeline`, {
