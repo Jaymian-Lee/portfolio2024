@@ -8,7 +8,7 @@
   gap: 0.5rem;
   background: color-mix(in srgb, var(--bg) 78%, transparent);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 0.25rem;
   backdrop-filter: blur(10px);
 }
@@ -16,7 +16,7 @@
 .fud-card {
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface) 86%, transparent);
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 0.3rem 0.58rem;
   display: inline-flex;
   align-items: center;
@@ -44,7 +44,7 @@
   position: relative;
   width: 68px;
   height: 30px;
-  border-radius: 999px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: linear-gradient(180deg, #f8efe3, #f2e4d6 56%, #efdfcf);
   display: inline-flex;
@@ -71,7 +71,7 @@
   left: 3px;
   width: 28px;
   height: 22px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.66);
   border: 1px solid rgba(110, 84, 62, 0.24);
   transition: transform 0.3s ease;
@@ -89,7 +89,7 @@
 .fud-theme-toggle {
   border: 1px solid var(--border);
   background: var(--surface);
-  border-radius: 999px;
+  border-radius: 8px;
   width: 64px;
   height: 34px;
   padding: 4px;
@@ -100,9 +100,19 @@
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 999px;
+  border-radius: 8px;
   background: linear-gradient(180deg, #ffdf9d, #ffd3aa 55%, #ffc4a2);
   display: block;
+}
+
+.fud-theme-icon {
+  display: block;
+  margin: 2px auto 0;
+  color: #59422e;
+}
+
+.fud-theme-toggle.dark .fud-theme-icon {
+  color: #e7ecff;
 }
 
 .fud-theme-toggle.dark .fud-theme-track {
@@ -166,6 +176,49 @@
   font-size: 0.7rem;
 }
 
+.fud-wordlee {
+  min-height: 34px;
+  margin: 0;
+  padding: 0.3rem 0.72rem;
+  color: #151515;
+  background: var(--lime);
+  border-color: color-mix(in srgb, var(--lime) 70%, #151515);
+  text-decoration: none;
+}
+
+.wordlee-mark {
+  display: grid;
+  grid-template-columns: repeat(5, 4px);
+  gap: 2px;
+}
+
+.wordlee-mark i {
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.fud-wordlee-label,
+.fud-wordlee-hint {
+  white-space: nowrap;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.fud-wordlee-hint {
+  display: none;
+}
+
+.fud-wordlee-hint .animated-icon,
+.fud-ask .animated-icon,
+.primary-action .animated-icon,
+.text-action .animated-icon,
+.lab-strip a .animated-icon {
+  display: inline-block;
+  vertical-align: -0.2em;
+}
+
 .fud-dot {
   width: 0.56rem;
   height: 0.56rem;
@@ -205,5 +258,21 @@
     text-transform: uppercase;
     letter-spacing: 0.11em;
     color: var(--muted);
+  }
+
+  .fud-wordlee {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.14rem;
+  }
+
+  .fud-wordlee-label {
+    display: block;
+    color: #151515;
+  }
+
+  .fud-wordlee-hint {
+    display: block;
+    font-weight: 500;
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import AnimatedIcon from './AnimatedIcon';
 import './FloatingUtilityBar.css';
 
 function FloatingUtilityBar({
@@ -8,7 +9,8 @@ function FloatingUtilityBar({
   onToggleTheme,
   askLabel,
   onAsk,
-  askAriaLabel = 'Open questions'
+  askAriaLabel = 'Open questions',
+  wordLee = null
 }) {
   return (
     <div className="floating-utility-dock" aria-label="Display controls">
@@ -37,8 +39,7 @@ function FloatingUtilityBar({
         <span className="fud-label">Theme</span>
         <span className={`fud-theme-toggle ${theme}`}>
           <span className="fud-theme-track" aria-hidden="true">
-            <span className="fud-sun" />
-            <span className="fud-moon" />
+            <AnimatedIcon name={theme === 'dark' ? 'moon' : 'sun'} size={18} className="fud-theme-icon" />
           </span>
         </span>
       </button>
@@ -50,9 +51,17 @@ function FloatingUtilityBar({
         aria-label={askAriaLabel}
         title={askAriaLabel}
       >
-        <span className="fud-dot" aria-hidden="true" />
+        <AnimatedIcon name="mail" size={15} />
         <span className="fud-label fud-ask-label">{askLabel}</span>
       </button>
+
+      {wordLee && (
+        <a className="fud-card fud-wordlee" href="/word-lee" aria-label={`${wordLee.label}: ${wordLee.hint}`}>
+          <span className="wordlee-mark" aria-hidden="true"><i /><i /><i /><i /><i /></span>
+          <span className="fud-label fud-wordlee-label">{wordLee.label}</span>
+          <span className="fud-wordlee-hint">{wordLee.hint} <AnimatedIcon name="arrow-right" size={13} /></span>
+        </a>
+      )}
     </div>
   );
 }
