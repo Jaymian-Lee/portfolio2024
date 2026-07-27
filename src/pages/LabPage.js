@@ -255,7 +255,12 @@ export default function LabPage() {
               </header>
               <div className="lab-grid">
                 {category.projects.map((project) => (
-                  <article className="lab-card" key={project.name}>
+                  <Link
+                    className="lab-card"
+                    key={project.name}
+                    to={localizePath(project.path, language)}
+                    aria-label={`${t.open}: ${project.name}`}
+                  >
                     <p className="lab-card-badge">{project.badge}</p>
                     <h3>{project.name}</h3>
                     <p>{project.description}</p>
@@ -264,8 +269,8 @@ export default function LabPage() {
                         <span className="lab-tag" key={`${project.name}-${tag}`}>{tag}</span>
                       ))}
                     </div>
-                    <Link to={localizePath(project.path, language)} className="lab-open-link">{t.open} <AnimatedIcon name="arrow-right" size={17} /></Link>
-                  </article>
+                    <span className="lab-open-link">{t.open} <AnimatedIcon name="arrow-right" size={17} /></span>
+                  </Link>
                 ))}
               </div>
             </section>
