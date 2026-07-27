@@ -105,16 +105,6 @@
   display: block;
 }
 
-.fud-theme-icon {
-  display: block;
-  margin: 2px auto 0;
-  color: #59422e;
-}
-
-.fud-theme-toggle.dark .fud-theme-icon {
-  color: #e7ecff;
-}
-
 .fud-theme-toggle.dark .fud-theme-track {
   background: linear-gradient(180deg, #433026, #35261f 55%, #2a1f1a);
 }

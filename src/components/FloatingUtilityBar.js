@@ -39,7 +39,8 @@ function FloatingUtilityBar({
         <span className="fud-label">Theme</span>
         <span className={`fud-theme-toggle ${theme}`}>
           <span className="fud-theme-track" aria-hidden="true">
-            <AnimatedIcon name={theme === 'dark' ? 'moon' : 'sun'} size={18} className="fud-theme-icon" />
+            <span className="fud-sun" />
+            <span className="fud-moon" />
           </span>
         </span>
       </button>
