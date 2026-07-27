@@ -3,4 +3,6 @@ Allow: /
 Disallow: /api/
 
 Sitemap: https://www.jaymian-lee.nl/sitemap.xml
-# AI-friendly summary: https://www.jaymian-lee.nl/llms.txt
+# Machine-readable portfolio summaries for AI systems:
+# https://www.jaymian-lee.nl/llms.txt
+# https://www.jaymian-lee.nl/llms-full.txt

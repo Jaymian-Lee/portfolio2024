@@ -9,7 +9,8 @@ const socialLinks = [
   'https://github.com/Jaymian-Lee',
   'https://twitch.tv/jaymianlee',
   'https://www.youtube.com/@JaymianLee',
-  'https://www.instagram.com/jaymianlee/'
+  'https://www.instagram.com/jaymianlee/',
+  'https://www.instagram.com/jaymianlee_/'
 ];
 
 export const siteSeo = {
@@ -29,13 +30,25 @@ export const createPersonSchema = () => ({
   url: PERSON_URL,
   image: PERSON_IMAGE,
   jobTitle: 'Full Stack Developer',
-  description: 'Full stack developer focused on AI automation, ecommerce development, chatbot automation, and product engineering.',
+  description: 'Full-stack developer focused on product engineering, ecommerce, marketing systems, technical SEO and practical AI.',
   address: {
     '@type': 'PostalAddress',
     addressRegion: 'Limburg',
     addressCountry: 'NL'
   },
-  sameAs: socialLinks
+  sameAs: socialLinks,
+  knowsAbout: [
+    'Full-stack development',
+    'Ecommerce development',
+    'Technical SEO',
+    'Marketing automation',
+    'Product engineering',
+    'AI systems'
+  ],
+  alumniOf: [
+    { '@type': 'EducationalOrganization', name: 'Zuyd Hogeschool' },
+    { '@type': 'EducationalOrganization', name: 'VISTA college' }
+  ]
 });
 
 export const createWebsiteSchema = ({ language = ['en', 'nl'] } = {}) => ({
@@ -56,11 +69,12 @@ export const createProfessionalServiceSchema = () => ({
   founder: { '@id': `${SITE_URL}/#person` },
   areaServed: ['Limburg', 'Netherlands', 'Europe'],
   serviceType: [
-    'AI automation',
     'Full stack development',
     'Ecommerce development',
-    'Chatbot automation',
-    'Product engineering'
+    'Product engineering',
+    'Technical SEO',
+    'Marketing systems',
+    'AI automation'
   ]
 });
 

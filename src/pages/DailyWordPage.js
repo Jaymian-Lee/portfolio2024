@@ -1282,6 +1282,7 @@ function DailyWordPage() {
       </div>
 
       <FloatingUtilityBar
+        className="daily-utility-dock"
         language={language}
         onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, language === 'en' ? 'nl' : 'en', location.search, location.hash))}
         theme={theme}

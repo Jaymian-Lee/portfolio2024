@@ -10,10 +10,11 @@ function FloatingUtilityBar({
   askLabel,
   onAsk,
   askAriaLabel = 'Open questions',
-  wordLee = null
+  wordLee = null,
+  className = ''
 }) {
   return (
-    <div className="floating-utility-dock" aria-label="Display controls">
+    <div className={`floating-utility-dock ${className}`.trim()} aria-label="Display controls">
       <button
         type="button"
         className="fud-card fud-control"
@@ -57,8 +58,9 @@ function FloatingUtilityBar({
       </button>
 
       {wordLee && (
-        <a className="fud-card fud-wordlee" href={wordLee.href || '/word-lee'} aria-label={`${wordLee.label}: ${wordLee.hint}`}>
+        <a className="fud-card fud-wordlee" href={wordLee.href || '/word-lee'} aria-label={`${wordLee.label}: ${wordLee.hint}`} title={wordLee.label}>
           <span className="wordlee-mark" aria-hidden="true"><i /><i /><i /><i /><i /></span>
+          <AnimatedIcon name="gamepad" size={19} className="fud-wordlee-gamepad" aria-hidden="true" />
           <span className="fud-label fud-wordlee-label">{wordLee.label}</span>
           <span className="fud-wordlee-hint">{wordLee.hint} <AnimatedIcon name="arrow-right" size={13} /></span>
         </a>

@@ -11,3 +11,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/*
+ * Keep desktop's document scroll untouched: `overflow` on an ancestor creates
+ * a new sticky containing block, which makes the fixed identity panel scroll
+ * away with the project list. Horizontal clipping is only needed on mobile.
+ */
+@media (max-width: 840px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}

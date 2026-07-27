@@ -5,12 +5,14 @@ import FloatingUtilityBar from './components/FloatingUtilityBar';
 import AnimatedIcon from './components/AnimatedIcon';
 import Seo from './components/Seo';
 import { createItemListSchema, createPersonSchema, createProfessionalServiceSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from './data/seo';
+import { getProjectCasePath } from './data/projectCases';
 import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from './utils/locale';
 import './App.css';
 
 const projectData = [
   {
     name: 'Corthex',
+    slug: 'corthex',
     url: 'https://corthex.app',
     image: '/projects/corthex-app.png',
     logo: 'https://www.google.com/s2/favicons?domain=corthex.app&sz=256',
@@ -25,6 +27,7 @@ const projectData = [
   },
   {
     name: 'Vizualy',
+    slug: 'vizualy',
     url: 'https://vizualy.nl',
     image: '/projects/vizualy-nl.jpg',
     logo: 'https://www.google.com/s2/favicons?domain=vizualy.nl&sz=256',
@@ -39,6 +42,7 @@ const projectData = [
   },
   {
     name: 'MartijnKozijn.nl',
+    slug: 'martijnkozijn',
     url: 'https://martijnkozijn.nl',
     image: '/projects/martijnkozijn-hero.png',
     logo: 'https://www.google.com/s2/favicons?domain=martijnkozijn.nl&sz=256',
@@ -53,6 +57,7 @@ const projectData = [
   },
   {
     name: 'Slecto',
+    slug: 'slecto',
     url: null,
     image: '/projects/slecto-app.png',
     logo: 'https://slecto.app/_next/image?url=%2Fbrand%2Fslecto-icon.png&w=48&q=75',
@@ -67,6 +72,7 @@ const projectData = [
   },
   {
     name: 'Botforger',
+    slug: 'botforger',
     url: 'https://botforger.com',
     image: '/projects/botforger-com.png',
     logo: 'https://www.google.com/s2/favicons?domain=botforger.com&sz=256',
@@ -81,6 +87,7 @@ const projectData = [
   },
   {
     name: 'Mintventory',
+    slug: 'mintventory',
     url: 'https://mintventory.com',
     image: '/projects/mintventory-com.svg',
     logo: 'https://www.google.com/s2/favicons?domain=mintventory.com&sz=256',
@@ -95,6 +102,7 @@ const projectData = [
   },
   {
     name: 'Twigsie',
+    slug: 'twigsie',
     url: 'https://twigsie.com',
     image: '/projects/twigsie-com.jpg',
     logo: 'https://www.google.com/s2/favicons?domain=twigsie.com&sz=256',
@@ -109,6 +117,7 @@ const projectData = [
   },
   {
     name: 'Refacthor',
+    slug: 'refacthor',
     url: 'https://refacthor.nl',
     image: '/projects/refacthor-hero.png',
     logo: 'https://www.google.com/s2/favicons?domain=refacthor.nl&sz=256',
@@ -123,6 +132,7 @@ const projectData = [
   },
   {
     name: 'Woonproblemen',
+    slug: 'woonproblemen',
     url: 'https://woonproblemen.nl',
     image: '/projects/woonproblemen-hero.png',
     logo: 'https://woonproblemen.nl/wp-content/uploads/2026/01/Woonproblemen-cartoon.png',
@@ -136,9 +146,10 @@ const projectData = [
   },
   {
     name: 'Vizualy Prints',
+    slug: 'vizualy-prints',
     url: 'https://vizualyprints.com',
     image: '/projects/vizualyprints-com.jpg',
-    logo: 'https://www.google.com/s2/favicons?domain=vizualyprints.com&sz=256',
+    logo: null,
     monogram: 'VP',
     number: '09',
     timeline: { start: '2025', end: '2026' },
@@ -151,9 +162,17 @@ const projectData = [
 ];
 
 // Keep portfolio work ordered from newest launch to oldest everywhere it is rendered.
-// A stable sort retains the curated order for projects that launched in the same year.
+// The 2026 releases use a deliberate showcase order after Corthex.
 const projects = projectData
-  .sort((first, second) => Number(second.timeline.start) - Number(first.timeline.start))
+  .sort((first, second) => {
+    const launchDifference = Number(second.timeline.start) - Number(first.timeline.start);
+
+    if (launchDifference !== 0) return launchDifference;
+    if (first.slug === 'slecto' && second.slug === 'vizualy') return -1;
+    if (first.slug === 'vizualy' && second.slug === 'slecto') return 1;
+
+    return 0;
+  })
   .map((project, index) => ({
     ...project,
     number: String(index + 1).padStart(2, '0')
@@ -162,14 +181,20 @@ const projects = projectData
 const archivedProjectNames = new Set(['Mintventory', 'Twigsie', 'Vizualy Prints']);
 const activeProjects = projects.filter((project) => !archivedProjectNames.has(project.name));
 const archivedProjects = projects.filter((project) => archivedProjectNames.has(project.name));
-const formatProjectTimeline = ({ start, end }) => `${start} — ${end}`;
+const formatProjectTimeline = ({ start, end }) => `${start} - ${end}`;
 
 const socials = [
   { label: 'GitHub', handle: '@Jaymian-Lee', url: 'https://github.com/Jaymian-Lee', nl: 'Code, experimenten en de bouwstenen achter mijn producten.', en: 'Code, experiments and the building blocks behind my products.' },
   { label: 'LinkedIn', handle: 'Jaymian-Lee Reinartz', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/', nl: 'Updates over productontwikkeling, AI en de dingen die ik aan het maken ben.', en: 'Updates on product work, AI and the things I am building.' },
   { label: 'Instagram', handle: '@jaymianlee', url: 'https://www.instagram.com/jaymianlee/', nl: 'Een persoonlijk kijkje achter de schermen, van idee naar release.', en: 'A personal look behind the scenes, from idea to release.' },
+  { label: 'Content IG', handle: '@jaymianlee_', url: 'https://www.instagram.com/jaymianlee_/', nl: 'Content, experimenten en korte updates over wat ik aan het maken ben.', en: 'Content, experiments and short updates on what I am making.' },
   { label: 'YouTube', handle: '@JaymianLee', url: 'https://www.youtube.com/@JaymianLee', nl: 'Video’s, walkthroughs en de verhalen achter de builds.', en: 'Videos, walkthroughs and the stories behind the builds.' },
   { label: 'Twitch', handle: 'twitch.tv/jaymianlee', url: 'https://twitch.tv/jaymianlee', nl: 'Live bouwen, experimenteren en praten met de community.', en: 'Live building, experimenting and talking with the community.' }
+];
+
+const education = [
+  { school: 'Zuyd Hogeschool', nl: 'HBO-ICT', en: 'HBO-ICT', period: 'Sep 2022 - Jul 2024' },
+  { school: 'VISTA college', nl: 'Applicatie- & mediaontwikkelaar · MBO 4', en: 'Application & media developer · MBO 4', period: 'Sep 2019 - Jul 2022' }
 ];
 
 function App() {
@@ -194,6 +219,15 @@ function App() {
   }, [language, theme]);
 
   const isNl = language === 'nl';
+  const homeSeo = isNl
+    ? {
+        title: 'Jaymian-Lee Reinartz | Software, e-commerce en digitale groei',
+        description: 'Portfolio van Jaymian-Lee Reinartz: software, e-commerce-ervaringen, marketingtools, technische SEO en praktische AI-producten.'
+      }
+    : {
+        title: 'Jaymian-Lee Reinartz | Software, ecommerce & digital growth',
+        description: 'Portfolio of Jaymian-Lee Reinartz: software, ecommerce experiences, marketing systems, technical SEO and practical AI products.'
+      };
   const toggleProjectView = () => {
     setActiveView((view) => (view === 'work' ? 'socials' : 'work'));
   };
@@ -210,25 +244,25 @@ function App() {
       createWebsiteSchema({ language: ['nl', 'en'] }),
       createProfessionalServiceSchema(),
       createWebPageSchema({
-        name: 'Jaymian-Lee Reinartz — Project portfolio',
+        name: homeSeo.title,
         url: `${siteSeo.siteUrl}${canonicalPath}`,
-        description: 'Selected projects in AI, ecommerce and product engineering by Jaymian-Lee Reinartz.',
+        description: homeSeo.description,
         language: isNl ? 'nl-NL' : 'en-US',
         image: `${siteSeo.siteUrl}/jay-portrait.png`
       }),
       createItemListSchema({
         name: isNl ? 'Projecten van Jaymian-Lee Reinartz' : 'Projects by Jaymian-Lee Reinartz',
         url: `${siteSeo.siteUrl}${canonicalPath}#projects`,
-        items: activeProjects.map(({ name, url }) => ({ name, url }))
+        items: activeProjects.map(({ name, slug }) => ({ name, url: `${siteSeo.siteUrl}${localizePath(getProjectCasePath(slug), language)}` }))
       })
     ]
-  }), [canonicalPath, isNl]);
+  }), [canonicalPath, homeSeo.description, homeSeo.title, isNl, language]);
 
   return (
     <div className="portfolio-shell">
       <Seo
-        title="Jaymian-Lee Reinartz — Building useful digital products"
-        description="Selected work in AI systems, ecommerce and product engineering by Jaymian-Lee Reinartz."
+        title={homeSeo.title}
+        description={homeSeo.description}
         canonicalPath={canonicalPath}
         language={language}
         alternatePaths={alternatePaths}
@@ -267,8 +301,8 @@ function App() {
             <p className="identity-motto">{isNl ? 'Kan niet bestaat niet.' : '“Impossible” is not in my vocabulary.'}</p>
             <p className="identity-summary">
               {isNl
-                ? 'Full-stack developer uit Limburg. Ik bouw AI-systemen, slimme ecommerce en software die teams echt verder brengt.'
-                : 'Full-stack developer in Limburg. I build AI systems, sharp ecommerce and software that moves teams forward.'}
+                ? 'Full-stack developer uit Limburg. Ik bouw sterke software, e-commerce en marketingtools die teams vooruithelpen, met AI waar het echt iets toevoegt.'
+                : 'Full-stack developer in Limburg. I build sharp software, ecommerce and marketing tools that move teams forward, with AI where it truly adds value.'}
             </p>
           </div>
 
@@ -329,14 +363,14 @@ function App() {
                 key={project.name}
                 style={{ '--entry-index': index, '--project-shot': project.image ? `url(${project.image})` : 'none' }}
               >
-                {project.url ? (
-                  <a className="project-visual" href={project.url} target="_blank" rel="noreferrer" aria-label={`${isNl ? 'Open' : 'Open'} ${project.name}`}>
+                {project.slug ? (
+                  <Link className="project-visual" to={localizePath(getProjectCasePath(project.slug), language)} aria-label={`${isNl ? 'Bekijk' : 'View'} ${project.name}`}>
                     <span className="project-logo" aria-hidden="true">
                       {project.logo ? <img src={project.logo} alt="" /> : <span className="project-monogram">{project.monogram}</span>}
                     </span>
                     <span className="visual-arrow"><AnimatedIcon name="arrow-right" size={19} /></span>
                     <span className="visual-no">{project.number}</span>
-                  </a>
+                  </Link>
                 ) : (
                   <div className="project-visual" aria-hidden="true">
                     <span className="project-logo">
@@ -347,7 +381,7 @@ function App() {
                 )}
                 <div className="project-info">
                   <div className="project-meta"><span>{project.type}</span><span>{formatProjectTimeline(project.timeline)}</span></div>
-                  <h3>{project.url ? <a href={project.url} target="_blank" rel="noreferrer">{project.name}</a> : project.name}</h3>
+                  <h3>{project.slug ? <Link to={localizePath(getProjectCasePath(project.slug), language)}>{project.name}</Link> : project.name}</h3>
                   <p className="project-summary">{project.summary}</p>
                   <div className="project-bottom">
                     <div className="project-tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
@@ -358,13 +392,29 @@ function App() {
             ))}
           </div>
 
-          <section className="lab-strip" aria-label="The Lab">
-            <p>{isNl ? 'Tussen projecten door' : 'Between projects'}</p>
-            <h2>{isNl ? 'Ik experimenteer ook in het openbaar.' : 'I also experiment in public.'}</h2>
+          <section className="lab-bridge" aria-label={isNl ? 'Naar het Lab' : 'Go to the Lab'}>
+            <span className="lab-bridge-icon" aria-hidden="true"><AnimatedIcon name="flask-conical" size={22} /></span>
             <div>
-              <Link to={localizePath('/lab', language)}>{isNl ? 'Open mijn Lab' : 'Open the Lab'} <AnimatedIcon name="arrow-right" size={17} /></Link>
-              <Link to={localizePath('/word-lee', language)}>Word-Lee <AnimatedIcon name="gamepad" size={17} /></Link>
+              <p>{isNl ? 'Tussen de builds door' : 'Between the builds'}</p>
+              <strong>{isNl ? 'Experimenten, games en kleine tools.' : 'Experiments, games and small tools.'}</strong>
             </div>
+            <Link to={localizePath('/lab', language)}>{isNl ? 'Bekijk het Lab' : 'See the Lab'} <AnimatedIcon name="arrow-right" size={18} /></Link>
+          </section>
+
+          <section className="education-section" aria-labelledby="education-title">
+            <div>
+              <p>{isNl ? 'Opleiding' : 'Education'}</p>
+              <h2 id="education-title">{isNl ? 'De basis achter de builds.' : 'The foundation behind the builds.'}</h2>
+            </div>
+            <ul>
+              {education.map((item) => (
+                <li key={item.school}>
+                  <span className="education-mark"><AnimatedIcon name="graduation-cap" size={18} /></span>
+                  <span><strong>{item.school}</strong><small>{isNl ? item.nl : item.en}</small></span>
+                  <em>{item.period}</em>
+                </li>
+              ))}
+            </ul>
           </section>
 
           <section className="archive-section" aria-labelledby="archive-title">
@@ -375,12 +425,21 @@ function App() {
             <ul>
               {archivedProjects.map((project) => (
                 <li key={project.name}>
-                  <span className="archive-mark">↘</span>
-                  <span><strong>{project.name}</strong><small>{project.type}</small></span>
+                  <span className="archive-mark"><AnimatedIcon name="archive" size={18} /></span>
+                  <span><Link to={localizePath(getProjectCasePath(project.slug), language)}><strong>{project.name}</strong></Link><small>{project.type}</small></span>
                   <em>{formatProjectTimeline(project.timeline)} · {isNl ? 'Gearchiveerd' : 'Archived'}</em>
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section className="lab-strip" aria-label="The Lab">
+            <p>{isNl ? 'Tussen projecten door' : 'Between projects'}</p>
+            <h2>{isNl ? 'Ik experimenteer ook in het openbaar.' : 'I also experiment in public.'}</h2>
+            <div>
+              <Link to={localizePath('/lab', language)}>{isNl ? 'Open mijn Lab' : 'Open the Lab'} <AnimatedIcon name="arrow-right" size={17} /></Link>
+              <Link to={localizePath('/word-lee', language)}>Word-Lee <AnimatedIcon name="gamepad" size={17} /></Link>
+            </div>
           </section>
 
             </motion.div>

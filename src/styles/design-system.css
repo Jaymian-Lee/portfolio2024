@@ -168,4 +168,8 @@ textarea {
 
 @media (max-width: 640px) {
   .ui-container { width: min(100% - 1.5rem, 1180px); }
+
+  .ui-page { padding-bottom: 5.75rem; }
+
+  .project-case-page { padding-bottom: 5.75rem; }
 }

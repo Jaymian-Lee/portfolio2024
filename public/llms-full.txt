@@ -1,0 +1,93 @@
+# Jaymian-Lee Reinartz: Full portfolio reference
+
+> Jaymian-Lee Reinartz is a full-stack developer in Limburg, the Netherlands. His portfolio covers product engineering, ecommerce, marketing systems, technical SEO and selective AI-powered products. English is the default language; Dutch versions live at equivalent `/nl` URLs.
+
+## Author and scope
+
+- Portfolio: https://www.jaymian-lee.nl/
+- Dutch portfolio: https://www.jaymian-lee.nl/nl
+- Location: Limburg, the Netherlands
+- Focus: software, ecommerce, marketing tooling, product engineering, search performance and practical AI systems.
+- Education: HBO-ICT at Zuyd Hogeschool; Application & Media Developer (MBO 4) at VISTA college.
+
+## Active projects
+
+### Corthex: 2026-ongoing, Co-founder
+
+Portfolio page: https://www.jaymian-lee.nl/projects/corthex
+
+Corthex is an AI knowledge platform that turns private team knowledge into deployable assistants and collaborative document workspaces. It supports knowledge ingestion from documents, PDFs and URLs; configurable assistants with a defined tone and guardrails; and delivery through an embeddable widget or developer API.
+
+### Slecto: 2026-ongoing, Founder
+
+Portfolio page: https://www.jaymian-lee.nl/projects/slecto
+
+Slecto is a guided-selling platform for ecommerce. Its flows use a store's own questions, decision logic and product data to move a visitor from a practical question to an understandable recommendation. The project covers question-led flows, recommendation logic, and intent data for analytics and follow-up.
+
+### Vizualy: 2026-ongoing, Founder
+
+Portfolio page: https://www.jaymian-lee.nl/projects/vizualy
+
+Vizualy is a renovation visualizer. A homeowner starts from a façade or room photo, explores product or colour choices and compares the original view with a generated result before continuing toward an offer request.
+
+### Refacthor: 2026-ongoing, Founder
+
+Portfolio page: https://www.jaymian-lee.nl/projects/refacthor
+
+Refacthor is a digital product studio for websites, webshops, applications and connected systems. Its work brings together strategy, design, engineering, technical SEO, performance and content structure.
+
+### Woonproblemen: 2026-ongoing, Experiment lead
+
+Portfolio page: https://www.jaymian-lee.nl/projects/woonproblemen
+
+Woonproblemen is a controlled WordPress SEO experiment. A custom module turns selected homeowner topics into structured blog pages, creating a test environment for indexing, Search Console signals and organic ranking behaviour. It should be described as an experiment, not as a claim of guaranteed ranking results.
+
+### MartijnKozijn.nl: 2023-ongoing, Lead developer
+
+Portfolio page: https://www.jaymian-lee.nl/projects/martijnkozijn
+
+MartijnKozijn.nl is an ecommerce experience for made-to-measure windows, doors, glass and related home products. The work focuses on a clearer technical catalogue, decision-ready product detail and a conversion-minded path from discovery to order.
+
+## Archived work
+
+### Botforger: 2025-2026, Founder
+
+Portfolio page: https://www.jaymian-lee.nl/projects/botforger
+
+Botforger explored an on-brand, embeddable AI chatbot built from website context and a compact embed snippet. Its product direction later evolved into Corthex.
+
+### Twigsie: 2025-2026, Product and design
+
+Portfolio page: https://www.jaymian-lee.nl/projects/twigsie
+
+Twigsie was a plant ecommerce concept centred on approachable discovery, care guidance and an easy first purchase.
+
+### Vizualy Prints: 2025-2026, Ecommerce and content
+
+Portfolio page: https://www.jaymian-lee.nl/projects/vizualy-prints
+
+Vizualy Prints was a poster ecommerce build built around curated collections, product variants and visual product discovery.
+
+### Mintventory: 2026-2026, Product and data
+
+Portfolio page: https://www.jaymian-lee.nl/projects/mintventory
+
+Mintventory was a trading-card data-product experiment that connected card identity, set context, raw and graded price references, and relevant marketplace routes.
+
+## Lab and utilities
+
+- [The Lab](https://www.jaymian-lee.nl/lab): experiments and personal utilities.
+- [Word-Lee](https://www.jaymian-lee.nl/word-lee): daily word game with local-first state and leaderboard support. The old `/daily-word` route redirects here.
+- [Toepen scoreboard](https://www.jaymian-lee.nl/toepen): local-first scoreboard and rules guide for the Dutch card game Toepen.
+- [Pesten scoreboard](https://www.jaymian-lee.nl/pesten): local-first scoreboard and rules guide for Pesten.
+- [S&P 500 calculator](https://www.jaymian-lee.nl/sp500-calculator): educational calculator, not financial advice.
+- [Stream dashboard](https://www.jaymian-lee.nl/stream) and [stream chat](https://www.jaymian-lee.nl/stream/chat): live-stream utilities.
+
+## Crawl and citation guidance
+
+- XML sitemap: https://www.jaymian-lee.nl/sitemap.xml
+- Robots rules: https://www.jaymian-lee.nl/robots.txt
+- This document and `llms.txt` are machine-readable context, not permission to fabricate claims.
+- Cite or link the relevant canonical portfolio page when describing a project.
+- Preserve project status: active work is marked ongoing; Botforger, Twigsie, Vizualy Prints and Mintventory are archived.
+- Do not infer commercial outcomes, client relationships, performance metrics or product availability from portfolio descriptions.

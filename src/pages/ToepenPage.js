@@ -89,7 +89,7 @@ const TAUNTS = {
 
 const copy = {
   nl: {
-    back: '← Terug naar portfolio',
+    back: '← Terug naar The Lab',
     title: 'Toepen scorebord',
     subtitle: 'LocalStorage only, zonder database.',
     setup: 'Setup',
@@ -118,6 +118,14 @@ const copy = {
       roundsText: 'Speel met 2 tot 8 spelers en een pak van 32 kaarten. Iedereen krijgt vier kaarten. Volg kleur als je kunt; de hoogste kaart in de gevraagde kleur wint de slag. De winnaar van de vierde slag wint de hand.',
       orderTitle: 'Kaartvolgorde',
       orderText: 'Van sterk naar zwak: 10, 9, 8, 7, aas, heer, vrouw, boer.',
+      gameTitle: 'Een hand spelen',
+      gameSteps: [
+        { title: 'Deel en kom uit', text: 'De deler geeft iedereen vier kaarten. De speler links van de deler komt uit met een kaart; er is geen troef.' },
+        { title: 'Volg kleur als dat kan', text: 'Heb je de gevraagde kleur, dan moet je die spelen. Kun je niet volgen, dan mag je een andere kleur wegspelen.' },
+        { title: 'Bepaal de slag', text: 'De hoogste kaart van de kleur waarmee is uitgekomen wint. De winnaar opent de volgende slag.' },
+        { title: 'Alleen slag vier telt', text: 'Na vier slagen wint degene met de vierde slag de hand. De andere spelers krijgen de afgesproken inzet als strafpunten.' },
+        { title: 'Durf te toepen', text: 'Wil je de inzet verhogen? Toep voordat je een kaart speelt. De andere spelers gaan mee of passen volgens jullie afspraak.' }
+      ],
       scoreTitle: 'Score bijhouden',
       steps: [
         { title: 'Kies de eindscore', text: 'Standaard is 10. Wie die score bereikt, ligt uit het spel.' },
@@ -127,11 +135,11 @@ const copy = {
       ],
       exampleTitle: 'Voorbeeld',
       exampleText: 'De eindscore is 10. Jay staat op 8 en krijgt na een hand 2 strafpunten: tik twee keer op +1. Jay komt op 10 en ligt eruit. Iemand op 3 die één strafpunt krijgt, eindigt gewoon op 4.',
-      note: 'Tip: spreken jullie een andere toep- of pasregel af? Geen probleem — voer alleen het uiteindelijke aantal strafpunten van de hand in. De laatste 25 afgeronde spellen blijven alleen op dit apparaat bewaard.'
+      note: 'Tip: spreken jullie een andere toep- of pasregel af? Geen probleem. Voer alleen het uiteindelijke aantal strafpunten van de hand in. De laatste 25 afgeronde spellen blijven alleen op dit apparaat bewaard.'
     }
   },
   en: {
-    back: '← Back to portfolio',
+    back: '← Back to The Lab',
     title: 'Toepen scoreboard',
     subtitle: 'LocalStorage only, no database.',
     setup: 'Setup',
@@ -160,6 +168,14 @@ const copy = {
       roundsText: 'Play with 2 to 8 players and a 32-card deck. Everyone receives four cards. Follow suit whenever possible; the highest card in the led suit wins the trick. The winner of the fourth trick wins the hand.',
       orderTitle: 'Card order',
       orderText: 'Strongest to weakest: 10, 9, 8, 7, ace, king, queen, jack.',
+      gameTitle: 'Playing a hand',
+      gameSteps: [
+        { title: 'Deal and lead', text: 'The dealer gives everyone four cards. The player to the dealer’s left leads one card; there is no trump suit.' },
+        { title: 'Follow suit when possible', text: 'If you hold the led suit, you must play it. If you cannot follow, you may discard any other suit.' },
+        { title: 'Resolve the trick', text: 'The highest card in the led suit wins. That player leads the next trick.' },
+        { title: 'Only trick four counts', text: 'After four tricks, the player who won the fourth wins the hand. The others receive the agreed stake as penalty points.' },
+        { title: 'Raise by toeping', text: 'Want to raise the stake? Toep before playing a card. The other players continue or pass under your table’s agreement.' }
+      ],
       scoreTitle: 'Keeping score',
       steps: [
         { title: 'Choose the end score', text: 'The default is 10. Reaching that score eliminates a player.' },
@@ -169,7 +185,7 @@ const copy = {
       ],
       exampleTitle: 'Example',
       exampleText: 'The end score is 10. Jay is on 8 and receives 2 penalty points after a hand: press +1 twice. Jay reaches 10 and is eliminated. A player on 3 who receives one penalty simply moves to 4.',
-      note: 'Tip: do you play with a different toep or pass rule? That is fine — only enter the final number of penalty points from the hand. The last 25 finished games are saved on this device only.'
+      note: 'Tip: do you play with a different toep or pass rule? That is fine. Only enter the final number of penalty points from the hand. The last 25 finished games are saved on this device only.'
     }
   }
 };
@@ -423,6 +439,7 @@ function ToepenPage() {
         }),
         createBreadcrumbSchema([
           { name: 'Home', item: siteSeo.siteUrl },
+          { name: 'The Lab', item: `${siteSeo.siteUrl}${localizePath('/lab', language)}` },
           { name: 'Toepen', item: canonical }
         ])
       ]
@@ -449,7 +466,7 @@ function ToepenPage() {
 
       <div className="toepen-wrap ui-container">
         <header className="toepen-header">
-          <Link to={localizePath('/', language)} className="toepen-back">{t.back}</Link>
+          <Link to={localizePath('/lab', language)} className="toepen-back">{t.back}</Link>
           <h1>{t.title}</h1>
           <p>{t.subtitle}</p>
         </header>
@@ -590,6 +607,14 @@ function ToepenPage() {
                 </div>
               </section>
             </div>
+            <section className="toepen-guide-score">
+              <h2>{t.guide.gameTitle}</h2>
+              <ol className="toepen-guide-steps">
+                {t.guide.gameSteps.map((step, index) => (
+                  <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>
+                ))}
+              </ol>
+            </section>
             <section className="toepen-guide-score">
               <h2>{t.guide.scoreTitle}</h2>
               <ol className="toepen-guide-steps">

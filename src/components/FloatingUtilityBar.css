@@ -11,6 +11,7 @@
   border-radius: 8px;
   padding: 0.25rem;
   backdrop-filter: blur(10px);
+  max-width: calc(100vw - 1.5rem);
 }
 
 .fud-card {
@@ -21,6 +22,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.42rem;
+  min-height: 40px;
 }
 
 .fud-control {
@@ -144,7 +146,7 @@
 }
 
 .fud-ask {
-  min-height: 34px;
+  min-height: 40px;
   margin: 0;
   padding: 0.3rem 0.72rem;
   border: 1px solid var(--border);
@@ -167,19 +169,23 @@
 }
 
 .fud-wordlee {
-  min-height: 34px;
+  width: 40px;
+  min-height: 40px;
   margin: 0;
-  padding: 0.3rem 0.72rem;
+  padding: 0;
+  justify-content: center;
   color: #151515;
   background: var(--lime);
   border-color: color-mix(in srgb, var(--lime) 70%, #151515);
   text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
+.fud-wordlee:hover,
+.fud-wordlee:focus-visible { transform: translateY(-2px); background: #ecff9a; }
+
 .wordlee-mark {
-  display: grid;
-  grid-template-columns: repeat(5, 4px);
-  gap: 2px;
+  display: none;
 }
 
 .wordlee-mark i {
@@ -199,6 +205,8 @@
 .fud-wordlee-hint {
   display: none;
 }
+
+.fud-wordlee-gamepad { display: block; }
 
 .fud-wordlee-hint .animated-icon,
 .fud-ask .animated-icon,
@@ -239,6 +247,7 @@
     background: none;
     border: 0;
     padding: 0;
+    max-width: none;
     flex-direction: column;
   }
 
@@ -248,10 +257,6 @@
     text-transform: uppercase;
     letter-spacing: 0.11em;
     color: var(--muted);
-  }
-
-  :root.has-subpage-brand .floating-utility-dock {
-    top: 4.1rem;
   }
 
   .fud-control {
@@ -265,10 +270,21 @@
   }
 
   .fud-wordlee {
+    width: auto;
+    min-height: 34px;
+    padding: 0.3rem 0.72rem;
     align-items: flex-start;
     flex-direction: column;
     gap: 0.14rem;
   }
+
+  .wordlee-mark {
+    display: grid;
+    grid-template-columns: repeat(5, 4px);
+    gap: 2px;
+  }
+
+  .fud-wordlee-gamepad { display: none; }
 
   .fud-wordlee-label {
     display: block;
@@ -279,4 +295,30 @@
     display: block;
     font-weight: 500;
   }
+}
+
+@media (max-width: 840px) {
+  .floating-utility-dock {
+    left: 0.75rem;
+    right: auto;
+    transform: none;
+  }
+
+  .fud-ask {
+    width: 40px;
+    padding-inline: 0;
+    justify-content: center;
+  }
+
+  .fud-ask-label { display: none !important; }
+}
+
+@media (max-width: 360px) {
+  .floating-utility-dock {
+    bottom: calc(4.8rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 840px) {
+  .daily-utility-dock { display: none; }
 }

@@ -236,6 +236,24 @@
   min-width: 110px;
 }
 
+@media (max-width: 380px) {
+  .keyboard { gap: 0.32rem; }
+
+  .key-row { gap: 0.22rem; }
+
+  .key {
+    min-width: 0;
+    flex: 1 1 0;
+    padding: 0.45rem 0.1rem;
+    font-size: 0.72rem;
+  }
+
+  .key-wide {
+    min-width: 0;
+    max-width: 8.6rem;
+  }
+}
+
 .key.correct {
   background: #5da069;
   border-color: #5da069;

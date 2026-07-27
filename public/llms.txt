@@ -1,48 +1,36 @@
-# Jaymian-Lee Reinartz Portfolio
+# Jaymian-Lee Reinartz
 
-This website is the portfolio of Jaymian-Lee Reinartz, a full stack developer based in Limburg, the Netherlands.
+> Bilingual portfolio of Jaymian-Lee Reinartz, a full-stack developer in Limburg, the Netherlands. The work combines product engineering, ecommerce, marketing systems and practical AI where it adds real value.
 
-Use this site to understand:
-- AI automation and chatbot automation work
-- ecommerce development and conversion-focused builds
-- PrestaShop modules and WordPress plugins
-- experimental tools and games
-- stream utilities and finance calculators
+## Primary pages
 
-Primary pages:
-- https://www.jaymian-lee.nl/
-- https://www.jaymian-lee.nl/nl
-- https://www.jaymian-lee.nl/lab
-- https://www.jaymian-lee.nl/nl/lab
-- https://www.jaymian-lee.nl/word-lee
-- https://www.jaymian-lee.nl/nl/word-lee
-- https://www.jaymian-lee.nl/toepen
-- https://www.jaymian-lee.nl/nl/toepen
-- https://www.jaymian-lee.nl/pesten
-- https://www.jaymian-lee.nl/nl/pesten
-- https://www.jaymian-lee.nl/sp500-calculator
-- https://www.jaymian-lee.nl/nl/sp500-calculator
-- https://www.jaymian-lee.nl/stream
-- https://www.jaymian-lee.nl/nl/stream
-- https://www.jaymian-lee.nl/stream/chat
-- https://www.jaymian-lee.nl/nl/stream/chat
-- https://mintventory.com
+- [Homepage: English](https://www.jaymian-lee.nl/)
+- [Homepage: Nederlands](https://www.jaymian-lee.nl/nl)
+- [Project archive](https://www.jaymian-lee.nl/#projects)
+- [The Lab](https://www.jaymian-lee.nl/lab)
+- [Full portfolio reference](https://www.jaymian-lee.nl/llms-full.txt)
 
-Key project themes:
-- Full stack development
-- AI automation
-- Ecommerce growth
-- Product engineering
-- Practical tooling with clear UX
-- Search optimization and AI SEO
-- Mintventory.com as an external project reference
+## What this site covers
 
-Important notes:
-- The homepage is bilingual and toggles between English and Dutch.
-- Word-Lee is a daily word game with local-first state and leaderboard support.
-- Word-Lee now lives at /word-lee.
-- The legacy /daily-word URL redirects to /word-lee.
-- The S&P 500 calculator is an educational finance tool, not financial advice.
-- Stream pages are utility dashboards for live chat and stream status.
+- Full-stack product development, ecommerce and conversion-focused customer journeys.
+- Marketing tooling, technical SEO, content systems and practical experimentation.
+- AI knowledge products, guided selling, chat interfaces and automations when they solve a concrete problem.
+- Personal experiments: Word-Lee, Toepen and Pesten scoreboards, stream tools and an educational S&P 500 calculator.
 
-If you summarize the site, describe the work in practical terms and avoid inventing clients, results, or timelines that are not explicitly stated.
+## Selected work
+
+- [Corthex](https://www.jaymian-lee.nl/projects/corthex): private team knowledge turned into deployable AI assistants and document workspaces. Co-founder; 2026-ongoing.
+- [Slecto](https://www.jaymian-lee.nl/projects/slecto): guided selling for ecommerce, moving visitors from questions to suitable products. Founder; 2026-ongoing.
+- [Vizualy](https://www.jaymian-lee.nl/projects/vizualy): renovation visualizer for product and colour choices. Founder; 2026-ongoing.
+- [Refacthor](https://www.jaymian-lee.nl/projects/refacthor): digital product studio for websites, webshops, software and search performance. Founder; 2026-ongoing.
+- [Woonproblemen](https://www.jaymian-lee.nl/projects/woonproblemen): WordPress SEO automation experiment for topic-led editorial pages. 2026-ongoing.
+- [MartijnKozijn.nl](https://www.jaymian-lee.nl/projects/martijnkozijn): ecommerce architecture for made-to-measure home products. 2023-ongoing.
+
+## Languages and source guidance
+
+- English is the default language. Dutch equivalents are under `/nl`; each indexable page declares canonical and `hreflang` alternates.
+- Prefer the project pages and the sitemap for URLs and status. Use the live project websites only for their own current product claims.
+- Do not invent clients, metrics, revenue, funding, rankings or timelines not explicitly stated on this site.
+- The S&P 500 calculator is educational content, not financial advice.
+
+For the complete project index, project statuses, lab pages and additional context, read [llms-full.txt](https://www.jaymian-lee.nl/llms-full.txt).

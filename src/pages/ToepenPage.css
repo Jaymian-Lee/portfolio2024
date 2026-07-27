@@ -255,6 +255,7 @@
 .toepen-guide-steps li { display: grid; grid-template-columns: 2rem 1fr; gap: .65rem; }
 .toepen-guide-steps li > span { color: var(--signal); font: 700 .72rem 'Poppins', sans-serif; letter-spacing: .08em; }
 .toepen-guide-steps h3 { margin-bottom: .3rem; font-size: .95rem; }
+.toepen-guide-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; margin-top: 1rem; }.toepen-guide-actions article { display: grid; grid-template-columns: 2rem 1fr; gap: .7rem; align-items: start; padding: .85rem; border: 1px solid var(--line); border-radius: var(--radius); background: color-mix(in srgb, var(--surface-strong) 84%, transparent); }.toepen-guide-actions article > span { display: grid; width: 2rem; height: 2rem; place-items: center; border: 1px solid color-mix(in srgb, var(--lime) 62%, var(--line)); border-radius: var(--radius); color: var(--lime); font: 700 .75rem 'Poppins', sans-serif; }.toepen-guide-actions h3 { margin-bottom: .25rem; font-size: .92rem; }.toepen-guide-actions p { margin-bottom: 0; color: var(--muted); font-size: .84rem; line-height: 1.55; }
 
 .toepen-guide-example { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: .9rem; margin-top: 1rem; padding: .9rem 1rem; border-radius: var(--radius); background: var(--lime); color: #151515; }
 .toepen-guide-example p { margin: 0; font: 700 .68rem 'Poppins', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
@@ -265,6 +266,6 @@
 @keyframes toepen-guide-in { from { opacity: 0; transform: translateY(-.35rem); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 620px) {
-  .toepen-guide-basics, .toepen-guide-steps { grid-template-columns: 1fr; }
+  .toepen-guide-basics, .toepen-guide-steps, .toepen-guide-actions { grid-template-columns: 1fr; }
   .toepen-guide-example { grid-template-columns: 1fr; gap: .45rem; }
 }

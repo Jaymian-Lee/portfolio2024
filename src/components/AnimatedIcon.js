@@ -11,6 +11,9 @@ const iconShapes = {
   x: <><path d="m6 6 12 12" /><path d="m18 6-12 12" /></>,
   mail: <><rect width="18" height="14" x="3" y="5" rx="2" /><path d="m3 7 9 6 9-6" /></>,
   gamepad: <><path d="M6 12h4" /><path d="M8 10v4" /><path d="M15 13h.01" /><path d="M18 11h.01" /><path d="M6.4 5h11.2a3.4 3.4 0 0 1 3.32 4.12l-1.13 5.08A2.4 2.4 0 0 1 17.45 16H6.55a2.4 2.4 0 0 1-2.34-1.8L3.08 9.12A3.4 3.4 0 0 1 6.4 5Z" /></>,
+  'graduation-cap': <><path d="m22 10-10-5L2 10l10 5 10-5Z" /><path d="M6 12v5c3 1.5 9 1.5 12 0v-5" /><path d="M22 10v6" /></>,
+  archive: <><path d="M21 8v13H3V8" /><path d="M1 3h22v5H1z" /><path d="M10 12h4" /></>,
+  'flask-conical': <><path d="M10 2v7.31" /><path d="M14 9.3V2" /><path d="M8.5 2h7" /><path d="M14 9.3a5 5 0 1 1-4 0" /><path d="M5.5 16h13" /></>,
   sun: <><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></>,
   moon: <path d="M12 3a6.8 6.8 0 1 0 9 9 9 9 0 1 1-9-9Z" />
 };
@@ -38,7 +41,7 @@ export default function AnimatedIcon({ name, size = 20, className = '', title, .
     >
       {title && <title>{title}</title>}
       <motion.g
-        animate={isActive ? { x: name.includes('right') ? [0, 2, 0] : name.includes('left') ? [0, -2, 0] : 0, y: name === 'arrow-down' ? [0, 2, 0] : 0, rotate: name === 'gamepad' ? [0, -5, 5, 0] : 0, scale: ['plus', 'x', 'mail', 'sun', 'moon'].includes(name) ? [1, 0.88, 1] : 1 } : { x: 0, y: 0, rotate: 0, scale: 1 }}
+        animate={isActive ? { x: name.includes('right') ? [0, 2, 0] : name.includes('left') ? [0, -2, 0] : 0, y: name === 'arrow-down' ? [0, 2, 0] : name === 'graduation-cap' ? [0, -1, 0] : name === 'archive' ? [0, 1, 0] : name === 'flask-conical' ? [0, -1, 0] : 0, rotate: name === 'gamepad' ? [0, -5, 5, 0] : name === 'graduation-cap' ? [0, -3, 3, 0] : name === 'flask-conical' ? [0, -4, 4, 0] : 0, scale: ['plus', 'x', 'mail', 'sun', 'moon', 'archive'].includes(name) ? [1, 0.88, 1] : 1 } : { x: 0, y: 0, rotate: 0, scale: 1 }}
         transition={{ duration: 0.38, ease: 'easeInOut' }}
       >
         {shape}

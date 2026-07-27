@@ -21,14 +21,29 @@ const initialState = () => ({ setupNames: [], targetScore: 10, game: null });
 
 const copy = {
   nl: {
-    back: '← Terug naar portfolio', title: 'Pesten scorebord', subtitle: 'LocalStorage only, zonder database.',
+    back: '← Terug naar The Lab', title: 'Pesten scorebord', subtitle: 'LocalStorage only, zonder database.',
     setup: 'Setup', targetScore: 'Eindscore (bij deze score lig je eruit)', addName: 'Naam toevoegen', namePlaceholder: 'Bijv. Jay', add: 'Toevoegen', remove: 'Verwijder', startGame: 'Start spel', resetAll: 'Alles resetten',
     runningGame: 'Lopend spel', endScore: 'Eindscore', winner: 'Winnaar', active: 'Actief', score: 'Score', eliminated: 'Uitgeschakeld', place: 'plaats', newGame: 'Nieuw spel opzetten', history: 'Historie (laatste 25)', noHistory: 'Nog geen afgeronde spellen.', ask: 'Vragen?',
     guide: {
       eyebrow: 'Handleiding', title: 'Zo werkt het Pesten-scorebord.',
-      lead: 'Pesten kent veel huisregels. Dit bord is daarom gemaakt voor jullie eigen puntensysteem: voer na elke ronde precies de straf- of rondepunten in waar jullie aan tafel voor kiezen.',
-      roundsTitle: 'Pesten in het kort', roundsText: 'Iedere speler probeert als eerste zijn of haar kaarten kwijt te raken. Actiekaarten en afspraken aan tafel bepalen wie kaarten pakt of extra punten krijgt.',
-      rulesTitle: 'Spreek dit eerst af', rulesText: 'Bepaal vóór de eerste ronde welke kaarten acties zijn, hoe strafpunten tellen en wanneer iemand bij de eindscore uit het spel ligt.',
+      lead: 'Pesten kent veel huisregels. Hieronder staat een veelgebruikte Nederlandse basisvariant. Spreek vóór je begint af welke acties en straffen jullie precies gebruiken; dit scorebord blijft bewust flexibel voor jullie eigen puntensysteem.',
+      roundsTitle: 'Benodigdheden en doel', roundsText: 'Speel met minstens twee spelers, een volledig pak van 52 kaarten en meestal jokers. Deel vaak zeven kaarten per speler. Leg de rest als trekstapel neer en draai één startkaart om. Wie als eerste alle handkaarten legaal weg speelt, wint de ronde.',
+      rulesTitle: 'Veelgebruikte actiekaarten', rulesText: 'Deze effecten komen vaak voor in Nederlands Pesten. Zijn jullie iets anders gewend? Kies jullie huisregel en houd die de hele ronde aan.',
+      gameTitle: 'Een ronde spelen',
+      gameSteps: [
+        { title: 'Kijk naar de bovenste kaart', text: 'Speel met de klok mee. Je mag meestal een kaart leggen met dezelfde kleur of dezelfde waarde als de bovenste kaart van de aflegstapel.' },
+        { title: 'Kun je niet leggen?', text: 'Trek één kaart van de trekstapel. Mag die kaart direct op de aflegstapel, dan mogen jullie afspreken dat je hem meteen speelt.' },
+        { title: 'Los acties meteen op', text: 'Een pestkaart verandert de beurt, laat iemand trekken of geeft je een extra beurt. Maak eerst het effect af voordat de volgende speler speelt.' },
+        { title: 'Roep laatste kaart', text: 'Heb je nog één kaart? Zeg “laatste kaart” of klop op tafel, afhankelijk van jullie afspraak. Vergeet je het, dan volgt vaak een strafkaart.' },
+        { title: 'Win de ronde', text: 'Leg je laatste kaart volgens jullie regels af, dan win je. Veel groepen staan niet toe dat een actiekaart de allerlaatste kaart is. Spreek dit vooraf af.' }
+      ],
+      actions: [
+        { card: '2', title: 'Twee pakken', text: 'De volgende speler legt een 2 terug of pakt twee kaarten. Stapelen is een veelgebruikte huisregel.' },
+        { card: '7', title: 'Zeven blijft kleven', text: 'Je mag nog een kaart spelen.' },
+        { card: '8', title: 'Acht wacht', text: 'De volgende speler slaat een beurt over.' },
+        { card: 'J', title: 'Boer kiest kleur', text: 'Een boer mag vaak altijd; de speler kiest de kleur waarmee verder wordt gespeeld.' },
+        { card: '🃏', title: 'Joker', text: 'De volgende speler legt een joker terug of pakt vaak vijf kaarten. Dit aantal is een huisregel.' }
+      ],
       scoreTitle: 'Stand bijhouden',
       steps: [
         { title: 'Kies jullie limiet', text: 'Laat 10 staan of kies de eindscore die bij jullie spel past.' },
@@ -36,19 +51,34 @@ const copy = {
         { title: 'Verwerk een ronde', text: 'Geef na iedere ronde een strafpunt met +1. Tik vaker als iemand meerdere punten krijgt; −1 corrigeert een invoerfout.' },
         { title: 'Speel door tot één winnaar', text: 'Wie de eindscore bereikt, wordt automatisch uitgeschakeld. De laatste actieve speler wint.' }
       ],
-      exampleTitle: 'Voorbeeld', exampleText: 'Jullie spelen tot 10. Sam staat op 7 en krijgt na een ronde 3 strafpunten. Tik drie keer op +1: Sam komt op 10 en ligt eruit. De rest speelt door.',
+      exampleTitle: 'Voorbeelden', exampleText: 'Er ligt ruiten 9. Jij mag een ruitenkaart of een 9 van een andere kleur spelen. Legt iemand daarna een 2, dan legt de volgende speler een 2 terug of pakt twee kaarten volgens jullie afspraak. Voor een speelavond tot 10: Sam staat op 7 en krijgt 3 strafpunten na een ronde; tik drie keer op +1 en Sam ligt eruit.',
       note: 'Tip: dit bord bewaart alleen namen, stand en de laatste 25 afgeronde spellen op dit apparaat. Het deelt niets met anderen en heeft geen database.'
     }
   },
   en: {
-    back: '← Back to portfolio', title: 'Pesten scoreboard', subtitle: 'LocalStorage only, no database.',
+    back: '← Back to The Lab', title: 'Pesten scoreboard', subtitle: 'LocalStorage only, no database.',
     setup: 'Setup', targetScore: 'End score (at this score you are out)', addName: 'Add name', namePlaceholder: 'e.g. Jay', add: 'Add', remove: 'Remove', startGame: 'Start game', resetAll: 'Reset all',
     runningGame: 'Current game', endScore: 'End score', winner: 'Winner', active: 'Active', score: 'Score', eliminated: 'Eliminated', place: 'place', newGame: 'Set up new game', history: 'History (last 25)', noHistory: 'No finished games yet.', ask: 'Questions?',
     guide: {
       eyebrow: 'Guide', title: 'How the Pesten scoreboard works.',
-      lead: 'Pesten has many house rules. This board is deliberately flexible: after each round, enter the penalty or round points your table agreed on.',
-      roundsTitle: 'Pesten in brief', roundsText: 'Every player tries to get rid of their cards first. Action cards and table agreements decide who draws cards or receives extra points.',
-      rulesTitle: 'Agree this first', rulesText: 'Before the first round, decide which cards are actions, how penalty points count, and when someone is out at the end score.',
+      lead: 'Pesten has many house rules. This guide uses a common Dutch base variant. Agree your exact actions and penalties before you start; this board deliberately stays flexible for your own scoring system.',
+      roundsTitle: 'What you need and the goal', roundsText: 'Play with at least two players, a full 52-card deck and usually jokers. Deal seven cards to each player, make a draw pile, then turn one starter card face up. The first player to legally play all cards from their hand wins the round.',
+      rulesTitle: 'Common action cards', rulesText: 'These effects are common in Dutch Pesten. If your table knows a different version, agree it first and use it consistently for the whole round.',
+      gameTitle: 'Playing a round',
+      gameSteps: [
+        { title: 'Read the top card', text: 'Play clockwise. You can usually play a card that matches either the suit or the value of the top card on the discard pile.' },
+        { title: 'Cannot play?', text: 'Draw one card from the draw pile. If it is playable, your table can agree that it may be played straight away.' },
+        { title: 'Resolve actions immediately', text: 'An action card changes the turn, makes someone draw, or gives you another play. Finish its effect before the next player acts.' },
+        { title: 'Call your last card', text: 'When you have one card left, say “last card” or knock on the table, depending on your agreement. Forgetting it often means a penalty card.' },
+        { title: 'Win the round', text: 'Play your last card legally to win. Many tables do not allow an action card as the final card, so agree this before dealing.' }
+      ],
+      actions: [
+        { card: '2', title: 'Draw two', text: 'The next player plays a 2 back or draws two cards. Stacking is a common house rule.' },
+        { card: '7', title: 'Play again', text: 'You may immediately play another card.' },
+        { card: '8', title: 'Wait', text: 'The next player skips a turn.' },
+        { card: 'J', title: 'Jack chooses suit', text: 'A jack is often playable at any time; the player chooses the suit that continues.' },
+        { card: '🃏', title: 'Joker', text: 'The next player plays another joker or often draws five cards. The amount is a house rule.' }
+      ],
       scoreTitle: 'Keeping score',
       steps: [
         { title: 'Choose your limit', text: 'Keep 10 or set the end score that fits your game.' },
@@ -56,7 +86,7 @@ const copy = {
         { title: 'Log a round', text: 'Give a penalty point with +1 after every round. Tap again for multiple points; −1 corrects an input mistake.' },
         { title: 'Play until one winner remains', text: 'Reaching the end score eliminates a player automatically. The last active player wins.' }
       ],
-      exampleTitle: 'Example', exampleText: 'You play to 10. Sam is on 7 and receives 3 penalty points after a round. Press +1 three times: Sam reaches 10 and is out. Everyone else keeps playing.',
+      exampleTitle: 'Examples', exampleText: 'The pile shows the 9 of diamonds. You may play a diamond or a 9 of another suit. If someone then plays a 2, the next player plays another 2 or draws two under your agreement. For a game to 10: Sam is on 7 and receives 3 penalty points after a round; press +1 three times and Sam is out.',
       note: 'Tip: this board stores only names, scores, and the last 25 finished games on this device. It has no database and shares nothing with anyone.'
     }
   }
@@ -105,7 +135,7 @@ export default function PestenPage() {
       '@graph': [
         createWebsiteSchema({ language: ['en', 'nl'] }),
         createWebPageSchema({ name: title, url: canonical, description, language: isNl ? 'nl-NL' : 'en-US' }),
-        createBreadcrumbSchema([{ name: 'Home', item: `${siteSeo.siteUrl}${localizePath('/', language)}` }, { name: title, item: canonical }])
+        createBreadcrumbSchema([{ name: 'Home', item: `${siteSeo.siteUrl}${localizePath('/', language)}` }, { name: 'The Lab', item: `${siteSeo.siteUrl}${localizePath('/lab', language)}` }, { name: title, item: canonical }])
       ]
     };
   }, [canonicalPath, isNl, language]);
@@ -150,7 +180,7 @@ export default function PestenPage() {
     <main className="toepen-page ui-page">
       <Seo title={`${t.title} | Jaymian-Lee Reinartz`} description={isNl ? 'Lokaal Pesten scorebord met flexibele eindscore, snelle invoer en spelhistorie.' : 'Local Pesten scoreboard with a flexible end score, quick input, and game history.'} canonicalPath={canonicalPath} language={language} alternatePaths={alternatePaths} defaultLocalePath={alternatePaths.en} image={`${siteSeo.siteUrl}/jay.png`} imageAlt={isNl ? 'Pesten scorebord van Jaymian-Lee Reinartz' : 'Pesten scoreboard by Jaymian-Lee Reinartz'} jsonLd={pageJsonLd} />
       <div className="toepen-wrap ui-container">
-        <header className="toepen-header"><Link to={localizePath('/', language)} className="toepen-back">{t.back}</Link><h1>{t.title}</h1><p>{t.subtitle}</p></header>
+        <header className="toepen-header"><Link to={localizePath('/lab', language)} className="toepen-back">{t.back}</Link><h1>{t.title}</h1><p>{t.subtitle}</p></header>
         <section className="toepen-card">
           <h2>{t.setup}</h2>
           <label className="toepen-label" htmlFor="pesten-target-score">{t.targetScore}</label>
@@ -162,7 +192,7 @@ export default function PestenPage() {
         </section>
         {game && <section className="toepen-card"><h2>{t.runningGame}</h2><p>{t.endScore}: <strong>{game.targetScore}</strong></p>{game.finished ? <p className="winner">{t.winner}: <strong>{winnerName}</strong></p> : <p>{t.active}: {activePlayers.map((player) => player.name).join(', ')}</p>}<ul className="toepen-scores">{game.players.map((player) => <li key={player.id} className={player.eliminated ? 'out' : ''}><div className="toepen-score-badge" aria-label={`${t.score} ${player.score}`}>{player.score}</div><div className="toepen-player-main"><strong>{player.name}</strong>{player.eliminated && <p>{t.eliminated} ({t.place} {player.place})</p>}</div><div className="toepen-score-actions"><button type="button" disabled={game.finished || player.eliminated || player.score === 0} onClick={() => changeScore(player.id, -1)}>−1</button><button type="button" disabled={game.finished || player.eliminated} onClick={() => changeScore(player.id, 1)}>+1</button></div></li>)}</ul><button type="button" className="ghost" onClick={() => setState((previous) => ({ ...previous, game: null }))}>{t.newGame}</button></section>}
         <section className="toepen-card"><h2>{t.history}</h2>{history.length === 0 ? <p>{t.noHistory}</p> : <div className="history-list">{history.map((item) => <article key={item.id}><p><strong>{new Date(item.finishedAt).toLocaleString(isNl ? 'nl-NL' : 'en-US')}</strong> · {t.endScore} {item.targetScore}</p><ol>{item.results.map((row) => <li key={`${item.id}-${row.name}`}>#{row.place} {row.name} ({row.score})</li>)}</ol></article>)}</div>}</section>
-        <details className="toepen-guide"><summary><span className="toepen-guide-summary-copy"><small>{t.guide.eyebrow}</small><strong>{t.guide.title}</strong></span><span className="toepen-guide-toggle" aria-hidden="true">+</span></summary><div className="toepen-guide-body"><p className="toepen-guide-lead">{t.guide.lead}</p><div className="toepen-guide-basics"><section><h2>{t.guide.roundsTitle}</h2><p>{t.guide.roundsText}</p></section><section><h2>{t.guide.rulesTitle}</h2><p>{t.guide.rulesText}</p></section></div><section className="toepen-guide-score"><h2>{t.guide.scoreTitle}</h2><ol className="toepen-guide-steps">{t.guide.steps.map((step, index) => <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol></section><aside className="toepen-guide-example"><p>{t.guide.exampleTitle}</p><strong>7 + 3 = 10</strong><span>{t.guide.exampleText}</span></aside><p className="toepen-guide-note">{t.guide.note}</p></div></details>
+        <details className="toepen-guide"><summary><span className="toepen-guide-summary-copy"><small>{t.guide.eyebrow}</small><strong>{t.guide.title}</strong></span><span className="toepen-guide-toggle" aria-hidden="true">+</span></summary><div className="toepen-guide-body"><p className="toepen-guide-lead">{t.guide.lead}</p><div className="toepen-guide-basics"><section><h2>{t.guide.roundsTitle}</h2><p>{t.guide.roundsText}</p></section><section><h2>{t.guide.rulesTitle}</h2><p>{t.guide.rulesText}</p></section></div><section className="toepen-guide-score"><h2>{t.guide.gameTitle}</h2><ol className="toepen-guide-steps">{t.guide.gameSteps.map((step, index) => <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol></section><section className="toepen-guide-actions" aria-label={t.guide.rulesTitle}>{t.guide.actions.map((action) => <article key={action.card}><span>{action.card}</span><div><h3>{action.title}</h3><p>{action.text}</p></div></article>)}</section><section className="toepen-guide-score"><h2>{t.guide.scoreTitle}</h2><ol className="toepen-guide-steps">{t.guide.steps.map((step, index) => <li key={step.title}><span>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol></section><aside className="toepen-guide-example"><p>{t.guide.exampleTitle}</p><strong>7 + 3 = 10</strong><span>{t.guide.exampleText}</span></aside><p className="toepen-guide-note">{t.guide.note}</p></div></details>
       </div>
       <FloatingUtilityBar language={language} onToggleLanguage={() => navigate(getLanguageSwitchPath(location.pathname, isNl ? 'en' : 'nl', location.search, location.hash))} theme={theme} onToggleTheme={() => setTheme((previous) => previous === 'dark' ? 'light' : 'dark')} askLabel={t.ask} askAriaLabel={t.ask} onAsk={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
     </main>
