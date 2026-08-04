@@ -591,7 +591,7 @@ async function getTop3(dateKey, language) {
   const key = leaderboardKey(dateKey, language);
   const namesKey = leaderboardNamesKey(dateKey, language);
 
-  const zrangeResult = await kvCommand(['zrange', key, '0', '2', 'WITHSCORES']);
+  const zrangeResult = await kvCommand(['zrange', key, '0', '-1', 'WITHSCORES']);
   const pairs = Array.isArray(zrangeResult) ? zrangeResult : [];
 
   if (pairs.length === 0) return [];
@@ -616,7 +616,7 @@ async function getTop3(dateKey, language) {
     })
   );
 
-  return members.map((member, index) => ({
+  const ranked = members.map((member, index) => ({
     name: (Array.isArray(names) ? names[index] : null) || member,
     attempts: decodeAttempts(scores[index]),
     ...decodeScoreMeta(scores[index]),
@@ -624,6 +624,19 @@ async function getTop3(dateKey, language) {
       ? 'failed'
       : (historyRecords[index]?.result === 'won' ? 'won' : (decodeAttempts(scores[index]) >= 6 ? 'failed' : 'won'))
   }));
+
+  return ranked.sort((a, b) => {
+    const aFailed = a.result === 'failed';
+    const bFailed = b.result === 'failed';
+    if (aFailed !== bFailed) return aFailed ? 1 : -1;
+    if (a.attempts !== b.attempts) return a.attempts - b.attempts;
+
+    const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
+    const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
+    if (aDuration !== bDuration) return aDuration - bDuration;
+
+    return Number(a.submittedAt || 0) - Number(b.submittedAt || 0);
+  }).slice(0, 3);
 }
 
 async function getHistory(language, nameKey) {

@@ -82,11 +82,24 @@ function isCheatScore(attempts, durationMs) {
   return attempts === 1 && Number.isInteger(durationMs) && durationMs >= 0 && durationMs < 1000;
 }
 
+function compareLeaderboardEntries(a, b) {
+  const aFailed = a.result === 'failed';
+  const bFailed = b.result === 'failed';
+  if (aFailed !== bFailed) return aFailed ? 1 : -1;
+  if (a.attempts !== b.attempts) return a.attempts - b.attempts;
+
+  const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
+  const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
+  if (aDuration !== bDuration) return aDuration - bDuration;
+
+  return Number(a.submittedAt || 0) - Number(b.submittedAt || 0);
+}
+
 async function getTop3(dateKey, language) {
   const key = leaderboardKey(dateKey, language);
   const namesKey = leaderboardNamesKey(dateKey, language);
 
-  const zrangeResult = await kvCommand(['zrange', key, '0', '49', 'WITHSCORES']);
+  const zrangeResult = await kvCommand(['zrange', key, '0', '-1', 'WITHSCORES']);
   const pairs = Array.isArray(zrangeResult) ? zrangeResult : [];
   if (pairs.length === 0) return [];
 
@@ -118,7 +131,10 @@ async function getTop3(dateKey, language) {
       : (historyRecords[index]?.result === 'won' ? 'won' : (decodeAttempts(scores[index]) >= 6 ? 'failed' : 'won'))
   }));
 
-  return ranked.filter((entry) => !isCheatScore(entry.attempts, entry.durationMs)).slice(0, 3);
+  return ranked
+    .filter((entry) => !isCheatScore(entry.attempts, entry.durationMs))
+    .sort(compareLeaderboardEntries)
+    .slice(0, 3);
 }
 
 module.exports = async (req, res) => {

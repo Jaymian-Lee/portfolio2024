@@ -18,6 +18,21 @@ const NAME_COMPARABLE_REGEX = /[^a-z0-9]/g;
 
 const normalizeGuessChar = (value) => normalizeWord(value);
 const normalizeComparableName = (value) => normalizeWord(value).replace(NAME_COMPARABLE_REGEX, '');
+const isFailedLeaderboardEntry = (entry) => entry?.result === 'failed';
+
+const compareLeaderboardEntries = (a, b) => {
+  const aFailed = isFailedLeaderboardEntry(a);
+  const bFailed = isFailedLeaderboardEntry(b);
+  if (aFailed !== bFailed) return aFailed ? 1 : -1;
+
+  if (a.attempts !== b.attempts) return a.attempts - b.attempts;
+
+  const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
+  const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
+  if (aDuration !== bDuration) return aDuration - bDuration;
+
+  return Number(a.submittedAt || 0) - Number(b.submittedAt || 0);
+};
 
 const levenshteinDistance = (a, b) => {
   if (a === b) return 0;
@@ -70,7 +85,7 @@ const copy = {
     askError: 'The assistant is temporarily unavailable.',
     askGreeting: 'Hi, ask me anything about Jaymian-Lee, this portfolio, services, projects, and Word-Lee.',
     leaderboardTitle: 'Word-Lee records',
-    leaderboardSubtitle: 'Fastest completed rounds. Fewer guesses wins; time breaks ties.',
+    leaderboardSubtitle: 'Best completed rounds. Fewer guesses wins; time breaks ties.',
     yesterdayWinnerTitle: 'Month record',
     dailyTopperTitle: 'Today\'s leader',
     weeklyTopppersTitle: 'This week',
@@ -146,7 +161,7 @@ const copy = {
     askError: 'De assistent is tijdelijk niet beschikbaar.',
     askGreeting: 'Hi, vraag me alles over Jaymian-Lee, deze portfolio, services, projecten en Word-Lee.',
     leaderboardTitle: 'Word-Lee records',
-    leaderboardSubtitle: 'Snelste afgeronde rondes. Minder pogingen wint; tijd breekt de gelijke stand.',
+    leaderboardSubtitle: 'Beste afgeronde rondes. Minder pogingen wint; tijd breekt de gelijke stand.',
     yesterdayWinnerTitle: 'Maandrecord',
     dailyTopperTitle: 'Koploper van vandaag',
     weeklyTopppersTitle: 'Deze week',
@@ -492,7 +507,9 @@ function DailyWordPage() {
         const todayData = await safeJson(todayResponse);
         if (cancelled) return;
         if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
-        setLeaderboard(Array.isArray(todayData.top3) ? todayData.top3 : []);
+        setLeaderboard(
+          (Array.isArray(todayData.top3) ? todayData.top3 : []).sort(compareLeaderboardEntries)
+        );
 
         const monthlyResponses = await Promise.all(monthDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`)));
         const monthlyData = await Promise.all(monthlyResponses.map((response) => safeJson(response)));
@@ -506,11 +523,8 @@ function DailyWordPage() {
         if (cancelled) return;
 
         monthlyCandidates.sort((a, b) => {
-          const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
-          const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
-          if (aDuration !== bDuration) return aDuration - bDuration;
-          if (a.attempts !== b.attempts) return a.attempts - b.attempts;
-          return String(a.dateKey).localeCompare(String(b.dateKey));
+          const comparison = compareLeaderboardEntries(a, b);
+          return comparison || String(a.dateKey).localeCompare(String(b.dateKey));
         });
 
         setMonthlyWorldRecord(monthlyCandidates[0] || null);
@@ -530,7 +544,7 @@ function DailyWordPage() {
             return {
               dateKey: key,
               label: formatWeekdayLabel(key, language),
-              entries
+              entries: entries.sort(compareLeaderboardEntries)
             };
           })
           .filter(Boolean);
@@ -833,7 +847,9 @@ function DailyWordPage() {
       const data = await safeJson(response);
       if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
 
-      setLeaderboard(Array.isArray(data.top3) ? data.top3 : []);
+      setLeaderboard(
+        (Array.isArray(data.top3) ? data.top3 : []).sort(compareLeaderboardEntries)
+      );
       setScoreSubmitted(true);
       setShowJoinPopup(false);
       localStorage.setItem(getScoreSubmittedKey(language, dateKey), '1');
@@ -1016,7 +1032,7 @@ function DailyWordPage() {
             <div className="record-heading">
               <div>
                 <p className="record-eyebrow">{copy[language].yesterdayWinnerTitle}</p>
-                <h3>{language === 'nl' ? 'Snelste ronde deze maand' : 'Fastest round this month'}</h3>
+                <h3>{language === 'nl' ? 'Beste ronde deze maand' : 'Best round this month'}</h3>
               </div>
               <span className="record-badge">{copy[language].worldRecord}</span>
             </div>
@@ -1038,7 +1054,7 @@ function DailyWordPage() {
             <div className="record-heading">
               <div>
                 <p className="record-eyebrow">{copy[language].dailyTopperTitle}</p>
-                <h3>{language === 'nl' ? 'Snelste ronde van vandaag' : 'Fastest round today'}</h3>
+                <h3>{language === 'nl' ? 'Beste ronde van vandaag' : 'Best round today'}</h3>
               </div>
               <span className="record-period">{language === 'nl' ? 'Vandaag' : 'Today'}</span>
             </div>
