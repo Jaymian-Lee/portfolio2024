@@ -30,41 +30,9 @@ async function kvCommand(command) {
 }
 
 async function collectPlayerNames(language) {
-  const namesMap = new Map();
-  let cursor = '0';
-  let loops = 0;
-
-  do {
-    const result = await kvCommand(['SCAN', cursor, 'MATCH', `wordlee:names:*:${language}`, 'COUNT', '200']);
-    const nextCursor = Array.isArray(result) ? String(result[0] || '0') : '0';
-    const keys = Array.isArray(result?.[1]) ? result[1] : [];
-
-    for (const key of keys) {
-      const rawMap = await kvCommand(['HGETALL', key]);
-      const entries = Array.isArray(rawMap)
-        ? rawMap.reduce((acc, value, index) => {
-            if (index % 2 === 0) acc.push([value, rawMap[index + 1]]);
-            return acc;
-          }, [])
-        : Object.entries(rawMap || {});
-
-      for (const [memberKey, value] of entries) {
-        const name = String(value || '').trim();
-        if (!name) continue;
-
-        const historyCount = Number(await kvCommand(['HLEN', `wordlee:user:${language}:${memberKey}`]));
-        if (!Number.isFinite(historyCount) || historyCount < 1) continue;
-
-        const normalized = name.toLowerCase();
-        if (!namesMap.has(normalized)) namesMap.set(normalized, name);
-      }
-    }
-
-    cursor = nextCursor;
-    loops += 1;
-  } while (cursor !== '0' && loops < 25);
-
-  return Array.from(namesMap.values()).sort((a, b) => a.localeCompare(b, 'nl'));
+  const raw = await kvCommand(['HGETALL', `wordlee:players:${language}`]);
+  const values = Array.isArray(raw) ? raw.filter((_, index) => index % 2 === 1) : Object.values(raw || {});
+  return Array.from(new Set(values.map((name) => String(name || '').trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'nl'));
 }
 
 module.exports = async (req, res) => {

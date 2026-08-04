@@ -1,4 +1,4 @@
-export const DAILY_WORDS = {
+module.exports = {
   en: [
     'plant',
     'react',

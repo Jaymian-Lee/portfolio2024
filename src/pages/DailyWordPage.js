@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { DAILY_WORDS } from '../data/dailyWords';
 import Seo from '../components/Seo';
 import { createBreadcrumbSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from '../data/seo';
-import { WORD_RULES, buildStorageKey, evaluateGuess, getDailyWord, getTodayKey, normalizeWord } from '../utils/dailyWord';
-import { validateWord } from '../utils/wordValidation';
+import { WORD_RULES, buildStorageKey, getTodayKey, normalizeWord } from '../utils/dailyWord';
 import FloatingUtilityBar from '../components/FloatingUtilityBar';
 import AnimatedIcon from '../components/AnimatedIcon';
 import LabBackLink from '../components/LabBackLink';
@@ -125,6 +123,10 @@ const copy = {
     myScoresTitle: 'Score spotlight',
     myScoresSearchPlaceholder: 'Search or pick a player',
     myScoresEmpty: 'No scores saved yet for this name.',
+    replayTitle: 'Guesses',
+    replayLocked: 'Today\'s guesses are available tomorrow.',
+    replayOpen: 'View guesses',
+    replayClose: 'Close guess history',
     durationLabel: 'time',
     durationNA: 'N/A',
     worldRecord: 'WR',
@@ -201,6 +203,10 @@ const copy = {
     myScoresTitle: 'Score spotlight',
     myScoresSearchPlaceholder: 'Zoek of kies een speler',
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
+    replayTitle: 'Gokgeschiedenis',
+    replayLocked: 'De gokken van vandaag zijn morgen zichtbaar.',
+    replayOpen: 'Bekijk gokken',
+    replayClose: 'Sluit gokgeschiedenis',
     durationLabel: 'tijd',
     durationNA: 'N/A',
     worldRecord: 'WR',
@@ -239,26 +245,6 @@ const getInitialState = (language, dateKey) => {
 };
 
 
-
-const getMondayWeekStart = (dateKey) => {
-  const base = new Date(`${dateKey}T00:00:00`);
-  const jsDay = base.getDay();
-  const mondayOffset = jsDay === 0 ? -6 : 1 - jsDay;
-  base.setDate(base.getDate() + mondayOffset);
-  return base;
-};
-
-const getWeekDateKeys = (dateKey) => {
-  const monday = getMondayWeekStart(dateKey);
-  return Array.from({ length: 7 }).map((_, index) => {
-    const day = new Date(monday);
-    day.setDate(monday.getDate() + index);
-    const year = day.getFullYear();
-    const month = String(day.getMonth() + 1).padStart(2, '0');
-    const date = String(day.getDate()).padStart(2, '0');
-    return `${year}-${month}-${date}`;
-  });
-};
 
 const formatWeekdayLabel = (dateKey, language) => {
   const locale = language === 'nl' ? 'nl-NL' : 'en-US';
@@ -315,6 +301,8 @@ function DailyWordPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [monthlyWorldRecord, setMonthlyWorldRecord] = useState(null);
   const [weeklyTopDays, setWeeklyTopDays] = useState([]);
+  const [replay, setReplay] = useState(null);
+  const [replayTarget, setReplayTarget] = useState(null);
   const [scoreName, setScoreName] = useState('');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
@@ -332,7 +320,6 @@ function DailyWordPage() {
 
   const dateKey = useMemo(() => getTodayKey(), []);
   const guessRequestVersionRef = useRef(0);
-  const validationCacheRef = useRef({ en: new Map(), nl: new Map() });
   const currentGuessRef = useRef(currentGuess);
   const gameRef = useRef(null);
   const isCheckingGuessRef = useRef(isCheckingGuess);
@@ -396,18 +383,6 @@ function DailyWordPage() {
       ]
     };
   }, [canonicalPath, language]);
-  const monthDateKeys = useMemo(() => {
-    const base = new Date(`${dateKey}T00:00:00`);
-    const year = base.getFullYear();
-    const month = base.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    return Array.from({ length: daysInMonth }).map((_, index) => {
-      const day = String(index + 1).padStart(2, '0');
-      return `${year}-${String(month + 1).padStart(2, '0')}-${day}`;
-    });
-  }, [dateKey]);
-  const answer = useMemo(() => getDailyWord(language, DAILY_WORDS, dateKey), [language, dateKey]);
   const [game, setGame] = useState(() => getInitialState(language, dateKey));
 
   useEffect(() => {
@@ -503,53 +478,22 @@ function DailyWordPage() {
       setLeaderboardLoading(true);
       setLeaderboardError('');
       try {
-        const todayResponse = await fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}`);
+        const todayResponse = await fetch(`/api/wordlee/leaderboard?date=${dateKey}&language=${language}&overview=1`);
         const todayData = await safeJson(todayResponse);
         if (cancelled) return;
         if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
         setLeaderboard(
           (Array.isArray(todayData.top3) ? todayData.top3 : []).sort(compareLeaderboardEntries)
         );
-
-        const monthlyResponses = await Promise.all(monthDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`)));
-        const monthlyData = await Promise.all(monthlyResponses.map((response) => safeJson(response)));
-
-        const monthlyCandidates = [];
-        monthlyResponses.forEach((response, index) => {
-          if (!response.ok) return;
-          const top = Array.isArray(monthlyData[index]?.top3) ? monthlyData[index].top3[0] : null;
-          if (top) monthlyCandidates.push({ ...top, dateKey: monthDateKeys[index] });
-        });
-        if (cancelled) return;
-
-        monthlyCandidates.sort((a, b) => {
-          const comparison = compareLeaderboardEntries(a, b);
-          return comparison || String(a.dateKey).localeCompare(String(b.dateKey));
-        });
-
-        setMonthlyWorldRecord(monthlyCandidates[0] || null);
-
-        const weekDateKeys = getWeekDateKeys(dateKey);
-        const weeklyResponses = await Promise.all(
-          weekDateKeys.map((key) => fetch(`/api/wordlee/leaderboard?date=${key}&language=${language}`))
+        setMonthlyWorldRecord(todayData.monthlyWorldRecord || null);
+        setWeeklyTopDays(
+          (Array.isArray(todayData.weeklyTopDays) ? todayData.weeklyTopDays : [])
+            .map((day) => ({
+              ...day,
+              label: formatWeekdayLabel(day.dateKey, language),
+              entries: (Array.isArray(day.entries) ? day.entries : []).sort(compareLeaderboardEntries)
+            }))
         );
-        const weeklyData = await Promise.all(weeklyResponses.map((response) => safeJson(response)));
-        if (cancelled) return;
-
-        const weekRows = weekDateKeys
-          .map((key, index) => {
-            if (!weeklyResponses[index].ok) return null;
-            const entries = Array.isArray(weeklyData[index]?.top3) ? weeklyData[index].top3 : [];
-            if (entries.length === 0) return null;
-            return {
-              dateKey: key,
-              label: formatWeekdayLabel(key, language),
-              entries: entries.sort(compareLeaderboardEntries)
-            };
-          })
-          .filter(Boolean);
-
-        setWeeklyTopDays(weekRows);
       } catch (err) {
         if (cancelled) return;
         setLeaderboardError(err.message || copy[language].leaderboardError);
@@ -564,7 +508,7 @@ function DailyWordPage() {
     return () => {
       cancelled = true;
     };
-  }, [language, dateKey, monthDateKeys]);
+  }, [language, dateKey]);
 
 
   useEffect(() => {
@@ -604,7 +548,15 @@ function DailyWordPage() {
         const data = await safeJson(response);
         if (cancelled) return;
         if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
-        setMyScores(Array.isArray(data.records) ? data.records : []);
+        const records = Array.isArray(data.records) ? data.records : [];
+        setMyScores(records);
+        if (replayTarget && replayTarget.name.toLowerCase() === name.toLowerCase()) {
+          const record = records.find((item) => item.dateKey === replayTarget.dateKey);
+          if (record?.guesses?.length && record?.evaluations?.length) {
+            setReplay({ name: data.name || name, record });
+          }
+          setReplayTarget(null);
+        }
       } catch {
         if (cancelled) return;
         setMyScores([]);
@@ -618,7 +570,7 @@ function DailyWordPage() {
     return () => {
       cancelled = true;
     };
-  }, [language, debouncedMyScoresQuery]);
+  }, [language, debouncedMyScoresQuery, replayTarget]);
 
 
   const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
@@ -691,25 +643,6 @@ function DailyWordPage() {
     return score;
   }, [game]);
 
-  const validateGuessWord = async (guessLanguage, guessWord) => {
-    const cache = validationCacheRef.current[guessLanguage];
-    const cached = cache.get(guessWord);
-    if (cached) return cached;
-
-    const request = validateWord(guessLanguage, guessWord)
-      .then((result) => {
-        cache.set(guessWord, Promise.resolve(result));
-        return result;
-      })
-      .catch((err) => {
-        cache.delete(guessWord);
-        throw err;
-      });
-
-    cache.set(guessWord, request);
-    return request;
-  };
-
   const submitGuess = async () => {
     if (game.status !== 'playing' || isCheckingGuess) return;
 
@@ -729,11 +662,14 @@ function DailyWordPage() {
     const requestVersion = guessRequestVersionRef.current + 1;
     guessRequestVersionRef.current = requestVersion;
     const requestLanguage = language;
-    const requestAnswer = answer;
     const requestGame = game;
 
     try {
-      const data = await validateGuessWord(requestLanguage, normalizedGuess);
+      const response = await fetch(
+        `/api/wordlee/guess?language=${encodeURIComponent(requestLanguage)}&date=${encodeURIComponent(dateKey)}&guess=${encodeURIComponent(normalizedGuess)}`
+      );
+      const data = await safeJson(response);
+      if (!response.ok) throw new Error(data?.error || copy[requestLanguage].wordValidationError);
       if (guessRequestVersionRef.current !== requestVersion) return;
 
       if (!data?.valid) {
@@ -751,13 +687,14 @@ function DailyWordPage() {
         return;
       }
 
-      const nextEvaluation = evaluateGuess(normalizedGuess, requestAnswer);
+      const nextEvaluation = Array.isArray(data.evaluation) ? data.evaluation : [];
+      if (nextEvaluation.length !== WORD_RULES.WORD_LENGTH) throw new Error(copy[requestLanguage].wordValidationError);
       const nextGuesses = [...requestGame.guesses, normalizedGuess];
       const nextEvaluations = [...requestGame.evaluations, nextEvaluation];
 
       let status = 'playing';
-      if (normalizedGuess === requestAnswer) status = 'won';
-      if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && normalizedGuess !== requestAnswer) status = 'lost';
+      if (data.solved) status = 'won';
+      if (nextGuesses.length >= WORD_RULES.MAX_GUESSES && !data.solved) status = 'lost';
 
       const startedAt = Number.isInteger(requestGame.startedAt) ? requestGame.startedAt : Date.now();
       const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);
@@ -840,7 +777,7 @@ function DailyWordPage() {
           language,
           attempts: game.guesses.length,
           durationMs: Number.isInteger(game.durationMs) ? game.durationMs : null,
-          status: game.status === 'lost' ? 'failed' : 'won'
+          guesses: game.guesses
         })
       });
 
@@ -883,6 +820,18 @@ function DailyWordPage() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const openPlayerReplay = (name, record) => {
+    setMyScoresQuery(name);
+    setShowPlayerDropdown(false);
+    if (record?.guesses?.length && record?.evaluations?.length) {
+      setReplay({ name, record });
+      return;
+    }
+    if (record?.dateKey && record.dateKey < dateKey) {
+      setReplayTarget({ name, dateKey: record.dateKey });
+    }
   };
 
   const getResultStatus = (record) => {
@@ -991,9 +940,7 @@ function DailyWordPage() {
 
         {error && <p className="daily-error">{error}</p>}
         {game.status === 'won' && <p className="daily-status win">{copy[language].won}</p>}
-        {game.status === 'lost' && (
-          <p className="daily-status lose">{copy[language].lost} {copy[language].answer}: <strong>{answer.toUpperCase()}</strong></p>
-        )}
+        {game.status === 'lost' && <p className="daily-status lose">{copy[language].lost}</p>}
         {game.status !== 'playing' && <p className="daily-done">{copy[language].alreadyDone}</p>}
 
         <section className="keyboard" aria-label="Virtual keyboard">
@@ -1086,12 +1033,21 @@ function DailyWordPage() {
               <div className="weekly-topppers-grid">
                 {weeklyTopDays.map((day) => (
                   <article key={day.dateKey} className="weekly-day-card">
-                    <h4 className="weekly-day-title">{day.label}</h4>
+                    <div className="weekly-day-heading">
+                      <h4 className="weekly-day-title">{day.label}</h4>
+                      {day.word && <span className="weekly-day-word">{day.word}</span>}
+                    </div>
                     <ol className="weekly-day-list">
                       {day.entries.map((entry, index) => (
                         <li key={`${day.dateKey}-${entry.name}-${entry.submittedAt || index}`}>
                           <span className="weekly-rank">#{index + 1}</span>
-                          <span className="weekly-name">{entry.name}</span>
+                          <button
+                            type="button"
+                            className="player-replay-link weekly-name"
+                            onClick={() => openPlayerReplay(entry.name, { dateKey: day.dateKey })}
+                          >
+                            {entry.name}
+                          </button>
                           {shouldShowResultBadge(entry) && (
                             <span className="score-badge failed">{formatResultLabel(entry)}</span>
                           )}
@@ -1178,7 +1134,14 @@ function DailyWordPage() {
                     {shouldShowResultBadge(record) && (
                       <span className="score-badge failed">{formatResultLabel(record)}</span>
                     )}
-                    <span className="my-scores-attempts">{record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}</span>
+                    <button
+                      type="button"
+                      className={`my-scores-attempts replay-row-trigger ${record.guesses?.length ? 'is-available' : ''}`}
+                      onClick={() => openPlayerReplay(myScoresQuery.trim(), record)}
+                      aria-label={`${copy[language].replayOpen}: ${formatDateTime(record)}`}
+                    >
+                      {record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}
+                    </button>
                     {record.isPR && <span className="my-scores-pr"><AnimatedIcon name="trophy" size={15} />{copy[language].myScoresPR}</span>}
                   </li>
                 ))}
@@ -1256,6 +1219,33 @@ function DailyWordPage() {
                   </div>
                 )}
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {replay && (
+        <div className="wordlee-replay-dialog" role="dialog" aria-modal="true" aria-label={copy[language].replayTitle}>
+          <div className="wordlee-replay-panel">
+            <button type="button" className="wordlee-replay-close" onClick={() => setReplay(null)} aria-label={copy[language].replayClose}>
+              <AnimatedIcon name="x" size={17} />
+            </button>
+            <p className="join-popup-kicker">{replay.name}</p>
+            <h3>{copy[language].replayTitle}</h3>
+            <p className="wordlee-replay-date">{formatDateTime(replay.record)}</p>
+            <div className="wordlee-replay-board" aria-label={`${copy[language].replayTitle} ${replay.name}`}>
+              {replay.record.guesses.map((guess, rowIndex) => (
+                <div className="wordlee-replay-row" key={`${guess}-${rowIndex}`}>
+                  {guess.split('').map((letter, letterIndex) => (
+                    <span
+                      key={`${letter}-${letterIndex}`}
+                      className={`wordlee-replay-tile ${replay.record.evaluations[rowIndex]?.[letterIndex] || 'absent'}`}
+                    >
+                      {letter.toUpperCase()}
+                    </span>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>

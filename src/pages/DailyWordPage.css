@@ -364,6 +364,21 @@
   font-size: 0.86rem;
 }
 
+.weekly-day-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.weekly-day-word {
+  margin-left: auto;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
 .weekly-day-list {
   list-style: none;
   margin: 0.45rem 0 0;
@@ -388,6 +403,31 @@
 
 .weekly-name {
   font-weight: 600;
+}
+
+.player-replay-link,
+.replay-row-trigger {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.player-replay-link {
+  cursor: pointer;
+}
+
+.player-replay-link:hover,
+.player-replay-link:focus-visible,
+.replay-row-trigger.is-available:hover,
+.replay-row-trigger.is-available:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  outline: none;
 }
 
 .weekly-score {
@@ -1224,6 +1264,88 @@
 .my-scores-attempts {
   font-weight: 600;
 }
+
+.replay-row-trigger {
+  cursor: default;
+  font-weight: 600;
+}
+
+.replay-row-trigger.is-available {
+  cursor: pointer;
+}
+
+.wordlee-replay-dialog {
+  position: fixed;
+  z-index: 1100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(8, 10, 14, 0.68);
+  backdrop-filter: blur(7px);
+}
+
+.wordlee-replay-panel {
+  position: relative;
+  width: min(320px, 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  padding: 1.1rem;
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.38);
+}
+
+.wordlee-replay-panel h3 {
+  margin: 0.1rem 2rem 0 0;
+}
+
+.wordlee-replay-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-alt);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.wordlee-replay-date {
+  margin: 0.25rem 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.wordlee-replay-board {
+  display: grid;
+  gap: 0.32rem;
+}
+
+.wordlee-replay-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.32rem;
+}
+
+.wordlee-replay-tile {
+  display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--panel-alt);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.wordlee-replay-tile.correct { background: #5ca66c; border-color: #5ca66c; }
+.wordlee-replay-tile.present { background: #c99a58; border-color: #c99a58; }
+.wordlee-replay-tile.absent { background: #564839; border-color: #6b5b48; }
 
 .my-scores-pr {
   display: inline-flex;

@@ -1,9 +1,11 @@
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const { evaluateGuess, getDailyWord, getTodayKey, normalizeWord } = require('./game');
 const isKvConfigured = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
 const SCORE_FACTOR = 10 ** 13;
 const DURATION_MULTIPLIER = 1000;
 const LEGACY_SUBMITTED_AT_THRESHOLD = 10 ** 10;
+const overviewCache = new Map();
 
 function normalizeName(name) {
   return String(name || '').trim().slice(0, 24);
@@ -32,6 +34,10 @@ function leaderboardNamesKey(dateKey, language) {
 
 function userHistoryKey(memberKey, language) {
   return `wordlee:user:${language}:${memberKey}`;
+}
+
+function playerIndexKey(language) {
+  return `wordlee:players:${language}`;
 }
 
 function compositeScore(attempts, durationMs, submittedAt) {
@@ -137,6 +143,49 @@ async function getTop3(dateKey, language) {
     .slice(0, 3);
 }
 
+function getMonthDateKeys(dateKey) {
+  const base = new Date(`${dateKey}T00:00:00`);
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const days = new Date(year, month + 1, 0).getDate();
+  return Array.from({ length: days }, (_, index) => `${year}-${String(month + 1).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`);
+}
+
+function getWeekDateKeys(dateKey) {
+  const monday = new Date(`${dateKey}T00:00:00`);
+  monday.setDate(monday.getDate() + (monday.getDay() === 0 ? -6 : 1 - monday.getDay()));
+  return Array.from({ length: 7 }, (_, index) => {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + index);
+    return `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+  });
+}
+
+async function getOverview(dateKey, language) {
+  const cacheKey = `${language}:${dateKey}`;
+  const cached = overviewCache.get(cacheKey);
+  if (cached && Date.now() - cached.createdAt < 60_000) return cached.value;
+
+  const weekDateKeys = getWeekDateKeys(dateKey);
+  const overviewDateKeys = Array.from(new Set([...getMonthDateKeys(dateKey), ...weekDateKeys]));
+  const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getTop3(key, language) })));
+  const top3 = rows.find((row) => row.dateKey === dateKey)?.entries || [];
+  const monthlyWorldRecord = rows
+    .filter((row) => row.entries[0])
+    .map((row) => ({ ...row.entries[0], dateKey: row.dateKey }))
+    .sort((a, b) => compareLeaderboardEntries(a, b) || a.dateKey.localeCompare(b.dateKey))[0] || null;
+  const weeklyTopDays = weekDateKeys
+    .map((key) => rows.find((row) => row.dateKey === key) || { dateKey: key, entries: [] })
+    .filter((row) => row.entries.length > 0)
+    .map((row) => ({
+      ...row,
+      word: row.dateKey < getTodayKey() ? getDailyWord(language, row.dateKey).toUpperCase() : null
+    }));
+  const value = { top3, monthlyWorldRecord, weeklyTopDays };
+  overviewCache.set(cacheKey, { createdAt: Date.now(), value });
+  return value;
+}
+
 module.exports = async (req, res) => {
   try {
     if (req.method === 'GET') {
@@ -148,6 +197,9 @@ module.exports = async (req, res) => {
       const language = normalizeLanguage(req.query?.language);
       if (!isKvConfigured) {
         return res.status(200).json({ dateKey, language, top3: [], storage: 'unavailable' });
+      }
+      if (req.query?.overview === '1') {
+        return res.status(200).json({ dateKey, language, ...(await getOverview(dateKey, language)) });
       }
       const top3 = await getTop3(dateKey, language);
       return res.status(200).json({ dateKey, language, top3 });
@@ -161,9 +213,10 @@ module.exports = async (req, res) => {
       const name = normalizeName(body?.name);
       const dateKey = normalizeDateKey(body?.dateKey);
       const language = normalizeLanguage(body?.language);
-      const attempts = Number(body?.attempts);
       const durationMs = body?.durationMs === null || body?.durationMs === undefined ? null : Number(body?.durationMs);
-      const status = body?.status === 'failed' ? 'failed' : 'won';
+      const guesses = Array.isArray(body?.guesses)
+        ? body.guesses.map(normalizeWord).filter((guess) => /^[a-z]{5}$/.test(guess)).slice(0, 6)
+        : [];
 
       if (!name || name.length < 2) {
         return res.status(400).json({ error: 'Vul een geldige naam in (minimaal 2 tekens).' });
@@ -173,13 +226,25 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Ongeldige datum. Gebruik YYYY-MM-DD.' });
       }
 
-      if (!Number.isInteger(attempts) || attempts < 1 || attempts > 6) {
+      if (guesses.length < 1 || guesses.length > 6) {
         return res.status(400).json({ error: 'Ongeldige score.' });
       }
 
       if (durationMs !== null && (!Number.isInteger(durationMs) || durationMs < 0 || durationMs > 86400000)) {
         return res.status(400).json({ error: 'Ongeldige tijd.' });
       }
+
+      const answer = getDailyWord(language, dateKey);
+      const solvedAt = guesses.findIndex((guess) => guess === answer);
+      if (solvedAt >= 0 && solvedAt !== guesses.length - 1) {
+        return res.status(400).json({ error: 'Ongeldige spelreeks.' });
+      }
+      if (solvedAt < 0 && guesses.length < 6) {
+        return res.status(400).json({ error: 'Rond eerst alle pogingen af.' });
+      }
+      const attempts = guesses.length;
+      const status = solvedAt >= 0 ? 'won' : 'failed';
+      const evaluations = guesses.map((guess) => evaluateGuess(guess, answer));
 
       if (attempts === 1 && durationMs !== null && durationMs < 1000) {
         return res.status(400).json({ error: 'Verdachte score geweigerd.' });
@@ -226,8 +291,10 @@ module.exports = async (req, res) => {
         'HSET',
         historyKey,
         dateKey,
-        JSON.stringify({ dateKey, language, attempts: historyAttempts, durationMs, submittedAt: now, result: status })
+        JSON.stringify({ dateKey, language, attempts: historyAttempts, durationMs, submittedAt: now, result: status, guesses, evaluations })
       ]);
+      await kvCommand(['HSET', playerIndexKey(language), memberKey, canonicalName]);
+      overviewCache.clear();
 
       const top3 = await getTop3(dateKey, language);
       return res.status(200).json({ ok: true, dateKey, language, top3, result: status });

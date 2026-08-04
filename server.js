@@ -6,6 +6,7 @@ const path = require('node:path');
 const tmi = require('tmi.js');
 const crypto = require('node:crypto');
 const nspell = require('nspell');
+const { evaluateGuess, getDailyWord, getTodayKey } = require('./api/wordlee/game');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -63,6 +64,7 @@ const wordValidityCache = {
   en: new Map(),
   nl: new Map()
 };
+const leaderboardOverviewCache = new Map();
 
 function loadYoutubeClientCreds() {
   if (!fs.existsSync(YT_CLIENT_ID_PATH) || !fs.existsSync(YT_CLIENT_SECRET_PATH)) return null;
@@ -442,6 +444,10 @@ function leaderboardHistoryKey(language, nameKey) {
   return `wordlee:user:${language}:${nameKey}`;
 }
 
+function playerIndexKey(language) {
+  return `wordlee:players:${language}`;
+}
+
 function compositeScore(attempts, durationMs, submittedAt) {
   const safeDuration = Number.isInteger(durationMs) && durationMs >= 0
     ? Math.min(durationMs, Math.floor((SCORE_FACTOR - 1) / DURATION_MULTIPLIER))
@@ -639,6 +645,62 @@ async function getTop3(dateKey, language) {
   }).slice(0, 3);
 }
 
+function compareLeaderboardEntries(a, b) {
+  const aFailed = a.result === 'failed';
+  const bFailed = b.result === 'failed';
+  if (aFailed !== bFailed) return aFailed ? 1 : -1;
+  if (a.attempts !== b.attempts) return a.attempts - b.attempts;
+  const aDuration = Number.isInteger(a.durationMs) ? a.durationMs : Number.MAX_SAFE_INTEGER;
+  const bDuration = Number.isInteger(b.durationMs) ? b.durationMs : Number.MAX_SAFE_INTEGER;
+  if (aDuration !== bDuration) return aDuration - bDuration;
+  return Number(a.submittedAt || 0) - Number(b.submittedAt || 0);
+}
+
+function getWeekDateKeys(dateKey) {
+  const monday = new Date(`${dateKey}T00:00:00`);
+  const offset = monday.getDay() === 0 ? -6 : 1 - monday.getDay();
+  monday.setDate(monday.getDate() + offset);
+  return Array.from({ length: 7 }, (_, index) => {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + index);
+    return `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+  });
+}
+
+function getMonthDateKeys(dateKey) {
+  const base = new Date(`${dateKey}T00:00:00`);
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const days = new Date(year, month + 1, 0).getDate();
+  return Array.from({ length: days }, (_, index) => `${year}-${String(month + 1).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`);
+}
+
+async function getLeaderboardOverview(dateKey, language) {
+  const cacheKey = `${language}:${dateKey}`;
+  const cached = leaderboardOverviewCache.get(cacheKey);
+  if (cached && Date.now() - cached.createdAt < 60_000) return cached.value;
+
+  const monthDateKeys = getMonthDateKeys(dateKey);
+  const weekDateKeys = getWeekDateKeys(dateKey);
+  const overviewDateKeys = Array.from(new Set([...monthDateKeys, ...weekDateKeys]));
+  const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getTop3(key, language) })));
+  const today = rows.find((row) => row.dateKey === dateKey)?.entries || [];
+  const monthlyCandidates = rows
+    .filter((row) => row.entries[0])
+    .map((row) => ({ ...row.entries[0], dateKey: row.dateKey }))
+    .sort((a, b) => compareLeaderboardEntries(a, b) || a.dateKey.localeCompare(b.dateKey));
+  const weeklyTopDays = weekDateKeys
+    .map((key) => rows.find((row) => row.dateKey === key) || { dateKey: key, entries: [] })
+    .filter((row) => row.entries.length > 0)
+    .map((row) => ({
+      ...row,
+      word: row.dateKey < getTodayKey() ? getDailyWord(language, row.dateKey).toUpperCase() : null
+    }));
+  const value = { top3: today, monthlyWorldRecord: monthlyCandidates[0] || null, weeklyTopDays };
+  leaderboardOverviewCache.set(cacheKey, { createdAt: Date.now(), value });
+  return value;
+}
+
 async function getHistory(language, nameKey) {
   const key = leaderboardHistoryKey(language, nameKey);
   const raw = await kvCommand(['HGETALL', key]);
@@ -660,7 +722,9 @@ async function getHistory(language, nameKey) {
           durationMs: Number.isInteger(record.durationMs) ? record.durationMs : null,
           submittedAt: Number.isInteger(record.submittedAt) ? record.submittedAt : null,
           result: record.result === 'failed' ? 'failed' : 'won',
-          isPR: Boolean(record.isPR)
+          isPR: Boolean(record.isPR),
+          guesses: dateKey < getTodayKey() && Array.isArray(record.guesses) ? record.guesses : null,
+          evaluations: dateKey < getTodayKey() && Array.isArray(record.evaluations) ? record.evaluations : null
         };
       } catch {
         return null;
@@ -675,41 +739,9 @@ async function getHistory(language, nameKey) {
 }
 
 async function getPlayers(language, query = '') {
-  const namesMap = new Map();
-  let cursor = '0';
-  let loops = 0;
-
-  do {
-    const scanResult = await kvCommand(['SCAN', cursor, 'MATCH', `wordlee:names:*:${language}`, 'COUNT', '200']);
-    const nextCursor = Array.isArray(scanResult) ? String(scanResult[0] || '0') : '0';
-    const keys = Array.isArray(scanResult?.[1]) ? scanResult[1] : [];
-
-    for (const key of keys) {
-      const rawMap = await kvCommand(['HGETALL', key]);
-      const entries = Array.isArray(rawMap)
-        ? rawMap.reduce((acc, value, index) => {
-            if (index % 2 === 0) acc.push([value, rawMap[index + 1]]);
-            return acc;
-          }, [])
-        : Object.entries(rawMap || {});
-
-      for (const [memberKey, value] of entries) {
-        const name = String(value || '').trim();
-        if (!name) continue;
-
-        const historyCount = Number(await kvCommand(['HLEN', `wordlee:user:${language}:${memberKey}`]));
-        if (!Number.isFinite(historyCount) || historyCount < 1) continue;
-
-        const normalized = name.toLowerCase();
-        if (!namesMap.has(normalized)) namesMap.set(normalized, name);
-      }
-    }
-
-    cursor = nextCursor;
-    loops += 1;
-  } while (cursor !== '0' && loops < 25);
-
-  const all = Array.from(namesMap.values()).sort((a, b) => a.localeCompare(b, 'nl'));
+  const raw = await kvCommand(['HGETALL', playerIndexKey(language)]);
+  const values = Array.isArray(raw) ? raw.filter((_, index) => index % 2 === 1) : Object.values(raw || {});
+  const all = Array.from(new Set(values.map((name) => String(name || '').trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'nl'));
   if (!query) return all.slice(0, 200);
   return all.filter((name) => name.toLowerCase().includes(query)).slice(0, 200);
 }
@@ -953,6 +985,10 @@ app.get('/api/wordlee/leaderboard', async (req, res) => {
     }
 
     const language = normalizeLanguage(req.query.language);
+    if (req.query.overview === '1') {
+      const overview = await getLeaderboardOverview(dateKey, language);
+      return res.json({ dateKey, language, ...overview });
+    }
     const top3 = await getTop3(dateKey, language);
 
     return res.json({ dateKey, language, top3 });
@@ -962,6 +998,29 @@ app.get('/api/wordlee/leaderboard', async (req, res) => {
       return res.status(500).json({ error: 'KV env vars ontbreken op de server.' });
     }
     return res.status(500).json({ error: 'Kon scorebord niet ophalen.' });
+  }
+});
+
+app.get('/api/wordlee/guess', async (req, res) => {
+  try {
+    const language = normalizeLanguage(req.query.language);
+    const dateKey = normalizeDateKey(req.query.date);
+    const guess = normalizeSpellcheckWord(req.query.guess);
+    if (!dateKey) return res.status(400).json({ error: 'Ongeldige datum.' });
+
+    const result = await isValidWord(language, guess);
+    if (!result.valid) return res.json({ language, valid: false });
+
+    const answer = getDailyWord(language, dateKey);
+    return res.json({
+      language,
+      valid: true,
+      evaluation: evaluateGuess(guess, answer),
+      solved: guess === answer
+    });
+  } catch (error) {
+    console.error('Wordlee guess error:', error);
+    return res.status(500).json({ error: 'Kon deze gok niet controleren.' });
   }
 });
 
@@ -1002,9 +1061,10 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
     const name = normalizeName(req.body?.name);
     const dateKey = normalizeDateKey(req.body?.dateKey);
     const language = normalizeLanguage(req.body?.language);
-    const attempts = Number(req.body?.attempts);
     const durationMs = req.body?.durationMs === null || req.body?.durationMs === undefined ? null : Number(req.body?.durationMs);
-    const status = req.body?.status === 'failed' ? 'failed' : 'won';
+    const guesses = Array.isArray(req.body?.guesses)
+      ? req.body.guesses.map(normalizeSpellcheckWord).filter((guess) => /^[a-z]{5}$/.test(guess)).slice(0, 6)
+      : [];
 
     if (!name || name.length < 2) {
       return res.status(400).json({ error: 'Vul een geldige naam in (minimaal 2 tekens).' });
@@ -1014,13 +1074,25 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
       return res.status(400).json({ error: 'Ongeldige datum. Gebruik YYYY-MM-DD.' });
     }
 
-    if (!Number.isInteger(attempts) || attempts < 1 || attempts > 6) {
+    if (guesses.length < 1 || guesses.length > 6) {
       return res.status(400).json({ error: 'Ongeldige score.' });
     }
 
     if (durationMs !== null && (!Number.isInteger(durationMs) || durationMs < 0 || durationMs > 86400000)) {
       return res.status(400).json({ error: 'Ongeldige tijd.' });
     }
+
+    const answer = getDailyWord(language, dateKey);
+    const solvedAt = guesses.findIndex((guess) => guess === answer);
+    if (solvedAt >= 0 && solvedAt !== guesses.length - 1) {
+      return res.status(400).json({ error: 'Ongeldige spelreeks.' });
+    }
+    if (solvedAt < 0 && guesses.length < 6) {
+      return res.status(400).json({ error: 'Rond eerst alle pogingen af.' });
+    }
+    const attempts = guesses.length;
+    const status = solvedAt >= 0 ? 'won' : 'failed';
+    const evaluations = guesses.map((guess) => evaluateGuess(guess, answer));
 
     const now = Date.now();
     const nameKey = name.toLowerCase();
@@ -1044,7 +1116,8 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
       const score = compositeScore(attempts, durationMs, now);
       await kvPipeline([
         ['ZADD', key, String(score), nameKey],
-        ['HSET', namesKey, nameKey, name]
+        ['HSET', namesKey, nameKey, name],
+        ['HSET', playerIndexKey(language), nameKey, name]
       ]);
     }
 
@@ -1055,9 +1128,14 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
         durationMs,
         submittedAt: now,
         result: status,
-        isPR: false
+        isPR: false,
+        guesses,
+        evaluations
       })]
     ]);
+    await kvPipeline([['HSET', playerIndexKey(language), nameKey, name]]);
+
+    leaderboardOverviewCache.clear();
 
     const top3 = await getTop3(dateKey, language);
     return res.json({ ok: true, dateKey, language, top3, result: status });

@@ -1,5 +1,6 @@
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const { getTodayKey } = require('./game');
 const isKvConfigured = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
 
 function normalizeName(name) {
@@ -58,7 +59,9 @@ function parseHistoryMap(result) {
           attempts: Number(parsed?.attempts),
           submittedAt: Number(parsed?.submittedAt),
           durationMs: parsed?.durationMs === null || parsed?.durationMs === undefined ? null : Number(parsed?.durationMs),
-          result: parsed?.result === 'failed' ? 'failed' : (Number(parsed?.attempts) >= 6 ? 'failed' : 'won')
+          result: parsed?.result === 'failed' ? 'failed' : (Number(parsed?.attempts) >= 6 ? 'failed' : 'won'),
+          guesses: dateKey < getTodayKey() && Array.isArray(parsed?.guesses) ? parsed.guesses : null,
+          evaluations: dateKey < getTodayKey() && Array.isArray(parsed?.evaluations) ? parsed.evaluations : null
         };
       } catch {
         return null;
