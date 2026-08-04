@@ -1013,6 +1013,7 @@
   content: '';
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   background: radial-gradient(circle at 15% -20%, rgba(255, 212, 122, 0.18), transparent 45%);
   pointer-events: none;
 }
