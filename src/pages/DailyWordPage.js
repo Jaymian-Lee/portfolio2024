@@ -252,7 +252,7 @@ const getInitialState = (language, dateKey) => {
 
 
 const formatWeekdayLabel = (dateKey, language) => {
-  const locale = language === 'nl' ? 'nl-NL' : 'en-US';
+  const locale = language === 'nl' ? 'nl-NL' : 'en-GB';
   const date = new Date(`${dateKey}T00:00:00`);
   const dayLabel = date.toLocaleDateString(locale, { weekday: 'long' });
   const normalizedDayLabel = dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1);
@@ -818,7 +818,7 @@ function DailyWordPage() {
 
   const formatDateTime = (record) => {
     const base = record?.submittedAt ? new Date(record.submittedAt) : new Date(`${record.dateKey}T00:00:00`);
-    return base.toLocaleString(language === 'nl' ? 'nl-NL' : 'en-US', {
+    return base.toLocaleString(language === 'nl' ? 'nl-NL' : 'en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
