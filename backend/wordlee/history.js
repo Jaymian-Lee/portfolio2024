@@ -59,7 +59,9 @@ function parseHistoryMap(result, language) {
           attempts: Number(parsed?.attempts),
           submittedAt: Number(parsed?.submittedAt),
           durationMs: parsed?.durationMs === null || parsed?.durationMs === undefined ? null : Number(parsed?.durationMs),
-          result: parsed?.result === 'failed' ? 'failed' : (Number(parsed?.attempts) >= 6 ? 'failed' : 'won'),
+          result: parsed?.result === 'failed'
+            ? 'failed'
+            : (parsed?.result === 'won' ? 'won' : (Number(parsed?.attempts) >= 6 ? 'failed' : 'won')),
           answer: dateKey < getTodayKey() ? getDailyWord(language, dateKey) : null,
           guesses: dateKey < getTodayKey() && Array.isArray(parsed?.guesses) ? parsed.guesses : null,
           evaluations: dateKey < getTodayKey() && Array.isArray(parsed?.evaluations) ? parsed.evaluations : null
