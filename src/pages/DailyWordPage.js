@@ -128,7 +128,14 @@ const copy = {
     replayWord: 'Word',
     replayUnavailable: 'The guesses were not saved for this round.',
     replayLocked: 'Today\'s guesses are available tomorrow.',
-    todayReplayLocked: 'Nice try - finish today\'s Word-Lee yourself before you peek at the results.',
+    todayReplayTitle: 'Not so fast',
+    todayReplayLocked: [
+      'Nice try - finish today\'s Word-Lee yourself before you peek at the results.',
+      'A little early to peek. Your own round comes first.',
+      'The score board keeps today\'s answers secret until you finish playing.',
+      'No shortcuts today. Make your guesses first, then compare them with everyone else.',
+      'Close call, detective. Solve today\'s word before opening the results.',
+    ],
     replayOpen: 'View guesses',
     replayClose: 'Close guess history',
     durationLabel: 'time',
@@ -211,7 +218,14 @@ const copy = {
     replayWord: 'Woord',
     replayUnavailable: 'De gokbeurten zijn bij deze ronde niet opgeslagen.',
     replayLocked: 'De gokken van vandaag zijn morgen zichtbaar.',
-    todayReplayLocked: 'Jij dacht natuurlijk het woord al te zien zonder dat je hem zelf al geraden had. Eerst even zelf proberen!',
+    todayReplayTitle: 'Even geduld',
+    todayReplayLocked: [
+      'Jij dacht natuurlijk het woord al te zien zonder dat je hem zelf al geraden had. Eerst even zelf proberen!',
+      'Aha, stiekem even spieken? Maak eerst jouw eigen ronde af.',
+      'De uitslag van vandaag blijft nog even geheim tot jij hebt gespeeld.',
+      'Geen sluiproute vandaag. Eerst gokken, daarna mag je vergelijken.',
+      'Bijna, speurneus. Raad eerst het woord van vandaag en kijk dan gerust rond.',
+    ],
     replayOpen: 'Bekijk gokken',
     replayClose: 'Sluit gokgeschiedenis',
     durationLabel: 'tijd',
@@ -310,7 +324,7 @@ function DailyWordPage() {
   const [weeklyTopDays, setWeeklyTopDays] = useState([]);
   const [expandedScoreKey, setExpandedScoreKey] = useState('');
   const [replayTarget, setReplayTarget] = useState(null);
-  const [replayNotice, setReplayNotice] = useState('');
+  const [replayNoticeIndex, setReplayNoticeIndex] = useState(-1);
   const [scoreName, setScoreName] = useState('');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
@@ -833,11 +847,13 @@ function DailyWordPage() {
 
   const openPlayerReplay = (name, record, scrollToSpotlight = false) => {
     if (record?.dateKey === dateKey && game.status === 'playing') {
-      setReplayNotice(copy[language].todayReplayLocked);
+      setReplayNoticeIndex((currentIndex) => (
+        (currentIndex + 1) % copy[language].todayReplayLocked.length
+      ));
       return;
     }
 
-    setReplayNotice('');
+    setReplayNoticeIndex(-1);
     setMyScoresQuery(name);
     setShowPlayerDropdown(false);
     if (scrollToSpotlight) {
@@ -995,9 +1011,6 @@ function DailyWordPage() {
         <section className="leaderboard" aria-label={copy[language].leaderboardTitle}>
           <h2>{copy[language].leaderboardTitle}</h2>
           <p className="leaderboard-subtitle">{copy[language].leaderboardSubtitle}</p>
-          {replayNotice && <p className="leaderboard-replay-notice" role="status">{replayNotice}</p>}
-
-
           <div className="record-block" aria-label={copy[language].yesterdayWinnerTitle}>
             <div className="record-heading">
               <div>
@@ -1290,6 +1303,24 @@ function DailyWordPage() {
               </form>
             </div>
           </div>
+        </div>
+      )}
+
+      {replayNoticeIndex >= 0 && (
+        <div className="replay-lock-toast" role="status" aria-live="polite">
+          <div>
+            <p className="replay-lock-toast-kicker">Word-Lee</p>
+            <strong>{copy[language].todayReplayTitle}</strong>
+            <p>{copy[language].todayReplayLocked[replayNoticeIndex]}</p>
+          </div>
+          <button
+            type="button"
+            className="replay-lock-toast-close"
+            onClick={() => setReplayNoticeIndex(-1)}
+            aria-label="Close"
+          >
+            <AnimatedIcon name="x" size={16} />
+          </button>
         </div>
       )}
 
