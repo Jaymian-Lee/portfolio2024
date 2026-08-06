@@ -1,6 +1,6 @@
 const KV_REST_API_URL = process.env.KV_REST_API_URL;
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
-const { getTodayKey } = require('./game');
+const { getDailyWord, getTodayKey } = require('./game');
 const isKvConfigured = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
 
 function normalizeName(name) {
@@ -38,7 +38,7 @@ async function kvCommand(command) {
   return json.result;
 }
 
-function parseHistoryMap(result) {
+function parseHistoryMap(result, language) {
   if (!result) return [];
 
   let entries = [];
@@ -60,6 +60,7 @@ function parseHistoryMap(result) {
           submittedAt: Number(parsed?.submittedAt),
           durationMs: parsed?.durationMs === null || parsed?.durationMs === undefined ? null : Number(parsed?.durationMs),
           result: parsed?.result === 'failed' ? 'failed' : (Number(parsed?.attempts) >= 6 ? 'failed' : 'won'),
+          answer: dateKey < getTodayKey() ? getDailyWord(language, dateKey) : null,
           guesses: dateKey < getTodayKey() && Array.isArray(parsed?.guesses) ? parsed.guesses : null,
           evaluations: dateKey < getTodayKey() && Array.isArray(parsed?.evaluations) ? parsed.evaluations : null
         };
@@ -89,7 +90,7 @@ module.exports = async (req, res) => {
     const key = userHistoryKey(memberKey, language);
 
     const mapResult = await kvCommand(['HGETALL', key]);
-    const history = parseHistoryMap(mapResult);
+    const history = parseHistoryMap(mapResult, language);
 
     const isBetterRecord = (a, b) => {
       if (!b) return true;

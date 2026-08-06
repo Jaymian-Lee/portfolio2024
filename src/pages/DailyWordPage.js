@@ -17,6 +17,7 @@ const NAME_COMPARABLE_REGEX = /[^a-z0-9]/g;
 const normalizeGuessChar = (value) => normalizeWord(value);
 const normalizeComparableName = (value) => normalizeWord(value).replace(NAME_COMPARABLE_REGEX, '');
 const isFailedLeaderboardEntry = (entry) => entry?.result === 'failed';
+const getScoreRecordKey = (record) => `${record?.dateKey || ''}-${record?.submittedAt || 0}`;
 
 const compareLeaderboardEntries = (a, b) => {
   const aFailed = isFailedLeaderboardEntry(a);
@@ -124,6 +125,7 @@ const copy = {
     myScoresSearchPlaceholder: 'Search or pick a player',
     myScoresEmpty: 'No scores saved yet for this name.',
     replayTitle: 'Guesses',
+    replayWord: 'Word',
     replayLocked: 'Today\'s guesses are available tomorrow.',
     replayOpen: 'View guesses',
     replayClose: 'Close guess history',
@@ -204,6 +206,7 @@ const copy = {
     myScoresSearchPlaceholder: 'Zoek of kies een speler',
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
     replayTitle: 'Gokgeschiedenis',
+    replayWord: 'Woord',
     replayLocked: 'De gokken van vandaag zijn morgen zichtbaar.',
     replayOpen: 'Bekijk gokken',
     replayClose: 'Sluit gokgeschiedenis',
@@ -301,7 +304,7 @@ function DailyWordPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [monthlyWorldRecord, setMonthlyWorldRecord] = useState(null);
   const [weeklyTopDays, setWeeklyTopDays] = useState([]);
-  const [replay, setReplay] = useState(null);
+  const [expandedScoreKey, setExpandedScoreKey] = useState('');
   const [replayTarget, setReplayTarget] = useState(null);
   const [scoreName, setScoreName] = useState('');
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
@@ -553,7 +556,7 @@ function DailyWordPage() {
         if (replayTarget && replayTarget.name.toLowerCase() === name.toLowerCase()) {
           const record = records.find((item) => item.dateKey === replayTarget.dateKey);
           if (record?.guesses?.length && record?.evaluations?.length) {
-            setReplay({ name: data.name || name, record });
+            setExpandedScoreKey(getScoreRecordKey(record));
           }
           setReplayTarget(null);
         }
@@ -826,10 +829,12 @@ function DailyWordPage() {
     setMyScoresQuery(name);
     setShowPlayerDropdown(false);
     if (record?.guesses?.length && record?.evaluations?.length) {
-      setReplay({ name, record });
+      const recordKey = getScoreRecordKey(record);
+      setExpandedScoreKey((currentKey) => (currentKey === recordKey ? '' : recordKey));
       return;
     }
     if (record?.dateKey && record.dateKey < dateKey) {
+      setExpandedScoreKey('');
       setReplayTarget({ name, dateKey: record.dateKey });
     }
   };
@@ -1090,6 +1095,7 @@ function DailyWordPage() {
                 value={myScoresQuery}
                 onChange={(e) => {
                   setMyScoresQuery(e.target.value.slice(0, 24));
+                  setExpandedScoreKey('');
                   setShowPlayerDropdown(true);
                 }}
                 onFocus={() => setShowPlayerDropdown(true)}
@@ -1113,6 +1119,7 @@ function DailyWordPage() {
                       className="my-scores-dropdown-item"
                       onClick={() => {
                         setMyScoresQuery(name);
+                        setExpandedScoreKey('');
                         setShowPlayerDropdown(false);
                       }}
                     >
@@ -1128,23 +1135,52 @@ function DailyWordPage() {
             )}
             {myScores.length > 0 && (
               <ul className="my-scores-list">
-                {myScores.map((record) => (
-                  <li key={`${record.dateKey}-${record.submittedAt || 0}`}>
+                {myScores.map((record) => {
+                  const recordKey = getScoreRecordKey(record);
+                  const hasReplay = Boolean(record.guesses?.length && record.evaluations?.length);
+                  const isExpanded = hasReplay && expandedScoreKey === recordKey;
+
+                  return (
+                  <li key={recordKey} className={isExpanded ? 'is-expanded' : ''}>
+                    <div className="my-scores-row">
                     <span className="my-scores-date">{formatDateTime(record)}</span>
                     {shouldShowResultBadge(record) && (
                       <span className="score-badge failed">{formatResultLabel(record)}</span>
                     )}
                     <button
                       type="button"
-                      className={`my-scores-attempts replay-row-trigger ${record.guesses?.length ? 'is-available' : ''}`}
+                      className={`my-scores-attempts replay-row-trigger ${hasReplay ? 'is-available' : ''}`}
                       onClick={() => openPlayerReplay(myScoresQuery.trim(), record)}
                       aria-label={`${copy[language].replayOpen}: ${formatDateTime(record)}`}
+                      aria-expanded={hasReplay ? isExpanded : undefined}
+                      aria-controls={hasReplay ? `score-replay-${recordKey}` : undefined}
                     >
                       {record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}
                     </button>
                     {record.isPR && <span className="my-scores-pr"><AnimatedIcon name="trophy" size={15} />{copy[language].myScoresPR}</span>}
+                    </div>
+                    {isExpanded && (
+                      <section className="score-replay" id={`score-replay-${recordKey}`} aria-label={`${copy[language].replayTitle} ${formatDateTime(record)}`}>
+                        <p className="score-replay-word">{copy[language].replayWord}: <strong>{record.answer?.toUpperCase()}</strong></p>
+                        <div className="wordlee-replay-board score-replay-board">
+                          {record.guesses.map((guess, rowIndex) => (
+                            <div className="wordlee-replay-row" key={`${guess}-${rowIndex}`}>
+                              {guess.split('').map((letter, letterIndex) => (
+                                <span
+                                  key={`${letter}-${letterIndex}`}
+                                  className={`wordlee-replay-tile ${record.evaluations[rowIndex]?.[letterIndex] || 'absent'}`}
+                                >
+                                  {letter.toUpperCase()}
+                                </span>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+                    )}
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             )}
           </div>
@@ -1219,33 +1255,6 @@ function DailyWordPage() {
                   </div>
                 )}
               </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {replay && (
-        <div className="wordlee-replay-dialog" role="dialog" aria-modal="true" aria-label={copy[language].replayTitle}>
-          <div className="wordlee-replay-panel">
-            <button type="button" className="wordlee-replay-close" onClick={() => setReplay(null)} aria-label={copy[language].replayClose}>
-              <AnimatedIcon name="x" size={17} />
-            </button>
-            <p className="join-popup-kicker">{replay.name}</p>
-            <h3>{copy[language].replayTitle}</h3>
-            <p className="wordlee-replay-date">{formatDateTime(replay.record)}</p>
-            <div className="wordlee-replay-board" aria-label={`${copy[language].replayTitle} ${replay.name}`}>
-              {replay.record.guesses.map((guess, rowIndex) => (
-                <div className="wordlee-replay-row" key={`${guess}-${rowIndex}`}>
-                  {guess.split('').map((letter, letterIndex) => (
-                    <span
-                      key={`${letter}-${letterIndex}`}
-                      className={`wordlee-replay-tile ${replay.record.evaluations[rowIndex]?.[letterIndex] || 'absent'}`}
-                    >
-                      {letter.toUpperCase()}
-                    </span>
-                  ))}
-                </div>
-              ))}
             </div>
           </div>
         </div>
