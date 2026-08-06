@@ -126,6 +126,7 @@ const copy = {
     myScoresEmpty: 'No scores saved yet for this name.',
     replayTitle: 'Guesses',
     replayWord: 'Word',
+    replayUnavailable: 'The guesses were not saved for this older round.',
     replayLocked: 'Today\'s guesses are available tomorrow.',
     replayOpen: 'View guesses',
     replayClose: 'Close guess history',
@@ -207,6 +208,7 @@ const copy = {
     myScoresEmpty: 'Nog geen scores opgeslagen voor deze naam.',
     replayTitle: 'Gokgeschiedenis',
     replayWord: 'Woord',
+    replayUnavailable: 'De gokbeurten zijn bij deze oudere ronde nog niet opgeslagen.',
     replayLocked: 'De gokken van vandaag zijn morgen zichtbaar.',
     replayOpen: 'Bekijk gokken',
     replayClose: 'Sluit gokgeschiedenis',
@@ -555,7 +557,7 @@ function DailyWordPage() {
         setMyScores(records);
         if (replayTarget && replayTarget.name.toLowerCase() === name.toLowerCase()) {
           const record = records.find((item) => item.dateKey === replayTarget.dateKey);
-          if (record?.guesses?.length && record?.evaluations?.length) {
+          if (record?.answer) {
             setExpandedScoreKey(getScoreRecordKey(record));
           }
           setReplayTarget(null);
@@ -828,7 +830,7 @@ function DailyWordPage() {
   const openPlayerReplay = (name, record) => {
     setMyScoresQuery(name);
     setShowPlayerDropdown(false);
-    if (record?.guesses?.length && record?.evaluations?.length) {
+    if (record?.answer) {
       const recordKey = getScoreRecordKey(record);
       setExpandedScoreKey((currentKey) => (currentKey === recordKey ? '' : recordKey));
       return;
@@ -1138,7 +1140,8 @@ function DailyWordPage() {
                 {myScores.map((record) => {
                   const recordKey = getScoreRecordKey(record);
                   const hasReplay = Boolean(record.guesses?.length && record.evaluations?.length);
-                  const isExpanded = hasReplay && expandedScoreKey === recordKey;
+                  const canExpand = Boolean(record.answer);
+                  const isExpanded = canExpand && expandedScoreKey === recordKey;
 
                   return (
                   <li key={recordKey} className={isExpanded ? 'is-expanded' : ''}>
@@ -1149,11 +1152,11 @@ function DailyWordPage() {
                     )}
                     <button
                       type="button"
-                      className={`my-scores-attempts replay-row-trigger ${hasReplay ? 'is-available' : ''}`}
+                          className={`my-scores-attempts replay-row-trigger ${canExpand ? 'is-available' : ''}`}
                       onClick={() => openPlayerReplay(myScoresQuery.trim(), record)}
                       aria-label={`${copy[language].replayOpen}: ${formatDateTime(record)}`}
-                      aria-expanded={hasReplay ? isExpanded : undefined}
-                      aria-controls={hasReplay ? `score-replay-${recordKey}` : undefined}
+                          aria-expanded={canExpand ? isExpanded : undefined}
+                          aria-controls={canExpand ? `score-replay-${recordKey}` : undefined}
                     >
                       {record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}
                     </button>
@@ -1162,20 +1165,22 @@ function DailyWordPage() {
                     {isExpanded && (
                       <section className="score-replay" id={`score-replay-${recordKey}`} aria-label={`${copy[language].replayTitle} ${formatDateTime(record)}`}>
                         <p className="score-replay-word">{copy[language].replayWord}: <strong>{record.answer?.toUpperCase()}</strong></p>
-                        <div className="wordlee-replay-board score-replay-board">
-                          {record.guesses.map((guess, rowIndex) => (
-                            <div className="wordlee-replay-row" key={`${guess}-${rowIndex}`}>
-                              {guess.split('').map((letter, letterIndex) => (
-                                <span
-                                  key={`${letter}-${letterIndex}`}
-                                  className={`wordlee-replay-tile ${record.evaluations[rowIndex]?.[letterIndex] || 'absent'}`}
-                                >
-                                  {letter.toUpperCase()}
-                                </span>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
+                        {hasReplay ? (
+                          <div className="wordlee-replay-board score-replay-board">
+                            {record.guesses.map((guess, rowIndex) => (
+                              <div className="wordlee-replay-row" key={`${guess}-${rowIndex}`}>
+                                {guess.split('').map((letter, letterIndex) => (
+                                  <span
+                                    key={`${letter}-${letterIndex}`}
+                                    className={`wordlee-replay-tile ${record.evaluations[rowIndex]?.[letterIndex] || 'absent'}`}
+                                  >
+                                    {letter.toUpperCase()}
+                                  </span>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        ) : <p className="score-replay-unavailable">{copy[language].replayUnavailable}</p>}
                       </section>
                     )}
                   </li>
