@@ -6,7 +6,7 @@ const path = require('node:path');
 const tmi = require('tmi.js');
 const crypto = require('node:crypto');
 const nspell = require('nspell');
-const { evaluateGuess, getDailyWord, getTodayKey } = require('./api/wordlee/game');
+const { evaluateGuess, getDailyWord, getTodayKey } = require('./backend/wordlee/game');
 
 const app = express();
 const port = process.env.PORT || 3001;
