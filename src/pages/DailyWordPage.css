@@ -1261,11 +1261,29 @@
 }
 
 .my-scores-row {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   display: grid;
   grid-template-columns: 1fr auto auto auto;
   gap: 0.5rem;
   align-items: center;
   padding: 0.45rem 0.55rem;
+  cursor: default;
+}
+
+.my-scores-row.is-available {
+  cursor: pointer;
+}
+
+.my-scores-row.is-available:hover,
+.my-scores-row.is-available:focus-visible {
+  background: color-mix(in srgb, var(--panel-alt) 56%, var(--accent) 44%);
+  outline: none;
 }
 
 .my-scores-date {
@@ -1275,15 +1293,6 @@
 
 .my-scores-attempts {
   font-weight: 600;
-}
-
-.replay-row-trigger {
-  cursor: default;
-  font-weight: 600;
-}
-
-.replay-row-trigger.is-available {
-  cursor: pointer;
 }
 
 .wordlee-replay-board {

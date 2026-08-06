@@ -723,8 +723,9 @@ async function getHistory(language, nameKey) {
           submittedAt: Number.isInteger(record.submittedAt) ? record.submittedAt : null,
           result: record.result === 'failed' ? 'failed' : 'won',
           isPR: Boolean(record.isPR),
-          guesses: dateKey < getTodayKey() && Array.isArray(record.guesses) ? record.guesses : null,
-          evaluations: dateKey < getTodayKey() && Array.isArray(record.evaluations) ? record.evaluations : null
+          answer: getDailyWord(language, dateKey),
+          guesses: Array.isArray(record.guesses) ? record.guesses : null,
+          evaluations: Array.isArray(record.evaluations) ? record.evaluations : null
         };
       } catch {
         return null;

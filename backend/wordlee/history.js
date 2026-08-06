@@ -62,9 +62,9 @@ function parseHistoryMap(result, language) {
           result: parsed?.result === 'failed'
             ? 'failed'
             : (parsed?.result === 'won' ? 'won' : (Number(parsed?.attempts) >= 6 ? 'failed' : 'won')),
-          answer: dateKey < getTodayKey() ? getDailyWord(language, dateKey) : null,
-          guesses: dateKey < getTodayKey() && Array.isArray(parsed?.guesses) ? parsed.guesses : null,
-          evaluations: dateKey < getTodayKey() && Array.isArray(parsed?.evaluations) ? parsed.evaluations : null
+          answer: getDailyWord(language, dateKey),
+          guesses: Array.isArray(parsed?.guesses) ? parsed.guesses : null,
+          evaluations: Array.isArray(parsed?.evaluations) ? parsed.evaluations : null
         };
       } catch {
         return null;

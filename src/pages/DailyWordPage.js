@@ -1157,23 +1157,23 @@ function DailyWordPage() {
 
                   return (
                   <li key={recordKey} className={isExpanded ? 'is-expanded' : ''}>
-                    <div className="my-scores-row">
+                    <button
+                      type="button"
+                      className={`my-scores-row ${canExpand ? 'is-available' : ''}`}
+                      onClick={() => openPlayerReplay(myScoresQuery.trim(), record)}
+                      aria-label={`${copy[language].replayOpen}: ${formatDateTime(record)}`}
+                      aria-expanded={canExpand ? isExpanded : undefined}
+                      aria-controls={canExpand ? `score-replay-${recordKey}` : undefined}
+                    >
                     <span className="my-scores-date">{formatDateTime(record)}</span>
                     {shouldShowResultBadge(record) && (
                       <span className="score-badge failed">{formatResultLabel(record)}</span>
                     )}
-                    <button
-                      type="button"
-                          className={`my-scores-attempts replay-row-trigger ${canExpand ? 'is-available' : ''}`}
-                      onClick={() => openPlayerReplay(myScoresQuery.trim(), record)}
-                      aria-label={`${copy[language].replayOpen}: ${formatDateTime(record)}`}
-                          aria-expanded={canExpand ? isExpanded : undefined}
-                          aria-controls={canExpand ? `score-replay-${recordKey}` : undefined}
-                    >
+                    <span className="my-scores-attempts">
                       {record.attempts} {copy[language].leaderboardAttempts} · {copy[language].durationLabel}: {formatDuration(record.durationMs)}
-                    </button>
+                    </span>
                     {record.isPR && <span className="my-scores-pr"><AnimatedIcon name="trophy" size={15} />{copy[language].myScoresPR}</span>}
-                    </div>
+                    </button>
                     {isExpanded && (
                       <section className="score-replay" id={`score-replay-${recordKey}`} aria-label={`${copy[language].replayTitle} ${formatDateTime(record)}`}>
                         <p className="score-replay-word">{copy[language].replayWord}: <strong>{record.answer?.toUpperCase()}</strong></p>
