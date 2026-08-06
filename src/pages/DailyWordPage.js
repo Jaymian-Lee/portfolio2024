@@ -329,6 +329,7 @@ function DailyWordPage() {
   const gameRef = useRef(null);
   const isCheckingGuessRef = useRef(isCheckingGuess);
   const submitGuessRef = useRef(null);
+  const scoreSpotlightRef = useRef(null);
 
   useEffect(() => () => {
     guessRequestVersionRef.current += 1;
@@ -827,9 +828,14 @@ function DailyWordPage() {
     });
   };
 
-  const openPlayerReplay = (name, record) => {
+  const openPlayerReplay = (name, record, scrollToSpotlight = false) => {
     setMyScoresQuery(name);
     setShowPlayerDropdown(false);
+    if (scrollToSpotlight) {
+      window.requestAnimationFrame(() => {
+        scoreSpotlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
     if (record?.answer) {
       const recordKey = getScoreRecordKey(record);
       setExpandedScoreKey((currentKey) => (currentKey === recordKey ? '' : recordKey));
@@ -996,7 +1002,7 @@ function DailyWordPage() {
                 <button
                   type="button"
                   className="player-replay-link yesterday-winner-name"
-                  onClick={() => openPlayerReplay(monthlyWorldRecord.name, { dateKey: monthlyWorldRecord.dateKey })}
+                  onClick={() => openPlayerReplay(monthlyWorldRecord.name, { dateKey: monthlyWorldRecord.dateKey }, true)}
                 >
                   {monthlyWorldRecord.name}
                 </button>
@@ -1024,7 +1030,7 @@ function DailyWordPage() {
                 <button
                   type="button"
                   className="player-replay-link yesterday-winner-name"
-                  onClick={() => openPlayerReplay(dailyTopper.name, { dateKey })}
+                  onClick={() => openPlayerReplay(dailyTopper.name, { dateKey }, true)}
                 >
                   {dailyTopper.name}
                 </button>
@@ -1063,7 +1069,7 @@ function DailyWordPage() {
                           <button
                             type="button"
                             className="player-replay-link weekly-name"
-                            onClick={() => openPlayerReplay(entry.name, { dateKey: day.dateKey })}
+                            onClick={() => openPlayerReplay(entry.name, { dateKey: day.dateKey }, true)}
                           >
                             {entry.name}
                           </button>
@@ -1101,7 +1107,7 @@ function DailyWordPage() {
 
 
 
-          <div className="my-scores" aria-label={copy[language].myScoresTitle}>
+          <div className="my-scores" ref={scoreSpotlightRef} aria-label={copy[language].myScoresTitle}>
             <h3>{copy[language].myScoresTitle}</h3>
             <div className="my-scores-search-wrap">
               <input

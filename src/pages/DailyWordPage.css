@@ -420,6 +420,11 @@
   cursor: pointer;
 }
 
+.player-replay-link.yesterday-winner-name {
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
 .player-replay-link:hover,
 .player-replay-link:focus-visible,
 .replay-row-trigger.is-available:hover,
