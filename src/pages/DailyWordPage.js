@@ -993,7 +993,13 @@ function DailyWordPage() {
             {monthlyWorldRecord ? (
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true"><AnimatedIcon name="trophy" size={17} /></span>
-                <span className="yesterday-winner-name">{monthlyWorldRecord.name}</span>
+                <button
+                  type="button"
+                  className="player-replay-link yesterday-winner-name"
+                  onClick={() => openPlayerReplay(monthlyWorldRecord.name, { dateKey: monthlyWorldRecord.dateKey })}
+                >
+                  {monthlyWorldRecord.name}
+                </button>
                 {shouldShowResultBadge(monthlyWorldRecord) && (
                   <span className="score-badge failed">{formatResultLabel(monthlyWorldRecord)}</span>
                 )}
@@ -1015,7 +1021,13 @@ function DailyWordPage() {
             {dailyTopper ? (
               <div className="yesterday-winner-card">
                 <span className="winner-crown" aria-hidden="true"><AnimatedIcon name="trophy" size={17} /></span>
-                <span className="yesterday-winner-name">{dailyTopper.name}</span>
+                <button
+                  type="button"
+                  className="player-replay-link yesterday-winner-name"
+                  onClick={() => openPlayerReplay(dailyTopper.name, { dateKey })}
+                >
+                  {dailyTopper.name}
+                </button>
                 {shouldShowResultBadge(dailyTopper) && (
                   <span className="score-badge failed">{formatResultLabel(dailyTopper)}</span>
                 )}
