@@ -128,7 +128,7 @@ const copy = {
     replayWord: 'Word',
     replayUnavailable: 'The guesses were not saved for this round.',
     replayLocked: 'Today\'s guesses are available tomorrow.',
-    todayReplayLocked: 'Nice try — finish today\'s Word-Lee yourself before you peek at the results.',
+    todayReplayLocked: 'Nice try - finish today\'s Word-Lee yourself before you peek at the results.',
     replayOpen: 'View guesses',
     replayClose: 'Close guess history',
     durationLabel: 'time',
