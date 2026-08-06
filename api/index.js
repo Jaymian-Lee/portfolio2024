@@ -1,5 +1,5 @@
-// Keep all API routes in one Vercel Serverless Function. The Hobby plan allows
-// at most 12 functions, while this portfolio exposes more individual endpoints.
+// Route every API URL through one Vercel Serverless Function. The Hobby plan
+// allows at most 12 functions, while this portfolio exposes more endpoints.
 const handlers = {
   'chat': () => require('../backend/chat'),
   'health': () => require('../backend/health'),
@@ -16,10 +16,13 @@ const handlers = {
 };
 
 function getRoute(req) {
+  const rewrittenPath = req.query?.path;
+  if (typeof rewrittenPath === 'string' && rewrittenPath) {
+    return rewrittenPath.replace(/^\/+|\/+$/g, '');
+  }
+
   const pathname = String(req.url || '').split('?')[0];
-  return pathname
-    .replace(/^\/api\/?/, '')
-    .replace(/\/+$/, '');
+  return pathname.replace(/^\/api\/?/, '').replace(/\/+$/, '');
 }
 
 module.exports = async function handler(req, res) {
