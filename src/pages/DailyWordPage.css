@@ -296,6 +296,16 @@
   font-size: 0.9rem;
 }
 
+.leaderboard-replay-notice {
+  margin: 0.7rem 0 0;
+  padding: 0.6rem 0.72rem;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--panel-alt) 82%, var(--accent) 18%);
+  color: var(--text);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
 
 .yesterday-winner {
   margin-top: 0.8rem;
