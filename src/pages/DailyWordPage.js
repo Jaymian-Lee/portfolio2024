@@ -13,11 +13,23 @@ import './DailyWordPage.css';
 const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 const LETTER_INPUT_REGEX = /^\p{L}$/u;
 const NAME_COMPARABLE_REGEX = /[^a-z0-9]/g;
+const REPLAY_NOTICE_DURATION_MS = 15_000;
 
 const normalizeGuessChar = (value) => normalizeWord(value);
 const normalizeComparableName = (value) => normalizeWord(value).replace(NAME_COMPARABLE_REGEX, '');
 const isFailedLeaderboardEntry = (entry) => entry?.result === 'failed';
 const getScoreRecordKey = (record) => `${record?.dateKey || ''}-${record?.submittedAt || 0}`;
+const DECOY_WORDS = {
+  en: ['lumet', 'varin', 'solen', 'mavik', 'rulix'],
+  nl: ['lumet', 'varin', 'solen', 'mavik', 'rulix']
+};
+
+const getDecoyWord = (dateKey, language, actualWord = '') => {
+  const words = DECOY_WORDS[language] || DECOY_WORDS.en;
+  const seed = String(dateKey || '').split('').reduce((total, char) => total + char.charCodeAt(0), 0);
+  const candidate = words[seed % words.length];
+  return candidate === normalizeWord(actualWord) ? words[(seed + 1) % words.length] : candidate;
+};
 
 const compareLeaderboardEntries = (a, b) => {
   const aFailed = isFailedLeaderboardEntry(a);
@@ -244,7 +256,7 @@ const getInitialState = (language, dateKey) => {
   const key = buildStorageKey(language, dateKey);
   const saved = localStorage.getItem(key);
   if (!saved) {
-    return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null };
+    return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null, answer: null };
   }
 
   try {
@@ -255,14 +267,17 @@ const getInitialState = (language, dateKey) => {
         evaluations: parsed.evaluations,
         status: parsed.status,
         startedAt: Number.isInteger(parsed.startedAt) ? parsed.startedAt : null,
-        durationMs: Number.isInteger(parsed.durationMs) ? parsed.durationMs : null
+        durationMs: Number.isInteger(parsed.durationMs) ? parsed.durationMs : null,
+        answer: typeof parsed.answer === 'string' && /^[a-z]{5}$/.test(normalizeWord(parsed.answer))
+          ? normalizeWord(parsed.answer)
+          : null
       };
     }
   } catch {
-    return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null };
+    return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null, answer: null };
   }
 
-  return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null };
+  return { guesses: [], evaluations: [], status: 'playing', startedAt: null, durationMs: null, answer: null };
 };
 
 
@@ -375,6 +390,16 @@ function DailyWordPage() {
 
     return () => window.clearTimeout(timerId);
   }, [myScoresQuery]);
+
+  useEffect(() => {
+    if (replayNoticeIndex < 0) return undefined;
+
+    const timerId = window.setTimeout(() => {
+      setReplayNoticeIndex(-1);
+    }, REPLAY_NOTICE_DURATION_MS);
+
+    return () => window.clearTimeout(timerId);
+  }, [replayNoticeIndex]);
 
   const dailySeoJsonLd = useMemo(() => {
     const canonical = `${siteSeo.siteUrl}${canonicalPath}`;
@@ -597,6 +622,22 @@ function DailyWordPage() {
 
 
   const dailyTopper = leaderboard.length > 0 ? leaderboard[0] : null;
+  const revealedAnswer = useMemo(() => {
+    if (game.status === 'playing') return '';
+    return normalizeWord(game.answer || (game.status === 'won' ? game.guesses.at(-1) : ''));
+  }, [game.answer, game.guesses, game.status]);
+
+  const getWeeklyDayWord = (day) => {
+    if (game.status === 'playing') {
+      return { value: getDecoyWord(day.dateKey, language, day.word), isMasked: true };
+    }
+
+    const word = day.dateKey === dateKey ? revealedAnswer : normalizeWord(day.word);
+    return word
+      ? { value: word.toUpperCase(), isMasked: false }
+      : { value: getDecoyWord(day.dateKey, language), isMasked: true };
+  };
+
   const filteredPlayerOptions = useMemo(() => {
     return playerOptions;
   }, [playerOptions]);
@@ -689,7 +730,7 @@ function DailyWordPage() {
 
     try {
       const response = await fetch(
-        `/api/wordlee/guess?language=${encodeURIComponent(requestLanguage)}&date=${encodeURIComponent(dateKey)}&guess=${encodeURIComponent(normalizedGuess)}`
+        `/api/wordlee/guess?language=${encodeURIComponent(requestLanguage)}&date=${encodeURIComponent(dateKey)}&guess=${encodeURIComponent(normalizedGuess)}&attempt=${requestGame.guesses.length + 1}`
       );
       const data = await safeJson(response);
       if (!response.ok) throw new Error(data?.error || copy[requestLanguage].wordValidationError);
@@ -721,10 +762,11 @@ function DailyWordPage() {
 
       const startedAt = Number.isInteger(requestGame.startedAt) ? requestGame.startedAt : Date.now();
       const durationMs = status === 'playing' ? null : Math.max(0, Date.now() - startedAt);
+      const answer = status === 'playing' ? null : normalizeWord(data.answer);
 
       setInvalidRow(-1);
       setPendingGuess('');
-      setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status, startedAt, durationMs });
+      setGame({ guesses: nextGuesses, evaluations: nextEvaluations, status, startedAt, durationMs, answer });
       setPopRow(nextGuesses.length - 1);
       setTimeout(() => {
         if (guessRequestVersionRef.current === requestVersion) {
@@ -978,7 +1020,11 @@ function DailyWordPage() {
 
         {error && <p className="daily-error">{error}</p>}
         {game.status === 'won' && <p className="daily-status win">{copy[language].won}</p>}
-        {game.status === 'lost' && <p className="daily-status lose">{copy[language].lost}</p>}
+        {game.status === 'lost' && (
+          <p className="daily-status lose">
+            {copy[language].lost} {revealedAnswer && <><span>{copy[language].answer}:</span> <strong>{revealedAnswer.toUpperCase()}</strong></>}
+          </p>
+        )}
         {game.status !== 'playing' && <p className="daily-done">{copy[language].alreadyDone}</p>}
 
         <section className="keyboard" aria-label="Virtual keyboard">
@@ -1079,11 +1125,19 @@ function DailyWordPage() {
               <p className="daily-tip">{copy[language].weeklyEmpty}</p>
             ) : (
               <div className="weekly-topppers-grid">
-                {weeklyTopDays.map((day) => (
+                {weeklyTopDays.map((day) => {
+                  const weeklyWord = getWeeklyDayWord(day);
+                  return (
                   <article key={day.dateKey} className="weekly-day-card">
                     <div className="weekly-day-heading">
                       <h4 className="weekly-day-title">{day.label}</h4>
-                      {day.word && <span className="weekly-day-word">{day.word}</span>}
+                      <span
+                        className={`weekly-day-word ${weeklyWord.isMasked ? 'is-masked' : ''}`}
+                        aria-label={weeklyWord.isMasked ? copy[language].answer : undefined}
+                        title={weeklyWord.isMasked ? copy[language].answer : undefined}
+                      >
+                        {weeklyWord.value}
+                      </span>
                     </div>
                     <ol className="weekly-day-list">
                       {day.entries.map((entry, index) => (
@@ -1104,7 +1158,8 @@ function DailyWordPage() {
                       ))}
                     </ol>
                   </article>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

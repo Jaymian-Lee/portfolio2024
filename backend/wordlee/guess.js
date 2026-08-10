@@ -22,16 +22,20 @@ module.exports = async (req, res) => {
     const language = normalizeLanguage(req.query?.language);
     const dateKey = String(req.query?.date || '');
     const guess = normalizeWord(req.query?.guess);
+    const attempt = Number(req.query?.attempt);
 
     if (!isDateKey(dateKey)) return res.status(400).json({ error: 'Ongeldige datum.' });
     if (!(await isValidWord(language, guess))) return res.status(200).json({ language, valid: false });
 
     const answer = getDailyWord(language, dateKey);
+    const solved = guess === answer;
+    const isFinalAttempt = attempt === 6;
     return res.status(200).json({
       language,
       valid: true,
       evaluation: evaluateGuess(guess, answer),
-      solved: guess === answer
+      solved,
+      ...(solved || isFinalAttempt ? { answer } : {})
     });
   } catch (error) {
     console.error('Wordlee guess error:', error);
