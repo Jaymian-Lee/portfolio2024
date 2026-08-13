@@ -691,6 +691,8 @@ async function getLeaderboardOverview(dateKey, language) {
     .sort((a, b) => compareLeaderboardEntries(a, b) || a.dateKey.localeCompare(b.dateKey));
   const weeklyTopDays = weekDateKeys
     .map((key) => rows.find((row) => row.dateKey === key) || { dateKey: key, entries: [] })
+    // Keep the weekly overview historical: today's live leaderboard is shown separately.
+    .filter((row) => row.dateKey < dateKey)
     .filter((row) => row.entries.length > 0)
     .map((row) => ({
       ...row,
