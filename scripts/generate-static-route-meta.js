@@ -5,9 +5,15 @@ const siteUrl = 'https://www.jaymian-lee.nl';
 const buildDir = path.resolve(__dirname, '..', 'build');
 const indexPath = path.join(buildDir, 'index.html');
 
+const projectSource = fs.readFileSync(path.resolve(__dirname, '..', 'src', 'data', 'projectCases.js'), 'utf8');
+const projectCases = JSON.parse(projectSource.slice(projectSource.indexOf('['), projectSource.indexOf('];') + 1));
+const projectBySlug = Object.fromEntries(projectCases.map((project) => [project.slug, project]));
+const personId = `${siteUrl}/#person`;
+const websiteId = `${siteUrl}/#website`;
+
 const pages = [
   {"path":"/projects/deurwebshop","image":"/projects/deurwebshop.svg","en":["Deurwebshop.nl | Door webshop & 3D configurator","From the size of your opening to a door that fits. Compare models, choose your options and explore the result in 3D."],"nl":["Deurwebshop.nl | Deurenwebshop & 3D-configurator","Van de maat van je opening naar een passende deur. Modellen vergelijken, opties kiezen en het resultaat in 3D bekijken."]},
-  { path: '/', en: ['Jaymian-Lee Reinartz | Full-Stack Developer', 'Portfolio of Jaymian-Lee Reinartz, a full-stack developer building software, ecommerce and AI products.'], nl: ['Jaymian-Lee Reinartz | Full-stack developer', 'Portfolio van Jaymian-Lee Reinartz: software, e-commerce-ervaringen en praktische AI-producten.'] },
+  { path: '/', en: ['Jaymian-Lee Reinartz | Full-Stack Developer in Limburg, NL', 'Full-stack developer in Limburg (NL). I build sharp software, ecommerce and marketing tools, with AI where it adds value. Nothing is impossible.'], nl: ['Jaymian-Lee Reinartz | Full-stack developer uit Limburg', 'Full-stack developer uit Limburg. Ik bouw sterke software, e-commerce en marketingtools, met AI waar het echt iets toevoegt. Kan niet bestaat niet.'] },
   { path: '/lab', en: ['The Lab | Experimental subprojects', 'Explore experimental tools, games and utilities by Jaymian-Lee Reinartz.'], nl: ['The Lab | Experimentele subprojecten', 'Bekijk experimentele tools, games en utilities van Jaymian-Lee Reinartz.'] },
   { path: '/word-lee', en: ['Word-Lee | Daily word game', 'Play Word-Lee, a daily 5-letter word game with a leaderboard and local-first progress.'], nl: ['Word-Lee | Dagelijkse woordgame', 'Speel Word-Lee, een dagelijkse 5-letter woordgame met leaderboard en lokale voortgang.'] },
   { path: '/toepen', en: ['Toepen scoreboard | Card game scorekeeper', 'A quick local scoreboard for Toepen game nights.'], nl: ['Toepen scorebord | Score bijhouden', 'Een snel, lokaal scorebord voor Toepen-avonden.'] },
@@ -38,13 +44,20 @@ const routes = pages.flatMap((page) => ['en', 'nl'].map((language) => {
     ? page.path
     : (page.path === '/' ? '/nl' : `/nl${page.path}`);
 
+  const slug = page.path.startsWith('/projects/') ? page.path.split('/').pop() : null;
+  const project = slug ? projectBySlug[slug] : null;
+  const image = project ? `/projects/og/${slug}.png` : page.image;
+
   return {
     path: pathName,
+    project,
+    isHome: page.path === '/',
     alternatePath,
     language,
     title,
     description,
-    image: `${siteUrl}${page.image || '/jay.png'}`,
+    image: `${siteUrl}${image || '/jay.png'}`,
+    hasOgSize: Boolean(project),
     imageAlt: title
   };
 }));
@@ -62,14 +75,89 @@ function createRouteHtml(source, route) {
     `<link rel="alternate" hreflang="${route.language === 'nl' ? 'en' : 'nl'}" href="${siteUrl}${route.alternatePath}" />`,
     `<link rel="alternate" hreflang="x-default" href="${route.language === 'nl' ? `${siteUrl}${route.alternatePath}` : url}" />`
   ].join('\n    ');
-  const schema = JSON.stringify({
-    '@context': 'https://schema.org',
+  const inLanguage = route.language === 'nl' ? 'nl-NL' : 'en-US';
+  const home = route.language === 'nl' ? `${siteUrl}/nl` : `${siteUrl}/`;
+  const webPage = {
     '@type': 'WebPage',
+    '@id': `${url}#webpage`,
     name: route.title,
     url,
-    inLanguage: route.language === 'nl' ? 'nl-NL' : 'en-US',
-    description: route.description
-  });
+    inLanguage,
+    description: route.description,
+    isPartOf: { '@id': websiteId },
+    primaryImageOfPage: { '@type': 'ImageObject', url: route.image }
+  };
+  const graph = [webPage];
+
+  if (route.isHome) {
+    graph.push(
+      {
+        '@type': 'Person',
+        '@id': personId,
+        name: 'Jaymian-Lee Reinartz',
+        url: `${siteUrl}/`,
+        image: `${siteUrl}/jay.png`,
+        jobTitle: 'Full Stack Developer',
+        description: route.description,
+        address: { '@type': 'PostalAddress', addressRegion: 'Limburg', addressCountry: 'NL' },
+        sameAs: [
+          'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/',
+          'https://github.com/Jaymian-Lee',
+          'https://twitch.tv/jaymianlee',
+          'https://www.youtube.com/@JaymianLee',
+          'https://www.instagram.com/jaymianlee/',
+          'https://www.instagram.com/jaymianlee_/'
+        ],
+        knowsAbout: ['Full-stack development', 'Ecommerce development', 'Technical SEO', 'Marketing automation', 'Product engineering', 'AI systems']
+      },
+      {
+        '@type': 'WebSite',
+        '@id': websiteId,
+        url: `${siteUrl}/`,
+        name: 'Jaymian-Lee Reinartz Portfolio',
+        inLanguage: ['nl', 'en'],
+        publisher: { '@id': personId }
+      },
+      {
+        '@type': 'ItemList',
+        name: route.language === 'nl' ? 'Projecten van Jaymian-Lee Reinartz' : 'Projects by Jaymian-Lee Reinartz',
+        itemListElement: projectCases.map((project, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: project.name,
+          url: `${siteUrl}${route.language === 'nl' ? '/nl' : ''}/projects/${project.slug}`
+        }))
+      }
+    );
+  } else {
+    graph.push({ '@type': 'WebSite', '@id': websiteId, url: `${siteUrl}/`, name: 'Jaymian-Lee Reinartz Portfolio', inLanguage: ['nl', 'en'] });
+    graph.push({
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Jaymian-Lee Reinartz', item: home },
+        ...(route.project ? [{ '@type': 'ListItem', position: 2, name: route.language === 'nl' ? 'Projecten' : 'Projects', item: `${home}#projects` }] : []),
+        { '@type': 'ListItem', position: route.project ? 3 : 2, name: route.title.split(' | ')[0], item: url }
+      ]
+    });
+  }
+
+  if (route.project) {
+    const content = route.project[route.language] || route.project.en;
+    graph.push({
+      '@type': 'CreativeWork',
+      '@id': `${url}#project`,
+      name: route.project.name,
+      description: content.intro,
+      image: route.image,
+      url,
+      mainEntityOfPage: { '@id': `${url}#webpage` },
+      creator: { '@id': personId },
+      inLanguage,
+      ...(route.project.url ? { sameAs: route.project.url } : {})
+    });
+  }
+
+  const schema = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 
   let html = source;
   html = replaceTag(html, /<html\b[^>]*>/i, `<html lang="${route.language}">`);
@@ -87,6 +175,10 @@ function createRouteHtml(source, route) {
   html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:description["'])[^>]*>/gi, `<meta name="twitter:description" content="${route.description}" />`);
   html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:image["'])[^>]*>/gi, `<meta name="twitter:image" content="${route.image}" />`);
   html = html.replace(/<script\b(?=[^>]*\bdata-seo-jsonld=["']true["'])[^>]*>[\s\S]*?<\/script>/gi, '');
+  html = html.replace(/<meta\b(?=[^>]*\bproperty=["']og:image:(?:width|height|type)["'])[^>]*>/gi, '');
+  if (route.hasOgSize) {
+    html = html.replace('</head>', `    <meta property="og:image:type" content="image/png" />\n    <meta property="og:image:width" content="1200" />\n    <meta property="og:image:height" content="630" />\n  </head>`);
+  }
   html = html.replace('</head>', `    ${alternateLinks}\n    <script type="application/ld+json">${schema}</script>\n  </head>`);
   return html;
 }
@@ -99,3 +191,13 @@ routes.forEach((route) => {
 });
 
 console.log(`Wrote static metadata fallbacks for ${routes.length} public routes.`);
+
+const notFoundHtml = source
+  .replace(/<title>[\s\S]*?<\/title>/i, '<title>404 | Page not found</title>')
+  .replace(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/gi, '<meta name="description" content="This page does not exist or has moved." />')
+  .replace(/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>/gi, '<meta name="robots" content="noindex,follow" />')
+  .replace(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/gi, '')
+  .replace(/<link\b(?=[^>]*\brel=["']alternate["'])[^>]*>/gi, '')
+  .replace(/<script\b(?=[^>]*\bdata-seo-jsonld=["']true["'])[^>]*>[\s\S]*?<\/script>/gi, '');
+fs.writeFileSync(path.join(buildDir, '404.html'), notFoundHtml);
+console.log('Wrote 404.html (noindex).');
