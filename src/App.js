@@ -290,12 +290,12 @@ function App() {
   const isNl = language === 'nl';
   const homeSeo = isNl
     ? {
-        title: 'Jaymian-Lee Reinartz | Software, e-commerce en digitale groei',
-        description: 'Portfolio van Jaymian-Lee Reinartz: software, e-commerce-ervaringen, marketingtools, technische SEO en praktische AI-producten.'
+        title: 'Jaymian-Lee Reinartz | Full-stack developer uit Limburg',
+        description: 'Full-stack developer uit Limburg. Ik bouw sterke software, e-commerce en marketingtools, met AI waar het echt iets toevoegt. Kan niet bestaat niet.'
       }
     : {
-        title: 'Jaymian-Lee Reinartz | Software, ecommerce & digital growth',
-        description: 'Portfolio of Jaymian-Lee Reinartz: software, ecommerce experiences, marketing systems, technical SEO and practical AI products.'
+        title: 'Jaymian-Lee Reinartz | Full-Stack Developer in Limburg, NL',
+        description: 'Full-stack developer in Limburg (NL). I build sharp software, ecommerce and marketing tools, with AI where it adds value. Nothing is impossible.'
       };
   const toggleProjectView = () => {
     setActiveView((view) => (view === 'work' ? 'socials' : 'work'));
