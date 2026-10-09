@@ -2,14 +2,11 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "redirects": [
-    { "source": "/daily-word", "destination": "/word-lee", "permanent": true },
-    { "source": "/nl/daily-word", "destination": "/nl/word-lee", "permanent": true }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api?path=:path*"
-    }
+  "routes": [
+    { "src": "/daily-word", "status": 308, "headers": { "Location": "/word-lee" } },
+    { "src": "/nl/daily-word", "status": 308, "headers": { "Location": "/nl/word-lee" } },
+    { "src": "/api/(.*)", "dest": "/api?path=$1" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "status": 404, "dest": "/404.html" }
   ]
 }
