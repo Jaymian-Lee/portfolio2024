@@ -36,3 +36,8 @@
 .case-hero-inner { position: relative; z-index: 1; }
 .case-title-block { padding: 1.4rem; border-radius: 8px; background: rgba(8, 11, 17, .86); }
 @media (max-width: 760px) { .case-title-block { padding: 1rem; } }
+
+.case-gallery { margin: 3rem 0; }
+.case-gallery figure { margin: 0; }
+.case-gallery img { width: 100%; height: auto; display: block; border-radius: var(--radius); }
+.case-gallery figcaption { margin-top: .8rem; color: var(--text-muted); font-size: .85rem; line-height: 1.7; }

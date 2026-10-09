@@ -64,7 +64,8 @@ export default function ProjectCasePage() {
 
   const toggleLanguage = () => navigate(getLanguageSwitchPath(location.pathname, isNl ? 'en' : 'nl', location.search, location.hash));
   const toggleTheme = () => setTheme((current) => current === 'dark' ? 'light' : 'dark');
-  const otherProjects = projectCases.filter((item) => item.slug !== project.slug).slice(0, 3);
+  const relatedSlugs = project.slug === 'deurwebshop' ? ['martijnkozijn', 'vizualy', 'slecto'] : project.slug === 'martijnkozijn' ? ['deurwebshop', 'slecto', 'corthex'] : null;
+  const otherProjects = relatedSlugs ? relatedSlugs.map(getProjectCase) : projectCases.filter((item) => item.slug !== project.slug).slice(0, 3);
 
   return (
     <div className="project-case-page">
@@ -101,7 +102,7 @@ export default function ProjectCasePage() {
             <div className="case-hero-grid">
               <div className="case-title-block">
                 <p className="case-kicker">{content.label}</p>
-                <h1>{project.name}</h1>
+                <h1>{project.displayName || project.name}</h1>
                 <p className="case-intro">{content.intro}</p>
                 <div className="case-actions">
                   <a className="case-primary-action" href={project.url} target="_blank" rel="noreferrer">{t.visit}<AnimatedIcon name="arrow-right" size={18} /></a>
@@ -147,6 +148,10 @@ export default function ProjectCasePage() {
               ))}
             </ol>
           </section>
+
+          {project.gallery && <section className="case-gallery" aria-label={isNl ? 'Projectbeelden' : 'Project screenshots'}>
+            {project.gallery.map((shot) => <figure key={shot.image}><img src={shot.image} alt={shot[language] || shot.en} loading="lazy" /><figcaption>{shot[language] || shot.en}</figcaption></figure>)}
+          </section>}
 
           <section className="case-related" aria-labelledby="case-related-title">
             <div><p className="case-section-label">04 / {t.related}</p><h2 id="case-related-title">{isNl ? 'Andere builds in beweging.' : 'Other builds in motion.'}</h2></div>

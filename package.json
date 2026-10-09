@@ -84,7 +84,9 @@
       "/projects/sjmoeleboek",
       "/projects/publion",
       "/nl/projects/sjmoeleboek",
-      "/nl/projects/publion"
+      "/nl/projects/publion",
+      "/projects/deurwebshop",
+      "/nl/projects/deurwebshop"
     ]
   },
   "eslintConfig": {

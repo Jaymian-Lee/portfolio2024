@@ -17,3 +17,11 @@ test('new projects and accurate availability are present', () => {
   expect(projectCases.find(project => project.slug === 'slecto').status).toBe('In use');
   expect(projectCases.find(project => project.slug === 'vizualy').status).toBe('Pilot');
 });
+
+test('Deurwebshop is grounded and the showcase leads with business work', () => {
+  expect(projectCases.slice(0, 5).map(p => p.slug)).toEqual(['corthex', 'slecto', 'vizualy', 'deurwebshop', 'martijnkozijn']);
+  const door = projectCases.find(p => p.slug === 'deurwebshop');
+  expect(door.role).toBe('Developer at MartijnKozijn');
+  expect(door.nl.features[2].text).toContain('indicatief');
+  expect(door.gallery.length).toBe(1);
+});

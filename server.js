@@ -355,6 +355,10 @@ About Jaymian-Lee:
 - Also develops custom PrestaShop modules and WordPress plugins.
 
 Projects and links:
+- Deurwebshop: https://www.deurwebshop.nl/
+  - Jay works on this new door-sales project at MartijnKozijn. Stock doors, made-to-measure models, dimension finder and choice guide.
+  - Renewed 3D configurator with model-specific dimensions/options, calculated price, rotation, zoom and opening the door. Preview is indicative; technical details require confirmation.
+  - Role: Developer at MartijnKozijn. No separate start date, ownership claim or performance metrics established.
 - Corthex: https://corthex.app
   - Business-aware AI chatbots that can look up customer and order details, show products and add items to a basket through connected tools.
   - Role: Co-Founder.
