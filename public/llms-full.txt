@@ -12,54 +12,59 @@
 
 ## Active projects
 
-### Sjmoeleboek: September 2026 - ongoing
-
-Portfolio page: https://www.jaymian-lee.nl/projects/sjmoeleboek
-
-Sjmoeleboek brings Limburg carnival together in a free web app. With AI editor Dirk, Sjmoelkaarten, the Sjmoeldex and groups. The web app is the place to use it now; iOS and Android apps are planned for later. A free web app built around Limburg carnival. Native mobile apps are still planned, not released.
-
-### Publion: Late 2025 - ongoing
-
-Portfolio page: https://www.jaymian-lee.nl/projects/publion
-
-Publion is my WordPress plugin for AI-assisted content planning and article production. Start with a category and an SEO brief, plan a topic and create a draft with images. The code is public on GitHub. A clearer content workflow, not an automatic ranking machine. Human review still matters.
-
-
-### Corthex: 2026-ongoing, Co-founder
+### Corthex: 2026 - ongoing, Co-founder
 
 Portfolio page: https://www.jaymian-lee.nl/projects/corthex
 
 Corthex grew out of my earlier chatbot builder, Botforger. The idea: useful answers are good, but helping a visitor take the next step is better. It works for webshops, information sites and personal chatbots. A chatbot that helps with the next step, rather than stopping at an answer.
 
-### Slecto: 2026-ongoing, Founder
+### Slecto: May 2026 - ongoing, Founder
 
 Portfolio page: https://www.jaymian-lee.nl/projects/slecto
 
 Slecto started as a fun little project. It now brings guided selling, Typeform-style forms and Mailchimp-style email marketing together. Still in development, but fully working and already in use. Apparently a little project does not have to stay little. One place for helping visitors choose, collecting answers and staying in touch.
 
-### Vizualy: 2026-ongoing, Founder
+### Vizualy: 2026 - ongoing, Founder
 
 Portfolio page: https://www.jaymian-lee.nl/projects/vizualy
 
 Vizualy is an AI visualisation platform for businesses. A webshop can connect a button to a product, letting visitors see it in a photo of their own room or façade. In development, with a pilot at a first company. A practical preview before making a choice. The pilot is a starting point, not a claim of measured conversion gains.
 
-### Refacthor: 2026-ongoing, Founder
+### Deurwebshop.nl: ongoing, Developer at MartijnKozijn
+
+Portfolio page: https://www.jaymian-lee.nl/projects/deurwebshop
+
+I work on Deurwebshop at MartijnKozijn: a new project for selling doors with a renewed 3D configurator. The site connects stock doors, made-to-measure models and guidance for choosing. Visitors can start with dimensions, compare product details and work through the options available for their model. One route from comparing doors to working out a model in detail. The project is being developed further at MartijnKozijn.
+
+### MartijnKozijn.nl: 2023 - ongoing, Lead developer
+
+Portfolio page: https://www.jaymian-lee.nl/projects/martijnkozijn
+
+The work focuses on making a large, technical catalogue easier to explore while keeping configuration, product information and the path to purchase clear. I also work on Deurwebshop.nl there, a new door-sales project with a renewed 3D configurator. A more maintainable storefront for a purchase that deserves confidence.
+
+### Refacthor: 2026 - ongoing, Founder
 
 Portfolio page: https://www.jaymian-lee.nl/projects/refacthor
 
-Refacthor is a digital product studio for websites, webshops, applications and connected systems. Its work brings together strategy, design, engineering, technical SEO, performance and content structure.
+It is the studio behind work that needs to be useful as well as memorable: websites, webshops, applications and the systems that connect them. Digital products with a stronger technical foundation and a clearer reason to exist.
 
-### Woonproblemen: 2026-ongoing, Experiment lead
+### Publion: Late 2025 - ongoing, Maker
+
+Portfolio page: https://www.jaymian-lee.nl/projects/publion
+
+Publion is my WordPress plugin for AI-assisted content planning and article production. Start with a category and an SEO brief, plan a topic and create a draft with images. The code is public on GitHub. A clearer content workflow, not an automatic ranking machine. Human review still matters.
+
+### Sjmoeleboek: September 2026 - ongoing, Maker
+
+Portfolio page: https://www.jaymian-lee.nl/projects/sjmoeleboek
+
+Sjmoeleboek brings Limburg carnival together in a free web app. With AI editor Dirk, Sjmoelkaarten, the Sjmoeldex and groups. The web app is the place to use it now; iOS and Android apps are planned for later. A free web app built around Limburg carnival. Native mobile apps are still planned, not released.
+
+### Woonproblemen: 2026 - ongoing, Experiment lead
 
 Portfolio page: https://www.jaymian-lee.nl/projects/woonproblemen
 
 Woonproblemen is my test environment for AI content about everyday problems around the home. The point is to use real sources and measure what happens in search and AI-driven discovery, rather than treating generated text as a result in itself. An experiment in progress. No invented traffic figures, guaranteed rankings or success story.
-
-### MartijnKozijn.nl: 2023-ongoing, Lead developer
-
-Portfolio page: https://www.jaymian-lee.nl/projects/martijnkozijn
-
-MartijnKozijn.nl is an ecommerce experience for made-to-measure windows, doors, glass and related home products. The work focuses on a clearer technical catalogue, decision-ready product detail and a conversion-minded path from discovery to order.
 
 ## Archived work
 
