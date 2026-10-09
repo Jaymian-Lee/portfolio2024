@@ -6,6 +6,7 @@ const buildDir = path.resolve(__dirname, '..', 'build');
 const indexPath = path.join(buildDir, 'index.html');
 
 const pages = [
+  {"path":"/projects/deurwebshop","image":"/projects/deurwebshop.svg","en":["Deurwebshop.nl | Door webshop & 3D configurator","From the size of your opening to a door that fits. Compare models, choose your options and explore the result in 3D."],"nl":["Deurwebshop.nl | Deurenwebshop & 3D-configurator","Van de maat van je opening naar een passende deur. Modellen vergelijken, opties kiezen en het resultaat in 3D bekijken."]},
   { path: '/', en: ['Jaymian-Lee Reinartz | Full-Stack Developer', 'Portfolio of Jaymian-Lee Reinartz, a full-stack developer building software, ecommerce and AI products.'], nl: ['Jaymian-Lee Reinartz | Full-stack developer', 'Portfolio van Jaymian-Lee Reinartz: software, e-commerce-ervaringen en praktische AI-producten.'] },
   { path: '/lab', en: ['The Lab | Experimental subprojects', 'Explore experimental tools, games and utilities by Jaymian-Lee Reinartz.'], nl: ['The Lab | Experimentele subprojecten', 'Bekijk experimentele tools, games en utilities van Jaymian-Lee Reinartz.'] },
   { path: '/word-lee', en: ['Word-Lee | Daily word game', 'Play Word-Lee, a daily 5-letter word game with a leaderboard and local-first progress.'], nl: ['Word-Lee | Dagelijkse woordgame', 'Speel Word-Lee, een dagelijkse 5-letter woordgame met leaderboard en lokale voortgang.'] },
