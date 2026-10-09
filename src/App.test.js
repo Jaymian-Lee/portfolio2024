@@ -1,7 +1,19 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { projectCases } from './data/projectCases';
 
-test('renders portfolio hero heading', () => {
-  render(<App />);
-  expect(screen.getByText(/Premium digital products/i)).toBeInTheDocument();
+test('all project slugs and bilingual case copy are complete', () => {
+  expect(new Set(projectCases.map(project => project.slug)).size).toBe(projectCases.length);
+  for (const project of projectCases) {
+    for (const language of ['en', 'nl']) {
+      expect(project[language].intro).toBeTruthy();
+      expect(project[language].story).toBeTruthy();
+      expect(project[language].features.length).toBeGreaterThan(0);
+    }
+  }
+});
+
+test('new projects and accurate availability are present', () => {
+  expect(projectCases.find(project => project.slug === 'sjmoeleboek').status).toBe('Live');
+  expect(projectCases.find(project => project.slug === 'publion').url).toBe('https://github.com/Jaymian-Lee/publion');
+  expect(projectCases.find(project => project.slug === 'slecto').status).toBe('In use');
+  expect(projectCases.find(project => project.slug === 'vizualy').status).toBe('Pilot');
 });
