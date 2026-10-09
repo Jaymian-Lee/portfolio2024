@@ -5,11 +5,53 @@ import FloatingUtilityBar from './components/FloatingUtilityBar';
 import AnimatedIcon from './components/AnimatedIcon';
 import Seo from './components/Seo';
 import { createItemListSchema, createPersonSchema, createProfessionalServiceSchema, createWebPageSchema, createWebsiteSchema, siteSeo } from './data/seo';
-import { getProjectCasePath } from './data/projectCases';
+import { getProjectCasePath, getProjectCase } from './data/projectCases';
 import { getAlternateLocalePaths, getLanguageSwitchPath, getLocaleFromPathname, localizePath } from './utils/locale';
 import './App.css';
 
 const projectData = [
+{
+  "name": "Sjmoeleboek",
+  "slug": "sjmoeleboek",
+  "url": "https://sjmoeleboek.nl/",
+  "image": "/projects/sjmoeleboek.png",
+  "logo": null,
+  "monogram": "S",
+  "timeline": {
+    "start": "2026",
+    "end": "ongoing"
+  },
+  "type": "Limburg carnival platform",
+  "summary": "A place for Limburg carnival. People, groups and a good dose of vastelaovend!",
+  "tags": [
+    "Community",
+    "Limburg",
+    "Web app"
+  ],
+  "tone": "orange",
+  "note": "Live web app"
+},
+{
+  "name": "Publion",
+  "slug": "publion",
+  "url": "https://github.com/Jaymian-Lee/publion",
+  "image": "/projects/publion.png",
+  "logo": null,
+  "monogram": "P",
+  "timeline": {
+    "start": "2025",
+    "end": "ongoing"
+  },
+  "type": "AI content for WordPress",
+  "summary": "From a content idea to an article draft. With a brief, images and a moment to check what the AI made.",
+  "tags": [
+    "WordPress",
+    "AI content",
+    "Public code"
+  ],
+  "tone": "purple",
+  "note": "Public on GitHub"
+},
   {
     name: 'Corthex',
     slug: 'corthex',
@@ -58,7 +100,7 @@ const projectData = [
   {
     name: 'Slecto',
     slug: 'slecto',
-    url: null,
+    url: 'https://slecto.app',
     image: '/projects/slecto-app.png',
     logo: 'https://slecto.app/_next/image?url=%2Fbrand%2Fslecto-icon.png&w=48&q=75',
     monogram: 'S',
@@ -175,13 +217,26 @@ const projects = projectData
   })
   .map((project, index) => ({
     ...project,
+    summary: getProjectCase(project.slug)?.en.intro || project.summary,
+    type: getProjectCase(project.slug)?.en.label || project.type,
     number: String(index + 1).padStart(2, '0')
   }));
 
 const archivedProjectNames = new Set(['Mintventory', 'Twigsie', 'Vizualy Prints']);
 const activeProjects = projects.filter((project) => !archivedProjectNames.has(project.name));
 const archivedProjects = projects.filter((project) => archivedProjectNames.has(project.name));
-const formatProjectTimeline = ({ start, end }) => `${start} - ${end}`;
+const formatProjectTimeline = ({ start, end }, isNl) => `${start} - ${end === 'ongoing' && isNl ? 'heden' : end}`;
+
+const projectNotes = {
+  en: { slecto: 'In use, still being developed', vizualy: 'Pilot at a first company', corthex: 'Grew out of Botforger', woonproblemen: 'Testing and measuring SEO / GEO', sjmoeleboek: 'Free web app, live now', publion: 'Public code on GitHub' },
+  nl: { slecto: 'In gebruik, wordt doorontwikkeld', vizualy: 'Pilot bij een eerste bedrijf', corthex: 'Voortgekomen uit Botforger', woonproblemen: 'SEO / GEO testen en meten', sjmoeleboek: 'Gratis webapp, nu live', publion: 'Publieke code op GitHub' }
+};
+const formatCasePeriod = (project, isNl) => {
+  const period = getProjectCase(project.slug)?.period;
+  return period
+    ? period.replace('May', isNl ? 'Mei' : 'May').replace('Late', isNl ? 'Eind' : 'Late').replace('ongoing', isNl ? 'heden' : 'ongoing')
+    : formatProjectTimeline(project.timeline, isNl);
+};
 
 const socials = [
   { label: 'GitHub', handle: '@Jaymian-Lee', url: 'https://github.com/Jaymian-Lee', nl: 'Code, experimenten en de bouwstenen achter mijn producten.', en: 'Code, experiments and the building blocks behind my products.' },
@@ -380,12 +435,12 @@ function App() {
                   </div>
                 )}
                 <div className="project-info">
-                  <div className="project-meta"><span>{project.type}</span><span>{formatProjectTimeline(project.timeline)}</span></div>
+                  <div className="project-meta"><span>{(getProjectCase(project.slug)?.[language]?.label || project.type)}</span><span>{formatCasePeriod(project, isNl)}</span></div>
                   <h3>{project.slug ? <Link to={localizePath(getProjectCasePath(project.slug), language)}>{project.name}</Link> : project.name}</h3>
-                  <p className="project-summary">{project.summary}</p>
+                  <p className="project-summary">{getProjectCase(project.slug)?.[language]?.intro || project.summary}</p>
                   <div className="project-bottom">
                     <div className="project-tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                    <p className="release-note"><i aria-hidden="true" />{project.note}</p>
+                    <p className="release-note"><i aria-hidden="true" />{projectNotes[language][project.slug] || project.note}</p>
                   </div>
                 </div>
               </article>
@@ -396,7 +451,8 @@ function App() {
             <span className="lab-bridge-icon" aria-hidden="true"><AnimatedIcon name="flask-conical" size={22} /></span>
             <div>
               <p>{isNl ? 'Tussen de builds door' : 'Between the builds'}</p>
-              <strong>{isNl ? 'Experimenten, games en kleine tools.' : 'Experiments, games and small tools.'}</strong>
+              <strong>{isNl ? 'Niet alles hoeft een startup te worden.' : 'Not everything has to become a startup.'}</strong>
+              <p className="lab-bridge-copy">{isNl ? 'Word-Lee voor een snelle woordpuzzel, Toepen en Pesten om de score bij te houden, en tools om met cijfers en streams te spelen. Kleine ideeën, gewoon bouwen en proberen!' : 'Word-Lee for a quick puzzle, Toepen and Pesten for keeping score, and tools for playing with numbers and streams. Small ideas. Build them and see what happens!'}</p>
             </div>
             <Link to={localizePath('/lab', language)}>{isNl ? 'Bekijk het Lab' : 'See the Lab'} <AnimatedIcon name="arrow-right" size={18} /></Link>
           </section>
@@ -427,7 +483,7 @@ function App() {
                 <li key={project.name}>
                   <span className="archive-mark"><AnimatedIcon name="archive" size={18} /></span>
                   <span><Link to={localizePath(getProjectCasePath(project.slug), language)}><strong>{project.name}</strong></Link><small>{project.type}</small></span>
-                  <em>{formatProjectTimeline(project.timeline)} · {isNl ? 'Gearchiveerd' : 'Archived'}</em>
+                  <em>{formatProjectTimeline(project.timeline, isNl)} · {isNl ? 'Gearchiveerd' : 'Archived'}</em>
                 </li>
               ))}
             </ul>
