@@ -118,7 +118,7 @@ export default function ProjectCasePage() {
         <section className="case-content">
           <div className="case-facts" aria-label={`${project.name} facts`}>
             <div><span>{t.role}</span><strong>{project.role}</strong></div>
-            <div><span>{t.period}</span><strong>{project.period}</strong></div>
+            <div><span>{t.period}</span><strong>{isNl ? project.period.replace('May', 'Mei').replace('Late', 'Eind').replace('ongoing', 'heden') : project.period}</strong></div>
             <div><span>{t.status}</span><strong>{project.status}</strong></div>
           </div>
 
