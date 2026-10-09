@@ -14,7 +14,7 @@ const projectData = [
   "name": "Sjmoeleboek",
   "slug": "sjmoeleboek",
   "url": "https://sjmoeleboek.nl/",
-  "image": "/projects/sjmoeleboek.png",
+  "image": "/projects/sjmoeleboek.svg",
   "logo": null,
   "monogram": "S",
   "timeline": {
@@ -35,7 +35,7 @@ const projectData = [
   "name": "Publion",
   "slug": "publion",
   "url": "https://github.com/Jaymian-Lee/publion",
-  "image": "/projects/publion.png",
+  "image": "/projects/publion.svg",
   "logo": null,
   "monogram": "P",
   "timeline": {
