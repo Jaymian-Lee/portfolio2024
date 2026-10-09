@@ -40,7 +40,7 @@ export default function ProjectCasePage() {
   const canonicalPath = localizePath(getProjectCasePath(project.slug), language);
   const alternatePaths = getAlternateLocalePaths(canonicalPath);
   const pageUrl = `${siteSeo.siteUrl}${canonicalPath}`;
-  const imageUrl = `${siteSeo.siteUrl}${project.image}`;
+  const imageUrl = `${siteSeo.siteUrl}/projects/og/${project.slug}.png`;
   const jsonLd = [
     createWebsiteSchema({ language: ['en', 'nl'] }),
     createWebPageSchema({ name: `${project.name} | ${content.label}`, url: pageUrl, description: content.intro, language: isNl ? 'nl-NL' : 'en-US', image: imageUrl }),
