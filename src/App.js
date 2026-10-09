@@ -12,6 +12,7 @@ import './App.css';
 const projectData = [
 {
   "name": "Deurwebshop.nl",
+  "displayName": "Deurwebshop",
   "slug": "deurwebshop",
   "url": "https://www.deurwebshop.nl/",
   "image": "/projects/deurwebshop.svg",
@@ -242,7 +243,7 @@ const formatProjectTimeline = ({ start, end }, isNl) => start ? `${start} - ${en
 
 const projectNotes = {
   en: { slecto: 'In use, still being developed', vizualy: 'Pilot at a first company', corthex: 'Grew out of Botforger', woonproblemen: 'Testing and measuring SEO / GEO', sjmoeleboek: 'Free web app, live now', publion: 'Public code on GitHub' },
-  nl: { slecto: 'In gebruik, wordt doorontwikkeld', vizualy: 'Pilot bij een eerste bedrijf', corthex: 'Voortgekomen uit Botforger', woonproblemen: 'SEO / GEO testen en meten', sjmoeleboek: 'Gratis webapp, nu live', publion: 'Publieke code op GitHub' }
+  nl: { deurwebshop: 'In ontwikkeling bij MartijnKozijn', slecto: 'In gebruik, wordt doorontwikkeld', vizualy: 'Pilot bij een eerste bedrijf', corthex: 'Voortgekomen uit Botforger', woonproblemen: 'SEO / GEO testen en meten', sjmoeleboek: 'Gratis webapp, nu live', publion: 'Publieke code op GitHub' }
 };
 const formatCasePeriod = (project, isNl) => {
   const period = getProjectCase(project.slug)?.period;
@@ -449,7 +450,7 @@ function App() {
                 )}
                 <div className="project-info">
                   <div className="project-meta"><span>{(getProjectCase(project.slug)?.[language]?.label || project.type)}</span><span>{formatCasePeriod(project, isNl)}</span></div>
-                  <h3>{project.slug ? <Link to={localizePath(getProjectCasePath(project.slug), language)}>{project.name}</Link> : project.name}</h3>
+                  <h3>{project.slug ? <Link to={localizePath(getProjectCasePath(project.slug), language)}>{project.displayName || project.name}</Link> : project.name}</h3>
                   <p className="project-summary">{getProjectCase(project.slug)?.[language]?.intro || project.summary}</p>
                   <div className="project-bottom">
                     <div className="project-tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
