@@ -80,7 +80,11 @@
       "/nl/projects/botforger",
       "/nl/projects/twigsie",
       "/nl/projects/vizualy-prints",
-      "/nl/projects/mintventory"
+      "/nl/projects/mintventory",
+      "/projects/sjmoeleboek",
+      "/projects/publion",
+      "/nl/projects/sjmoeleboek",
+      "/nl/projects/publion"
     ]
   },
   "eslintConfig": {
