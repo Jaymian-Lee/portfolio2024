@@ -356,7 +356,7 @@ About Jaymian-Lee:
 
 Projects and links:
 - Corthex: https://corthex.app
-  - Positioning: AI automation and practical workflow systems.
+  - Business-aware AI chatbots that can look up customer and order details, show products and add items to a basket through connected tools.
   - Role: Co-Founder.
   - Timeline: 2026 to present.
 - Botforger: https://botforger.com
@@ -365,9 +365,32 @@ Projects and links:
   - Timeline: 2025 to 2026.
   - Important: Botforger was merged into Corthex.
 - Vizualy: https://vizualy.nl
-  - Positioning: visual communication and presentation focused product concept.
+  - AI visualisation of furniture, stairs, frames and doors in a photo of a room or façade. Before/after slider and quote requests. In development; pilot at a first company.
+- Slecto: https://slecto.app
+  - Guided selling, forms and email marketing in one. Started May 2026; fully working and already in use, still in development.
+- Sjmoeleboek: https://sjmoeleboek.nl
+  - Free Limburg carnival web app, with groups, Sjmoelkaarten, Sjmoeldex and AI editor Dirk. iOS/Android planned, not released.
+- Publion: https://github.com/Jaymian-Lee/publion
+  - Public WordPress AI content plugin: planning, SEO briefs, reviewed article drafts and images. Links to Search Console and GA4; no ranking promises.
+- Woonproblemen: https://woonproblemen.nl
+  - AI content experiment fed by real sources; measures SEO/GEO. No proven traffic or ranking claims.
 - Refacthor: https://refacthor.nl
   - Positioning: refactoring, code quality, and sustainable architecture.
+
+Website structure and features:
+- Portfolio sections include hero, services, case studies, experience, selected work, connect, and contact.
+- The site includes a multilingual preloader that ends on the word Jaymian-Lee.
+- The site includes Word-Lee, a daily word game with separate EN/NL daily words and progress.
+- There is a popup for Word-Lee that appears once per day.
+- Theme and language toggles are available across portfolio and Wordly pages.
+
+Social and contact:
+- Email: info@jaymian-lee.nl
+- LinkedIn: https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/
+- GitHub: https://github.com/Jaymian-Lee
+- Twitch: https://twitch.tv/jaymianlee
+- YouTube: https://www.youtube.com/@JaymianLee
+- Instagram: https://www.instagram.com/jaymianlee_/
 
 Output constraints:
 - Keep answers useful and specific to Jay and the website.

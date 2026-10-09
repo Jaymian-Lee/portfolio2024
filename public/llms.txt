@@ -19,11 +19,14 @@
 
 ## Selected work
 
-- [Corthex](https://www.jaymian-lee.nl/projects/corthex): private team knowledge turned into deployable AI assistants and document workspaces. Co-founder; 2026-ongoing.
-- [Slecto](https://www.jaymian-lee.nl/projects/slecto): guided selling for ecommerce, moving visitors from questions to suitable products. Founder; 2026-ongoing.
-- [Vizualy](https://www.jaymian-lee.nl/projects/vizualy): renovation visualizer for product and colour choices. Founder; 2026-ongoing.
+- [Sjmoeleboek](https://www.jaymian-lee.nl/projects/sjmoeleboek): A place for Limburg carnival. People, groups and a good dose of vastelaovend!
+- [Publion](https://www.jaymian-lee.nl/projects/publion): From a content idea to an article draft. With a brief, images and a moment to check what the AI made.
+
+- [Corthex](https://www.jaymian-lee.nl/projects/corthex): An assistant that knows your business and website, and can actually do something with that knowledge. 2026 - ongoing.
+- [Slecto](https://www.jaymian-lee.nl/projects/slecto): Product finders, forms and email marketing. All in one platform. May 2026 - ongoing.
+- [Vizualy](https://www.jaymian-lee.nl/projects/vizualy): What would that sofa, staircase or front door look like at your place? Upload a photo and take a look. 2026 - ongoing.
 - [Refacthor](https://www.jaymian-lee.nl/projects/refacthor): digital product studio for websites, webshops, software and search performance. Founder; 2026-ongoing.
-- [Woonproblemen](https://www.jaymian-lee.nl/projects/woonproblemen): WordPress SEO automation experiment for topic-led editorial pages. 2026-ongoing.
+- [Woonproblemen](https://www.jaymian-lee.nl/projects/woonproblemen): What happens when AI-written home articles start from real sources? I am testing it, not promising rankings. 2026 - ongoing.
 - [MartijnKozijn.nl](https://www.jaymian-lee.nl/projects/martijnkozijn): ecommerce architecture for made-to-measure home products. 2023-ongoing.
 
 ## Languages and source guidance
