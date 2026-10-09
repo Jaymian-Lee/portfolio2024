@@ -1,4 +1,11 @@
 {
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "redirects": [
+    { "source": "/daily-word", "destination": "/word-lee", "permanent": true },
+    { "source": "/nl/daily-word", "destination": "/nl/word-lee", "permanent": true }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",
