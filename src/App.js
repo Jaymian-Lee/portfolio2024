@@ -11,6 +11,27 @@ import './App.css';
 
 const projectData = [
 {
+  "name": "Deurwebshop.nl",
+  "slug": "deurwebshop",
+  "url": "https://www.deurwebshop.nl/",
+  "image": "/projects/deurwebshop.svg",
+  "logo": null,
+  "monogram": "DW",
+  "timeline": {
+    "start": null,
+    "end": "ongoing"
+  },
+  "type": "Door webshop & 3D configurator",
+  "summary": "From the size of your opening to a door that fits. Compare models, choose your options and explore the result in 3D.",
+  "tags": [
+    "Ecommerce",
+    "3D configurator",
+    "MartijnKozijn"
+  ],
+  "tone": "mint",
+  "note": "In development at MartijnKozijn"
+},
+{
   "name": "Sjmoeleboek",
   "slug": "sjmoeleboek",
   "url": "https://sjmoeleboek.nl/",
@@ -203,18 +224,10 @@ const projectData = [
   }
 ];
 
-// Keep portfolio work ordered from newest launch to oldest everywhere it is rendered.
-// The 2026 releases use a deliberate showcase order after Corthex.
+// Deliberate showcase order, shared with the case index.
+const showcaseOrder = ["corthex","slecto","vizualy","deurwebshop","martijnkozijn","refacthor","publion","sjmoeleboek","woonproblemen","botforger","mintventory","twigsie","vizualy-prints"];
 const projects = projectData
-  .sort((first, second) => {
-    const launchDifference = Number(second.timeline.start) - Number(first.timeline.start);
-
-    if (launchDifference !== 0) return launchDifference;
-    if (first.slug === 'slecto' && second.slug === 'vizualy') return -1;
-    if (first.slug === 'vizualy' && second.slug === 'slecto') return 1;
-
-    return 0;
-  })
+  .sort((a, b) => showcaseOrder.indexOf(a.slug) - showcaseOrder.indexOf(b.slug))
   .map((project, index) => ({
     ...project,
     summary: getProjectCase(project.slug)?.en.intro || project.summary,
@@ -225,7 +238,7 @@ const projects = projectData
 const archivedProjectNames = new Set(['Mintventory', 'Twigsie', 'Vizualy Prints']);
 const activeProjects = projects.filter((project) => !archivedProjectNames.has(project.name));
 const archivedProjects = projects.filter((project) => archivedProjectNames.has(project.name));
-const formatProjectTimeline = ({ start, end }, isNl) => `${start} - ${end === 'ongoing' && isNl ? 'heden' : end}`;
+const formatProjectTimeline = ({ start, end }, isNl) => start ? `${start} - ${end === 'ongoing' && isNl ? 'heden' : end}` : (isNl ? 'In ontwikkeling' : 'In development');
 
 const projectNotes = {
   en: { slecto: 'In use, still being developed', vizualy: 'Pilot at a first company', corthex: 'Grew out of Botforger', woonproblemen: 'Testing and measuring SEO / GEO', sjmoeleboek: 'Free web app, live now', publion: 'Public code on GitHub' },
