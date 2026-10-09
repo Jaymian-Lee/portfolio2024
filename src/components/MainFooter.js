@@ -14,6 +14,10 @@ const footerQuickLinks = [
 ];
 
 const footerProjects = [
+  { label: 'Sjmoeleboek', href: 'https://sjmoeleboek.nl' },
+  { label: 'Slecto', href: 'https://slecto.app' },
+  { label: 'Publion', href: 'https://github.com/Jaymian-Lee/publion' },
+  { label: 'Woonproblemen', href: 'https://woonproblemen.nl' },
   { label: 'Botforger', href: 'https://botforger.com' },
   { label: 'Corthex', href: 'https://corthex.app' },
   { label: 'Vizualy', href: 'https://vizualy.nl' },
