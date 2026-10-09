@@ -46,7 +46,7 @@ const routes = pages.flatMap((page) => ['en', 'nl'].map((language) => {
 
   const slug = page.path.startsWith('/projects/') ? page.path.split('/').pop() : null;
   const project = slug ? projectBySlug[slug] : null;
-  const image = project ? `/projects/og/${slug}.png` : page.image;
+  const image = page.image;
 
   return {
     path: pathName,
@@ -57,7 +57,6 @@ const routes = pages.flatMap((page) => ['en', 'nl'].map((language) => {
     title,
     description,
     image: `${siteUrl}${image || '/jay.png'}`,
-    hasOgSize: Boolean(project),
     imageAlt: title
   };
 }));
@@ -175,10 +174,6 @@ function createRouteHtml(source, route) {
   html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:description["'])[^>]*>/gi, `<meta name="twitter:description" content="${route.description}" />`);
   html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:image["'])[^>]*>/gi, `<meta name="twitter:image" content="${route.image}" />`);
   html = html.replace(/<script\b(?=[^>]*\bdata-seo-jsonld=["']true["'])[^>]*>[\s\S]*?<\/script>/gi, '');
-  html = html.replace(/<meta\b(?=[^>]*\bproperty=["']og:image:(?:width|height|type)["'])[^>]*>/gi, '');
-  if (route.hasOgSize) {
-    html = html.replace('</head>', `    <meta property="og:image:type" content="image/png" />\n    <meta property="og:image:width" content="1200" />\n    <meta property="og:image:height" content="630" />\n  </head>`);
-  }
   html = html.replace('</head>', `    ${alternateLinks}\n    <script type="application/ld+json">${schema}</script>\n  </head>`);
   return html;
 }
