@@ -1,56 +1,5 @@
 export const projectCases = [
   {
-    "slug": "sjmoeleboek",
-    "name": "Sjmoeleboek",
-    "url": "https://sjmoeleboek.nl/",
-    "image": "/projects/sjmoeleboek.svg",
-    "logo": null,
-    "monogram": "S",
-    "period": "September 2026 - ongoing",
-    "role": "Maker",
-    "status": "Live",
-    "en": {
-      "label": "Limburg carnival platform",
-      "intro": "A place for Limburg carnival. People, groups and a good dose of vastelaovend!",
-      "story": "Sjmoeleboek brings Limburg carnival together in a free web app. With AI editor Dirk, Sjmoelkaarten, the Sjmoeldex and groups. The web app is the place to use it now; iOS and Android apps are planned for later.",
-      "features": [
-        {
-          "title": "People and groups",
-          "text": "Create or join carnival groups, with member and staff chats, events and appointments in one place."
-        },
-        {
-          "title": "Sjmoelkaarten & Sjmoeldex",
-          "text": "Make your own Sjmoelkaart and collect other people’s cards by scanning the QR code on the back. Build your own Sjmoeldex."
-        },
-        {
-          "title": "Dirk, the AI editor",
-          "text": "An AI editor on the platform, alongside the community."
-        }
-      ],
-      "outcome": "A free web app built around Limburg carnival. Native mobile apps are still planned, not released."
-    },
-    "nl": {
-      "label": "Limburgs carnavalsplatform",
-      "intro": "Vastelaovend op één plek. Mensen, groepen en een flinke dosis Limburg!",
-      "story": "Sjmoeleboek brengt de Limburgse carnaval samen in een gratis webapp. Met AI-redacteur Dirk, Sjmoelkaarten, de Sjmoeldex en groepen. Nu te gebruiken in je browser; iOS- en Android-apps komen later.",
-      "features": [
-        {
-          "title": "Mensen en groepen",
-          "text": "Maak of join carnavalsgroepen, met leden- en staffchat, evenementen en afspraken op één plek."
-        },
-        {
-          "title": "Sjmoelkaarten & Sjmoeldex",
-          "text": "Maak je eigen Sjmoelkaart en verzamel kaarten van anderen door de QR-code op de achterkant te scannen. Bouw zo je Sjmoeldex op."
-        },
-        {
-          "title": "Dirk, de AI-redacteur",
-          "text": "Een AI-redacteur op het platform, naast de community."
-        }
-      ],
-      "outcome": "Een gratis webapp voor de Limburgse vastelaovend. De mobiele apps zijn nog gepland, niet uitgebracht."
-    }
-  },
-  {
     "slug": "corthex",
     "name": "Corthex",
     "url": "https://www.corthex.app/",
@@ -98,106 +47,6 @@ export const projectCases = [
         }
       ],
       "outcome": "Niet alleen een antwoord geven, maar ook helpen met de volgende stap."
-    }
-  },
-  {
-    "slug": "vizualy",
-    "name": "Vizualy",
-    "url": "https://www.vizualy.nl/",
-    "image": "/projects/vizualy-nl.jpg",
-    "logo": "https://www.google.com/s2/favicons?domain=vizualy.nl&sz=256",
-    "period": "2026 - ongoing",
-    "role": "Founder",
-    "status": "Pilot",
-    "en": {
-      "label": "AI product visualisation",
-      "intro": "What would that sofa, staircase or front door look like at your place? Upload a photo and take a look.",
-      "story": "Vizualy is an AI visualisation platform for businesses. A webshop can connect a button to a product, letting visitors see it in a photo of their own room or façade. In development, with a pilot at a first company.",
-      "features": [
-        {
-          "title": "Your own photo",
-          "text": "Start with a photo of a living room or house façade."
-        },
-        {
-          "title": "The product in your space",
-          "text": "Visualise furniture, stairs, window frames or doors in the visitor’s own setting."
-        },
-        {
-          "title": "Compare and enquire",
-          "text": "Use the before-and-after slider and continue to a quote request."
-        }
-      ],
-      "outcome": "A practical preview before making a choice. The pilot is a starting point, not a claim of measured conversion gains."
-    },
-    "nl": {
-      "label": "AI-productvisualisatie",
-      "intro": "Hoe staat die bank, trap of voordeur bij jou? Foto uploaden en kijken maar!",
-      "story": "Vizualy is een AI-visualisatieplatform voor bedrijven. Een webshop koppelt een knop aan een product, waarna de bezoeker het kan bekijken op een foto van de eigen woonkamer of huisgevel. Nog in ontwikkeling en als pilot in gebruik bij een eerste bedrijf.",
-      "features": [
-        {
-          "title": "Je eigen foto",
-          "text": "Begin met een foto van je woonkamer of huisgevel."
-        },
-        {
-          "title": "Product bij jou thuis",
-          "text": "Bekijk hoe meubels, trappen, kozijnen of deuren in jouw omgeving staan."
-        },
-        {
-          "title": "Vergelijken en aanvragen",
-          "text": "Schuif tussen voor en na en ga verder naar een offerteaanvraag."
-        }
-      ],
-      "outcome": "Een praktisch voorproefje vóór je kiest. De pilot is een begin, geen belofte van gemeten conversiewinst."
-    }
-  },
-  {
-    "slug": "martijnkozijn",
-    "name": "MartijnKozijn.nl",
-    "url": "https://www.martijnkozijn.nl/",
-    "image": "/projects/martijnkozijn-hero.png",
-    "logo": "https://www.google.com/s2/favicons?domain=martijnkozijn.nl&sz=256",
-    "period": "2023 - ongoing",
-    "role": "Lead developer",
-    "status": "Ongoing",
-    "en": {
-      "label": "Ecommerce architecture",
-      "intro": "A continuously improved ecommerce experience for made-to-measure windows, doors and related home products.",
-      "story": "The work focuses on making a large, technical catalogue easier to explore while keeping configuration, product information and the path to purchase clear.",
-      "features": [
-        {
-          "title": "Made-to-measure catalogue",
-          "text": "Structured product journeys for windows, doors, glass and configurations."
-        },
-        {
-          "title": "Decision-ready detail",
-          "text": "Bring dimensions, material, glazing and delivery information into a clear buying flow."
-        },
-        {
-          "title": "Conversion-minded commerce",
-          "text": "Keep the route from discovery to order focused across desktop and mobile."
-        }
-      ],
-      "outcome": "A more maintainable storefront for a purchase that deserves confidence."
-    },
-    "nl": {
-      "label": "E-commercearchitectuur",
-      "intro": "Een continu verbeterde e-commerce-ervaring voor kozijnen, deuren en gerelateerde producten op maat.",
-      "story": "Het werk draait om een groot, technisch assortiment makkelijker vindbaar maken, met heldere configuratie, productinformatie en een logische route naar aankoop.",
-      "features": [
-        {
-          "title": "Maatwerkcatalogus",
-          "text": "Gestructureerde productroutes voor kozijnen, deuren, glas en configuraties."
-        },
-        {
-          "title": "Beslisinformatie",
-          "text": "Breng maatvoering, materiaal, glas en bezorging samen in een duidelijke koopflow."
-        },
-        {
-          "title": "Conversiegerichte commerce",
-          "text": "Houd de route van oriëntatie naar bestelling scherp op desktop en mobiel."
-        }
-      ],
-      "outcome": "Een beter onderhoudbare shop voor een aankoop waarbij vertrouwen telt."
     }
   },
   {
@@ -251,6 +100,165 @@ export const projectCases = [
     }
   },
   {
+    "slug": "vizualy",
+    "name": "Vizualy",
+    "url": "https://www.vizualy.nl/",
+    "image": "/projects/vizualy-nl.jpg",
+    "logo": "https://www.google.com/s2/favicons?domain=vizualy.nl&sz=256",
+    "period": "2026 - ongoing",
+    "role": "Founder",
+    "status": "Pilot",
+    "en": {
+      "label": "AI product visualisation",
+      "intro": "What would that sofa, staircase or front door look like at your place? Upload a photo and take a look.",
+      "story": "Vizualy is an AI visualisation platform for businesses. A webshop can connect a button to a product, letting visitors see it in a photo of their own room or façade. In development, with a pilot at a first company.",
+      "features": [
+        {
+          "title": "Your own photo",
+          "text": "Start with a photo of a living room or house façade."
+        },
+        {
+          "title": "The product in your space",
+          "text": "Visualise furniture, stairs, window frames or doors in the visitor’s own setting."
+        },
+        {
+          "title": "Compare and enquire",
+          "text": "Use the before-and-after slider and continue to a quote request."
+        }
+      ],
+      "outcome": "A practical preview before making a choice. The pilot is a starting point, not a claim of measured conversion gains."
+    },
+    "nl": {
+      "label": "AI-productvisualisatie",
+      "intro": "Hoe staat die bank, trap of voordeur bij jou? Foto uploaden en kijken maar!",
+      "story": "Vizualy is een AI-visualisatieplatform voor bedrijven. Een webshop koppelt een knop aan een product, waarna de bezoeker het kan bekijken op een foto van de eigen woonkamer of huisgevel. Nog in ontwikkeling en als pilot in gebruik bij een eerste bedrijf.",
+      "features": [
+        {
+          "title": "Je eigen foto",
+          "text": "Begin met een foto van je woonkamer of huisgevel."
+        },
+        {
+          "title": "Product bij jou thuis",
+          "text": "Bekijk hoe meubels, trappen, kozijnen of deuren in jouw omgeving staan."
+        },
+        {
+          "title": "Vergelijken en aanvragen",
+          "text": "Schuif tussen voor en na en ga verder naar een offerteaanvraag."
+        }
+      ],
+      "outcome": "Een praktisch voorproefje vóór je kiest. De pilot is een begin, geen belofte van gemeten conversiewinst."
+    }
+  },
+  {
+    "slug": "deurwebshop",
+    "displayName": "Deurwebshop",
+    "name": "Deurwebshop.nl",
+    "url": "https://www.deurwebshop.nl/",
+    "image": "/projects/deurwebshop.svg",
+    "logo": null,
+    "monogram": "DW",
+    "period": "ongoing",
+    "role": "Developer at MartijnKozijn",
+    "status": "Ongoing",
+    "gallery": [
+      {
+        "image": "/projects/deurwebshop-configurator.svg",
+        "en": "The live 3D configurator: an opened door with an anthracite exterior, model options and the calculated price.",
+        "nl": "De live 3D-configurator: een geopende deur met antraciete buitenzijde, modelopties en de berekende prijs."
+      }
+    ],
+    "en": {
+      "label": "Door webshop & 3D configurator",
+      "intro": "From the size of your opening to a door that fits. Compare models, choose your options and explore the result in 3D.",
+      "story": "I work on Deurwebshop at MartijnKozijn: a new project for selling doors with a renewed 3D configurator. The site connects stock doors, made-to-measure models and guidance for choosing. Visitors can start with dimensions, compare product details and work through the options available for their model.",
+      "features": [
+        {
+          "title": "Find a starting point",
+          "text": "A dimension finder, catalogue filters and a choice guide help visitors explore stock doors and made-to-measure models."
+        },
+        {
+          "title": "Configure step by step",
+          "text": "Choose dimensions, opening direction, profile, exterior and interior colours, glazing and hardware where the model supports them. The configuration shows a calculated price."
+        },
+        {
+          "title": "Explore the door in 3D",
+          "text": "Rotate, zoom and open the door, switch between inside and outside views, or use the technical drawing and product photos. The preview is indicative; technical details still need confirmation."
+        }
+      ],
+      "outcome": "One route from comparing doors to working out a model in detail. The project is being developed further at MartijnKozijn."
+    },
+    "nl": {
+      "label": "Deurenwebshop & 3D-configurator",
+      "intro": "Van de maat van je opening naar een passende deur. Modellen vergelijken, opties kiezen en het resultaat in 3D bekijken.",
+      "story": "Bij MartijnKozijn werk ik aan Deurwebshop: een nieuw project voor deurenverkoop met een vernieuwde 3D-configurator. De site brengt voorraaddeuren, maatwerkmodellen en hulp bij kiezen samen. Bezoekers kunnen beginnen bij hun maten, productinformatie vergelijken en de beschikbare opties van hun model uitwerken.",
+      "features": [
+        {
+          "title": "Een startpunt vinden",
+          "text": "Een maatzoeker, assortimentfilters en keuzehulp helpen bezoekers op weg naar voorraaddeuren of een model op maat."
+        },
+        {
+          "title": "Stap voor stap samenstellen",
+          "text": "Kies afmetingen, draairichting, profiel, buiten- en binnenkleur, glas en beslag waar het model dat biedt. De samenstelling toont een berekende prijs."
+        },
+        {
+          "title": "De deur in 3D bekijken",
+          "text": "Draai, zoom en open de deur, wissel tussen binnen- en buitenaanzicht of bekijk de technische tekening en productfoto’s. Het voorbeeld is indicatief; technische details worden nog bevestigd."
+        }
+      ],
+      "outcome": "Van deuren vergelijken naar een model concreet uitwerken, op één plek. Het project wordt bij MartijnKozijn verder ontwikkeld."
+    }
+  },
+  {
+    "slug": "martijnkozijn",
+    "name": "MartijnKozijn.nl",
+    "url": "https://www.martijnkozijn.nl/",
+    "image": "/projects/martijnkozijn-hero.png",
+    "logo": "https://www.google.com/s2/favicons?domain=martijnkozijn.nl&sz=256",
+    "period": "2023 - ongoing",
+    "role": "Lead developer",
+    "status": "Ongoing",
+    "en": {
+      "label": "Ecommerce architecture",
+      "intro": "A continuously improved ecommerce experience for made-to-measure windows, doors and related home products.",
+      "story": "The work focuses on making a large, technical catalogue easier to explore while keeping configuration, product information and the path to purchase clear. I also work on Deurwebshop.nl there, a new door-sales project with a renewed 3D configurator.",
+      "features": [
+        {
+          "title": "Made-to-measure catalogue",
+          "text": "Structured product journeys for windows, doors, glass and configurations."
+        },
+        {
+          "title": "Decision-ready detail",
+          "text": "Bring dimensions, material, glazing and delivery information into a clear buying flow."
+        },
+        {
+          "title": "Conversion-minded commerce",
+          "text": "Keep the route from discovery to order focused across desktop and mobile."
+        }
+      ],
+      "outcome": "A more maintainable storefront for a purchase that deserves confidence."
+    },
+    "nl": {
+      "label": "E-commercearchitectuur",
+      "intro": "Een continu verbeterde e-commerce-ervaring voor kozijnen, deuren en gerelateerde producten op maat.",
+      "story": "Het werk draait om een groot, technisch assortiment makkelijker vindbaar maken, met heldere configuratie, productinformatie en een logische route naar aankoop. Daar werk ik ook aan Deurwebshop.nl, het nieuwe deurenproject met een vernieuwde 3D-configurator.",
+      "features": [
+        {
+          "title": "Maatwerkcatalogus",
+          "text": "Gestructureerde productroutes voor kozijnen, deuren, glas en configuraties."
+        },
+        {
+          "title": "Beslisinformatie",
+          "text": "Breng maatvoering, materiaal, glas en bezorging samen in een duidelijke koopflow."
+        },
+        {
+          "title": "Conversiegerichte commerce",
+          "text": "Houd de route van oriëntatie naar bestelling scherp op desktop en mobiel."
+        }
+      ],
+      "outcome": "Een beter onderhoudbare shop voor een aankoop waarbij vertrouwen telt."
+    }
+  },
+  {
     "slug": "refacthor",
     "name": "Refacthor",
     "url": "https://refacthor.nl/",
@@ -298,6 +306,108 @@ export const projectCases = [
         }
       ],
       "outcome": "Digitale producten met een sterkere technische basis en een helderder bestaansrecht."
+    }
+  },
+  {
+    "slug": "publion",
+    "name": "Publion",
+    "url": "https://github.com/Jaymian-Lee/publion",
+    "image": "/projects/publion.svg",
+    "logo": null,
+    "monogram": "P",
+    "period": "Late 2025 - ongoing",
+    "role": "Maker",
+    "status": "Public",
+    "en": {
+      "label": "AI content for WordPress",
+      "intro": "From a content idea to an article draft. With a brief, images and a moment to check what the AI made.",
+      "story": "Publion is my WordPress plugin for AI-assisted content planning and article production. Start with a category and an SEO brief, plan a topic and create a draft with images. The code is public on GitHub.",
+      "features": [
+        {
+          "title": "Plan with a brief",
+          "text": "Prepare topics with a focus keyword, search intent, angle and FAQ questions."
+        },
+        {
+          "title": "Draft, check, publish",
+          "text": "Generate article drafts and images, then review facts, sources and tone before publication."
+        },
+        {
+          "title": "Follow performance",
+          "text": "Open your own Search Console and GA4 reports from the dashboard; direct API connections are optional."
+        }
+      ],
+      "outcome": "A clearer content workflow, not an automatic ranking machine. Human review still matters."
+    },
+    "nl": {
+      "label": "AI-content voor WordPress",
+      "intro": "Van contentidee naar artikelconcept. Met een brief, afbeeldingen en een moment om te controleren wat de AI ervan heeft gemaakt.",
+      "story": "Publion is mijn WordPress-plugin voor AI-gestuurde contentplanning en artikelproductie. Begin met een categorie en SEO-brief, plan een onderwerp en maak een concept met afbeeldingen. De code staat publiek op GitHub.",
+      "features": [
+        {
+          "title": "Plannen met een brief",
+          "text": "Bereid onderwerpen voor met een focus-keyword, zoekintentie, invalshoek en FAQ-vragen."
+        },
+        {
+          "title": "Concept, controle, publicatie",
+          "text": "Maak artikelconcepten en afbeeldingen. Controleer daarna feiten, bronnen en toon vóór publicatie."
+        },
+        {
+          "title": "Prestaties volgen",
+          "text": "Open je eigen Search Console- en GA4-rapporten vanuit het dashboard; directe API-koppelingen zijn optioneel."
+        }
+      ],
+      "outcome": "Een duidelijker contentproces, geen automatische rankingmachine. Inhoudelijke controle blijft nodig."
+    }
+  },
+  {
+    "slug": "sjmoeleboek",
+    "name": "Sjmoeleboek",
+    "url": "https://sjmoeleboek.nl/",
+    "image": "/projects/sjmoeleboek.svg",
+    "logo": null,
+    "monogram": "S",
+    "period": "September 2026 - ongoing",
+    "role": "Maker",
+    "status": "Live",
+    "en": {
+      "label": "Limburg carnival platform",
+      "intro": "A place for Limburg carnival. People, groups and a good dose of vastelaovend!",
+      "story": "Sjmoeleboek brings Limburg carnival together in a free web app. With AI editor Dirk, Sjmoelkaarten, the Sjmoeldex and groups. The web app is the place to use it now; iOS and Android apps are planned for later.",
+      "features": [
+        {
+          "title": "People and groups",
+          "text": "Create or join carnival groups, with member and staff chats, events and appointments in one place."
+        },
+        {
+          "title": "Sjmoelkaarten & Sjmoeldex",
+          "text": "Make your own Sjmoelkaart and collect other people’s cards by scanning the QR code on the back. Build your own Sjmoeldex."
+        },
+        {
+          "title": "Dirk, the AI editor",
+          "text": "An AI editor on the platform, alongside the community."
+        }
+      ],
+      "outcome": "A free web app built around Limburg carnival. Native mobile apps are still planned, not released."
+    },
+    "nl": {
+      "label": "Limburgs carnavalsplatform",
+      "intro": "Vastelaovend op één plek. Mensen, groepen en een flinke dosis Limburg!",
+      "story": "Sjmoeleboek brengt de Limburgse carnaval samen in een gratis webapp. Met AI-redacteur Dirk, Sjmoelkaarten, de Sjmoeldex en groepen. Nu te gebruiken in je browser; iOS- en Android-apps komen later.",
+      "features": [
+        {
+          "title": "Mensen en groepen",
+          "text": "Maak of join carnavalsgroepen, met leden- en staffchat, evenementen en afspraken op één plek."
+        },
+        {
+          "title": "Sjmoelkaarten & Sjmoeldex",
+          "text": "Maak je eigen Sjmoelkaart en verzamel kaarten van anderen door de QR-code op de achterkant te scannen. Bouw zo je Sjmoeldex op."
+        },
+        {
+          "title": "Dirk, de AI-redacteur",
+          "text": "Een AI-redacteur op het platform, naast de community."
+        }
+      ],
+      "outcome": "Een gratis webapp voor de Limburgse vastelaovend. De mobiele apps zijn nog gepland, niet uitgebracht."
     }
   },
   {
@@ -401,6 +511,56 @@ export const projectCases = [
     }
   },
   {
+    "slug": "mintventory",
+    "name": "Mintventory",
+    "url": "https://mintventory.com/",
+    "image": "/projects/mintventory-com.svg",
+    "logo": "https://www.google.com/s2/favicons?domain=mintventory.com&sz=256",
+    "period": "2026 - 2026",
+    "role": "Product and data",
+    "status": "Archived",
+    "en": {
+      "label": "Trading-card data platform",
+      "intro": "Mintventory brought card identity, collector context and market signals into one structured record.",
+      "story": "The project separated raw and graded pricing, connected cards to set data and linked collectors out to relevant market places without losing the reference context.",
+      "features": [
+        {
+          "title": "Canonical card records",
+          "text": "Keep set, card number, rarity and collector context together."
+        },
+        {
+          "title": "Raw versus graded prices",
+          "text": "Separate ungraded market value from slabbed sales data."
+        },
+        {
+          "title": "Marketplace routes",
+          "text": "Connect collectors to relevant external listings and market references."
+        }
+      ],
+      "outcome": "An archived data-product experiment for making card research less fragmented."
+    },
+    "nl": {
+      "label": "Trading-carddataplatform",
+      "intro": "Mintventory bracht kaartidentiteit, verzamelaarcontext en marktsignalen samen in één gestructureerd record.",
+      "story": "Het project scheidde raw en graded prijzen, koppelde kaarten aan setdata en verwees verzamelaars naar relevante marktplaatsen zonder de referentiecontext te verliezen.",
+      "features": [
+        {
+          "title": "Canonieke kaartrecords",
+          "text": "Houd set, kaartnummer, rarity en verzamelaarcontext bij elkaar."
+        },
+        {
+          "title": "Raw versus graded prijzen",
+          "text": "Scheid ongerade marktwaarde van slabbed verkoopdata."
+        },
+        {
+          "title": "Routes naar marktplaatsen",
+          "text": "Koppel verzamelaars aan relevante externe listings en marktreferenties."
+        }
+      ],
+      "outcome": "Een gearchiveerd data-productexperiment om kaartonderzoek minder versnipperd te maken."
+    }
+  },
+  {
     "slug": "twigsie",
     "name": "Twigsie",
     "url": "https://twigsie.com/",
@@ -499,107 +659,6 @@ export const projectCases = [
         }
       ],
       "outcome": "Een gearchiveerde e-commercebuild rond visuele productontdekking."
-    }
-  },
-  {
-    "slug": "mintventory",
-    "name": "Mintventory",
-    "url": "https://mintventory.com/",
-    "image": "/projects/mintventory-com.svg",
-    "logo": "https://www.google.com/s2/favicons?domain=mintventory.com&sz=256",
-    "period": "2026 - 2026",
-    "role": "Product and data",
-    "status": "Archived",
-    "en": {
-      "label": "Trading-card data platform",
-      "intro": "Mintventory brought card identity, collector context and market signals into one structured record.",
-      "story": "The project separated raw and graded pricing, connected cards to set data and linked collectors out to relevant market places without losing the reference context.",
-      "features": [
-        {
-          "title": "Canonical card records",
-          "text": "Keep set, card number, rarity and collector context together."
-        },
-        {
-          "title": "Raw versus graded prices",
-          "text": "Separate ungraded market value from slabbed sales data."
-        },
-        {
-          "title": "Marketplace routes",
-          "text": "Connect collectors to relevant external listings and market references."
-        }
-      ],
-      "outcome": "An archived data-product experiment for making card research less fragmented."
-    },
-    "nl": {
-      "label": "Trading-carddataplatform",
-      "intro": "Mintventory bracht kaartidentiteit, verzamelaarcontext en marktsignalen samen in één gestructureerd record.",
-      "story": "Het project scheidde raw en graded prijzen, koppelde kaarten aan setdata en verwees verzamelaars naar relevante marktplaatsen zonder de referentiecontext te verliezen.",
-      "features": [
-        {
-          "title": "Canonieke kaartrecords",
-          "text": "Houd set, kaartnummer, rarity en verzamelaarcontext bij elkaar."
-        },
-        {
-          "title": "Raw versus graded prijzen",
-          "text": "Scheid ongerade marktwaarde van slabbed verkoopdata."
-        },
-        {
-          "title": "Routes naar marktplaatsen",
-          "text": "Koppel verzamelaars aan relevante externe listings en marktreferenties."
-        }
-      ],
-      "outcome": "Een gearchiveerd data-productexperiment om kaartonderzoek minder versnipperd te maken."
-    }
-  },
-  {
-    "slug": "publion",
-    "name": "Publion",
-    "url": "https://github.com/Jaymian-Lee/publion",
-    "image": "/projects/publion.svg",
-    "logo": null,
-    "monogram": "P",
-    "period": "Late 2025 - ongoing",
-    "role": "Maker",
-    "status": "Public",
-    "en": {
-      "label": "AI content for WordPress",
-      "intro": "From a content idea to an article draft. With a brief, images and a moment to check what the AI made.",
-      "story": "Publion is my WordPress plugin for AI-assisted content planning and article production. Start with a category and an SEO brief, plan a topic and create a draft with images. The code is public on GitHub.",
-      "features": [
-        {
-          "title": "Plan with a brief",
-          "text": "Prepare topics with a focus keyword, search intent, angle and FAQ questions."
-        },
-        {
-          "title": "Draft, check, publish",
-          "text": "Generate article drafts and images, then review facts, sources and tone before publication."
-        },
-        {
-          "title": "Follow performance",
-          "text": "Open your own Search Console and GA4 reports from the dashboard; direct API connections are optional."
-        }
-      ],
-      "outcome": "A clearer content workflow, not an automatic ranking machine. Human review still matters."
-    },
-    "nl": {
-      "label": "AI-content voor WordPress",
-      "intro": "Van contentidee naar artikelconcept. Met een brief, afbeeldingen en een moment om te controleren wat de AI ervan heeft gemaakt.",
-      "story": "Publion is mijn WordPress-plugin voor AI-gestuurde contentplanning en artikelproductie. Begin met een categorie en SEO-brief, plan een onderwerp en maak een concept met afbeeldingen. De code staat publiek op GitHub.",
-      "features": [
-        {
-          "title": "Plannen met een brief",
-          "text": "Bereid onderwerpen voor met een focus-keyword, zoekintentie, invalshoek en FAQ-vragen."
-        },
-        {
-          "title": "Concept, controle, publicatie",
-          "text": "Maak artikelconcepten en afbeeldingen. Controleer daarna feiten, bronnen en toon vóór publicatie."
-        },
-        {
-          "title": "Prestaties volgen",
-          "text": "Open je eigen Search Console- en GA4-rapporten vanuit het dashboard; directe API-koppelingen zijn optioneel."
-        }
-      ],
-      "outcome": "Een duidelijker contentproces, geen automatische rankingmachine. Inhoudelijke controle blijft nodig."
     }
   }
 ];
