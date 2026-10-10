@@ -2,6 +2,7 @@ const { spawnSync } = require('node:child_process');
 
 if (process.env.VERCEL || process.env.CI) {
   console.log('Skipping react-snap during CI/Vercel build; writing route metadata fallbacks.');
+  spawnSync(process.execPath, ['scripts/generate-og-images.js'], { stdio: 'inherit', env: process.env });
   const result = spawnSync(process.execPath, ['scripts/generate-static-route-meta.js'], {
     stdio: 'inherit',
     env: process.env
