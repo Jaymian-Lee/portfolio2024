@@ -101,7 +101,7 @@ function compareLeaderboardEntries(a, b) {
   return Number(a.submittedAt || 0) - Number(b.submittedAt || 0);
 }
 
-async function getTop3(dateKey, language) {
+async function getLeaderboardEntries(dateKey, language) {
   const key = leaderboardKey(dateKey, language);
   const namesKey = leaderboardNamesKey(dateKey, language);
 
@@ -139,8 +139,11 @@ async function getTop3(dateKey, language) {
 
   return ranked
     .filter((entry) => !isCheatScore(entry.attempts, entry.durationMs))
-    .sort(compareLeaderboardEntries)
-    .slice(0, 3);
+    .sort(compareLeaderboardEntries);
+}
+
+async function getTop3(dateKey, language) {
+  return (await getLeaderboardEntries(dateKey, language)).slice(0, 3);
 }
 
 function getMonthDateKeys(dateKey) {
@@ -168,8 +171,8 @@ async function getOverview(dateKey, language) {
 
   const weekDateKeys = getWeekDateKeys(dateKey);
   const overviewDateKeys = Array.from(new Set([...getMonthDateKeys(dateKey), ...weekDateKeys]));
-  const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getTop3(key, language) })));
-  const top3 = rows.find((row) => row.dateKey === dateKey)?.entries || [];
+  const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getLeaderboardEntries(key, language) })));
+  const top3 = (rows.find((row) => row.dateKey === dateKey)?.entries || []).slice(0, 3);
   const monthlyWorldRecord = rows
     .filter((row) => row.entries[0])
     .map((row) => ({ ...row.entries[0], dateKey: row.dateKey }))

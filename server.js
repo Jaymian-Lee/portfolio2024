@@ -620,7 +620,7 @@ async function kvPipeline(commands) {
   });
 }
 
-async function getTop3(dateKey, language) {
+async function getLeaderboardEntries(dateKey, language) {
   const key = leaderboardKey(dateKey, language);
   const namesKey = leaderboardNamesKey(dateKey, language);
 
@@ -669,7 +669,11 @@ async function getTop3(dateKey, language) {
     if (aDuration !== bDuration) return aDuration - bDuration;
 
     return Number(a.submittedAt || 0) - Number(b.submittedAt || 0);
-  }).slice(0, 3);
+  });
+}
+
+async function getTop3(dateKey, language) {
+  return (await getLeaderboardEntries(dateKey, language)).slice(0, 3);
 }
 
 function compareLeaderboardEntries(a, b) {
@@ -710,8 +714,8 @@ async function getLeaderboardOverview(dateKey, language) {
   const monthDateKeys = getMonthDateKeys(dateKey);
   const weekDateKeys = getWeekDateKeys(dateKey);
   const overviewDateKeys = Array.from(new Set([...monthDateKeys, ...weekDateKeys]));
-  const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getTop3(key, language) })));
-  const today = rows.find((row) => row.dateKey === dateKey)?.entries || [];
+  const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getLeaderboardEntries(key, language) })));
+  const today = (rows.find((row) => row.dateKey === dateKey)?.entries || []).slice(0, 3);
   const monthlyCandidates = rows
     .filter((row) => row.entries[0])
     .map((row) => ({ ...row.entries[0], dateKey: row.dateKey }))

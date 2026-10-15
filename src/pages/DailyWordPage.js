@@ -1142,7 +1142,7 @@ function DailyWordPage() {
                     <ol className="weekly-day-list">
                       {day.entries.map((entry, index) => (
                         <li key={`${day.dateKey}-${entry.name}-${entry.submittedAt || index}`}>
-                          <span className="weekly-rank">#{index + 1}</span>
+                          <span className={`weekly-rank${index < 3 ? ` weekly-rank--${['gold', 'silver', 'bronze'][index]}` : ''}`}>#{index + 1}</span>
                           <button
                             type="button"
                             className="player-replay-link weekly-name"

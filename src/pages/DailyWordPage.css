@@ -488,7 +488,37 @@
 }
 
 .weekly-rank {
+  color: #fff;
   font-weight: 700;
+}
+
+.weekly-rank--gold {
+  color: #edc65f;
+  --rank-metal: linear-gradient(165deg, #fff3c4 5%, #edc65f 35%, #b98426 52%, #ffe7a0 72%, #d3a33f 100%);
+  filter: drop-shadow(0 0 4px rgb(237 198 95 / 24%));
+}
+
+.weekly-rank--silver {
+  color: #d4dce7;
+  --rank-metal: linear-gradient(165deg, #fff 5%, #d4dce7 35%, #8996aa 52%, #f1f5fc 72%, #b2becf 100%);
+  filter: drop-shadow(0 0 4px rgb(212 220 231 / 20%));
+}
+
+.weekly-rank--bronze {
+  color: #d69a6c;
+  --rank-metal: linear-gradient(165deg, #ffdbc0 5%, #d69a6c 35%, #a96438 52%, #f2c39d 72%, #bf8052 100%);
+  filter: drop-shadow(0 0 4px rgb(214 154 108 / 22%));
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .weekly-rank--gold,
+  .weekly-rank--silver,
+  .weekly-rank--bronze {
+    background-image: var(--rank-metal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .weekly-name {
