@@ -1,10 +1,10 @@
 # Portfolio social preview
 
-The current artwork is `public/social/jaymian-lee-share-v2.png` (1200 × 630 PNG).
+The current artwork is `public/social/jaymian-lee-share-v3.png` (1200 × 630 PNG).
 It was generated with the built-in image generation tool. The owner requested
 an anonymous silhouette based on his hair outline and crossed-arms posture,
 with a question mark and no face. The existing `public/jay-portrait.png` was used
-only as a contour/pose reference. Version 1 remains available for compatibility.
+only as a contour/pose reference. Versions 1 and 2 remain available for compatibility. Version 3 replaces the blue spark with a lime code icon at the owner’s request.
 
 Research used the existing portfolio homepage, local content and
 `src/styles/design-system.css`: warm paper, near-black, lime, electric blue,
@@ -20,6 +20,12 @@ structured data remains the person's photo rather than the marketing banner.
 Increment the asset filename and shared config when replacing it; keep the public
 HTML template aligned. Validate the Vercel-style build and its generated route
 HTML so both English and Dutch links work without JavaScript.
+
+## Version 3 edit prompt
+
+```text
+Edit this existing portfolio social preview image. Change ONLY the small blue four-point star/spark at the upper right beside the lime circle: remove the star completely and replace it with a small clean bold code icon "</>" in flat lime green #ceff3c, with a thin dark outline only if needed for legibility on the warm paper background. The icon should have similar size and occupy the same spot. No star or spark anywhere, no blue accents remaining. Preserve everything else exactly: the anonymous black silhouette with folded arms, featureless face and large lime question mark, lime circle, warm paper background, original layout and all typography. All existing text must be unchanged: "JAYMIAN-LEE REINARTZ", "NOTHING IS IMPOSSIBLE.", "Full-stack developer. Product builder.", "jaymian-lee.nl". No face, no portrait details. Wide 1.91:1 composition.
+```
 
 ## Version 2 generation prompt
 
