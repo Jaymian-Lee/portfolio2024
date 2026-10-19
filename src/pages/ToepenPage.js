@@ -458,10 +458,8 @@ function ToepenPage() {
         language={language}
         alternatePaths={alternatePaths}
         defaultLocalePath={alternatePaths.en}
-        image={`${siteSeo.siteUrl}/jay.png`}
-        imageAlt={language === 'nl'
-          ? 'Toepen scorebord van Jaymian-Lee Reinartz'
-          : 'Toepen scoreboard by Jaymian-Lee Reinartz'}
+        image={siteSeo.socialImage}
+        imageAlt={siteSeo.socialImageAlt}
         jsonLd={toePenSeoJsonLd}
       />
 

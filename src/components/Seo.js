@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
+import socialPreview from '../data/social-preview.json';
 
 const SITE_URL = 'https://www.jaymian-lee.nl';
 const SITE_NAME = 'Jaymian-Lee Reinartz Portfolio';
-const DEFAULT_IMAGE = `${SITE_URL}/jay.png`;
+const DEFAULT_IMAGE = `${SITE_URL}${socialPreview.path}`;
 
 const upsertMeta = (selector, attributes) => {
   let tag = document.head.querySelector(selector);
@@ -48,7 +49,7 @@ export default function Seo({
   description,
   canonicalPath = '/',
   image = DEFAULT_IMAGE,
-  imageAlt = SITE_NAME,
+  imageAlt = socialPreview.alt,
   language = 'en',
   type = 'website',
   noIndex = false,
@@ -82,6 +83,12 @@ export default function Seo({
     upsertMeta('meta[property="og:url"]', { property: 'og:url', content: canonicalUrl });
     upsertMeta('meta[property="og:image"]', { property: 'og:image', content: image });
     upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: imageAlt });
+    document.head.querySelectorAll('meta[property="og:image:width"], meta[property="og:image:height"], meta[property="og:image:type"]').forEach((tag) => tag.remove());
+    if (image === DEFAULT_IMAGE || image.includes('/projects/og/')) {
+      upsertMeta('meta[property="og:image:width"]', { property: 'og:image:width', content: '1200' });
+      upsertMeta('meta[property="og:image:height"]', { property: 'og:image:height', content: '630' });
+      upsertMeta('meta[property="og:image:type"]', { property: 'og:image:type', content: 'image/png' });
+    }
     upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name', content: SITE_NAME });
     upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: language === 'nl' ? 'nl_NL' : 'en_US' });
     document.head.querySelectorAll('meta[property="og:locale:alternate"]').forEach((tag) => tag.remove());

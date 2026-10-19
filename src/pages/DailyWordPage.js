@@ -966,10 +966,8 @@ function DailyWordPage() {
         language={language}
         alternatePaths={alternatePaths}
         defaultLocalePath={alternatePaths.en}
-        image={`${siteSeo.siteUrl}/jay.png`}
-        imageAlt={language === 'nl'
-          ? 'Word-Lee dagelijkse woordgame van Jaymian-Lee Reinartz'
-          : 'Word-Lee daily word game by Jaymian-Lee Reinartz'}
+        image={siteSeo.socialImage}
+        imageAlt={siteSeo.socialImageAlt}
         jsonLd={dailySeoJsonLd}
       />
 

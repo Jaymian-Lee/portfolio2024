@@ -369,10 +369,8 @@ export default function SP500CalculatorPage() {
         language={language}
         alternatePaths={alternatePaths}
         defaultLocalePath={alternatePaths.en}
-        image={`${siteSeo.siteUrl}/jay.png`}
-        imageAlt={language === 'nl'
-          ? 'S&P 500 calculator van Jaymian-Lee Reinartz'
-          : 'S&P 500 calculator by Jaymian-Lee Reinartz'}
+        image={siteSeo.socialImage}
+        imageAlt={siteSeo.socialImageAlt}
         jsonLd={sp500SeoJsonLd}
       />
 

@@ -184,8 +184,8 @@ export default function StreamChatPage() {
         language={language}
         alternatePaths={alternatePaths}
         defaultLocalePath={alternatePaths.en}
-        image={`${siteSeo.siteUrl}/jay.png`}
-        imageAlt="Stream chat overview for Jaymian-Lee Reinartz"
+        image={siteSeo.socialImage}
+        imageAlt={siteSeo.socialImageAlt}
         jsonLd={pageJsonLd}
       />
 

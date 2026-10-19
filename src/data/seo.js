@@ -1,3 +1,5 @@
+import socialPreview from './social-preview.json';
+
 const SITE_URL = 'https://www.jaymian-lee.nl';
 const SITE_NAME = 'Jaymian-Lee Reinartz Portfolio';
 const PERSON_NAME = 'Jaymian-Lee Reinartz';
@@ -19,7 +21,9 @@ export const siteSeo = {
   personName: PERSON_NAME,
   personUrl: PERSON_URL,
   personImage: PERSON_IMAGE,
-  socialLinks
+  socialLinks,
+  socialImage: `${SITE_URL}${socialPreview.path}`,
+  socialImageAlt: socialPreview.alt
 };
 
 export const createPersonSchema = () => ({

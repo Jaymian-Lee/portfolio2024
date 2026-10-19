@@ -1,6 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const socialPreview = require('../src/data/social-preview.json');
+
 const siteUrl = 'https://www.jaymian-lee.nl';
 const buildDir = path.resolve(__dirname, '..', 'build');
 const indexPath = path.join(buildDir, 'index.html');
@@ -58,9 +60,9 @@ const routes = pages.flatMap((page) => ['en', 'nl'].map((language) => {
     language,
     title,
     description,
-    image: `${siteUrl}${image || '/jay.png'}`,
-    hasOgSize: hasOg,
-    imageAlt: title
+    image: `${siteUrl}${image || socialPreview.path}`,
+    hasOgSize: hasOg || !image,
+    imageAlt: image ? title : socialPreview.alt
   };
 }));
 
@@ -176,6 +178,7 @@ function createRouteHtml(source, route) {
   html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:title["'])[^>]*>/gi, `<meta name="twitter:title" content="${route.title}" />`);
   html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:description["'])[^>]*>/gi, `<meta name="twitter:description" content="${route.description}" />`);
   html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:image["'])[^>]*>/gi, `<meta name="twitter:image" content="${route.image}" />`);
+  html = replaceTag(html, /<meta\b(?=[^>]*\bname=["']twitter:image:alt["'])[^>]*>/gi, `<meta name="twitter:image:alt" content="${route.imageAlt}" />`);
   html = html.replace(/<script\b(?=[^>]*\bdata-seo-jsonld=["']true["'])[^>]*>[\s\S]*?<\/script>/gi, '');
   html = html.replace(/<meta\b(?=[^>]*\bproperty=["']og:image:(?:width|height|type)["'])[^>]*>/gi, '');
   if (route.hasOgSize) {

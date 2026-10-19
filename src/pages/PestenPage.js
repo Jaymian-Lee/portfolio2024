@@ -180,7 +180,7 @@ export default function PestenPage() {
 
   return (
     <main className="toepen-page ui-page">
-      <Seo title={`${t.title} | Jaymian-Lee Reinartz`} description={isNl ? 'Lokaal Pesten scorebord met flexibele eindscore, snelle invoer en spelhistorie.' : 'Local Pesten scoreboard with a flexible end score, quick input, and game history.'} canonicalPath={canonicalPath} language={language} alternatePaths={alternatePaths} defaultLocalePath={alternatePaths.en} image={`${siteSeo.siteUrl}/jay.png`} imageAlt={isNl ? 'Pesten scorebord van Jaymian-Lee Reinartz' : 'Pesten scoreboard by Jaymian-Lee Reinartz'} jsonLd={pageJsonLd} />
+      <Seo title={`${t.title} | Jaymian-Lee Reinartz`} description={isNl ? 'Lokaal Pesten scorebord met flexibele eindscore, snelle invoer en spelhistorie.' : 'Local Pesten scoreboard with a flexible end score, quick input, and game history.'} canonicalPath={canonicalPath} language={language} alternatePaths={alternatePaths} defaultLocalePath={alternatePaths.en} image={siteSeo.socialImage} imageAlt={siteSeo.socialImageAlt} jsonLd={pageJsonLd} />
       <div className="toepen-wrap ui-container">
         <header className="toepen-header"><LabBackLink to={localizePath('/lab', language)}>{t.back}</LabBackLink><h1>{t.title}</h1><p>{t.subtitle}</p></header>
         <section className="toepen-card">

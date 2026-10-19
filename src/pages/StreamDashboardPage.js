@@ -52,8 +52,8 @@ export default function StreamDashboardPage() {
         language={language}
         alternatePaths={alternatePaths}
         defaultLocalePath={alternatePaths.en}
-        image={`${siteSeo.siteUrl}/jay.png`}
-        imageAlt="Stream Dashboard overview for Jaymian-Lee Reinartz"
+        image={siteSeo.socialImage}
+        imageAlt={siteSeo.socialImageAlt}
         jsonLd={pageJsonLd}
       />
 

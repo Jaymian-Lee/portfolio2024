@@ -336,8 +336,8 @@ function App() {
         language={language}
         alternatePaths={alternatePaths}
         defaultLocalePath={alternatePaths.en}
-        image={`${siteSeo.siteUrl}/jay-portrait.png`}
-        imageAlt="Portrait of Jaymian-Lee Reinartz"
+        image={siteSeo.socialImage}
+        imageAlt={siteSeo.socialImageAlt}
         jsonLd={jsonLd}
       />
 

@@ -216,10 +216,8 @@ export default function LabPage() {
         language={language}
         alternatePaths={alternatePaths}
         defaultLocalePath={alternatePaths.en}
-        image={`${siteSeo.siteUrl}/jay.png`}
-        imageAlt={language === 'nl'
-          ? 'The Lab overzichtspagina met experimentele projecten van Jaymian-Lee Reinartz'
-          : 'The Lab overview page with experimental projects by Jaymian-Lee Reinartz'}
+        image={siteSeo.socialImage}
+        imageAlt={siteSeo.socialImageAlt}
         jsonLd={labSeoJsonLd}
       />
 
