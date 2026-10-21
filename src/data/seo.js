@@ -9,6 +9,7 @@ const PERSON_IMAGE = `${SITE_URL}/jay.png`;
 const socialLinks = [
   'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/',
   'https://github.com/Jaymian-Lee',
+  'https://x.com/JaymianLee_',
   'https://twitch.tv/jaymianlee',
   'https://www.youtube.com/@JaymianLee',
   'https://www.instagram.com/jaymianlee/',

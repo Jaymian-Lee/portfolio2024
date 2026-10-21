@@ -33,6 +33,7 @@ const footerProjects = [
 const footerConnect = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/' },
   { label: 'GitHub', href: 'https://github.com/Jaymian-Lee' },
+  { label: 'X', href: 'https://x.com/JaymianLee_' },
   { label: 'Twitch', href: 'https://twitch.tv/jaymianlee' },
   { label: 'YouTube', href: 'https://www.youtube.com/@JaymianLee' },
   { label: 'Instagram', href: 'https://www.instagram.com/jaymianlee/' }

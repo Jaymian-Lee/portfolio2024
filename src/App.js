@@ -268,6 +268,7 @@ const formatCasePeriod = (project, isNl) => {
 const socials = [
   { label: 'GitHub', handle: '@Jaymian-Lee', url: 'https://github.com/Jaymian-Lee', nl: 'Code, experimenten en de bouwstenen achter mijn producten.', en: 'Code, experiments and the building blocks behind my products.' },
   { label: 'LinkedIn', handle: 'Jaymian-Lee Reinartz', url: 'https://www.linkedin.com/in/jaymian-lee-reinartz-9b02941b0/', nl: 'Updates over productontwikkeling, AI en de dingen die ik aan het maken ben.', en: 'Updates on product work, AI and the things I am building.' },
+  { label: 'X', handle: '@JaymianLee_', url: 'https://x.com/JaymianLee_', nl: 'Korte updates over wat ik bouw, AI en nieuwe ideeën.', en: 'Short updates on what I am building, AI and new ideas.' },
   { label: 'Instagram', handle: '@jaymianlee', url: 'https://www.instagram.com/jaymianlee/', nl: 'Een persoonlijk kijkje achter de schermen, van idee naar release.', en: 'A personal look behind the scenes, from idea to release.' },
   { label: 'Content IG', handle: '@jaymianlee_', url: 'https://www.instagram.com/jaymianlee_/', nl: 'Content, experimenten en korte updates over wat ik aan het maken ben.', en: 'Content, experiments and short updates on what I am making.' },
   { label: 'YouTube', handle: '@JaymianLee', url: 'https://www.youtube.com/@JaymianLee', nl: 'Video’s, walkthroughs en de verhalen achter de builds.', en: 'Videos, walkthroughs and the stories behind the builds.' },
