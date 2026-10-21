@@ -64,11 +64,11 @@ export default function ProjectCasePage() {
 
   const toggleLanguage = () => navigate(getLanguageSwitchPath(location.pathname, isNl ? 'en' : 'nl', location.search, location.hash));
   const toggleTheme = () => setTheme((current) => current === 'dark' ? 'light' : 'dark');
-  const relatedSlugs = project.slug === 'deurwebshop' ? ['martijnkozijn', 'vizualy', 'slecto'] : project.slug === 'martijnkozijn' ? ['deurwebshop', 'slecto', 'corthex'] : null;
+  const relatedSlugs = project.relatedSlugs || (project.slug === 'deurwebshop' ? ['martijnkozijn', 'vizualy', 'slecto'] : project.slug === 'martijnkozijn' ? ['deurwebshop', 'slecto', 'corthex'] : null);
   const otherProjects = relatedSlugs ? relatedSlugs.map(getProjectCase) : projectCases.filter((item) => item.slug !== project.slug).slice(0, 3);
 
   return (
-    <div className="project-case-page">
+    <div className={`project-case-page project-case-page--${project.slug}`}>
       <Seo
         title={`${project.name} | ${content.label} | Jaymian-Lee Reinartz`}
         description={content.intro}
@@ -105,7 +105,7 @@ export default function ProjectCasePage() {
                 <h1>{project.displayName || project.name}</h1>
                 <p className="case-intro">{content.intro}</p>
                 <div className="case-actions">
-                  <a className="case-primary-action" href={project.url} target="_blank" rel="noreferrer">{t.visit}<AnimatedIcon name="arrow-right" size={18} /></a>
+                  <a className="case-primary-action" href={project.url} target="_blank" rel="noreferrer">{content.visit || t.visit}<AnimatedIcon name="arrow-right" size={18} /></a>
                   <span className={`case-status ${project.status.toLowerCase()}`}><i aria-hidden="true" />{project.status}</span>
                 </div>
               </div>
@@ -118,8 +118,8 @@ export default function ProjectCasePage() {
 
         <section className="case-content">
           <div className="case-facts" aria-label={`${project.name} facts`}>
-            <div><span>{t.role}</span><strong>{project.role}</strong></div>
-            <div><span>{t.period}</span><strong>{isNl ? project.period.replace('May', 'Mei').replace('Late', 'Eind').replace('ongoing', 'heden') : project.period}</strong></div>
+            <div><span>{t.role}</span><strong>{content.role || project.role}</strong></div>
+            <div><span>{t.period}</span><strong>{isNl ? project.period.replace('May', 'Mei').replace('October', 'Oktober').replace('Late', 'Eind').replace('ongoing', 'heden') : project.period}</strong></div>
             <div><span>{t.status}</span><strong>{project.status}</strong></div>
           </div>
 
@@ -150,11 +150,44 @@ export default function ProjectCasePage() {
           </section>
 
           {project.gallery && <section className="case-gallery" aria-label={isNl ? 'Projectbeelden' : 'Project screenshots'}>
-            {project.gallery.map((shot) => <figure key={shot.image}><img src={shot.image} alt={shot[language] || shot.en} loading="lazy" /><figcaption>{shot[language] || shot.en}</figcaption></figure>)}
+            {project.gallery.map((shot) => <figure key={shot.image}><img src={shot.image} alt={shot[language] || shot.en} width={shot.width} height={shot.height} loading="lazy" /><figcaption>{shot[language] || shot.en}</figcaption></figure>)}
+          </section>}
+
+          {content.sections && <section className="case-deep-dive" aria-label={isNl ? 'Het verhaal achter de game' : 'Behind the game'}>
+            {content.sections.map((section, index) => (
+              <article className="case-chapter" key={section.title}>
+                <div>
+                  <p className="case-section-label">{String(index + 4).padStart(2, '0')} / {isNl ? 'Uitgelicht' : 'A closer look'}</p>
+                  <h2>{section.title}</h2>
+                </div>
+                <div className="case-chapter-copy">
+                  {section.icon && <img className="case-service-icon" src={section.icon} alt="" width="48" height="48" loading="lazy" />}
+                  {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                </div>
+              </article>
+            ))}
+          </section>}
+
+          {project.artwork && <section className="case-identity" aria-labelledby="case-identity-title">
+            <div className="case-character-lineup" aria-hidden="true">
+              {project.artwork.map((src) => <img src={src} key={src} alt="" width="144" height="144" loading="lazy" />)}
+            </div>
+            <div>
+              <p className="case-section-label">{isNl ? 'Visuele identiteit' : 'Visual identity'}</p>
+              <h2 id="case-identity-title">{content.identityTitle}</h2>
+              <p>{content.identityText}</p>
+            </div>
+          </section>}
+
+          {content.closingTitle && <section className="case-play-cta" aria-labelledby="case-play-title">
+            <img src={project.logo} alt="" width="56" height="56" loading="lazy" />
+            <h2 id="case-play-title">{content.closingTitle}</h2>
+            <p>{content.closingText}</p>
+            <a className="case-primary-action" href={project.url} target="_blank" rel="noreferrer">{content.visit || t.visit}<AnimatedIcon name="arrow-right" size={18} /></a>
           </section>}
 
           <section className="case-related" aria-labelledby="case-related-title">
-            <div><p className="case-section-label">04 / {t.related}</p><h2 id="case-related-title">{isNl ? 'Andere builds in beweging.' : 'Other builds in motion.'}</h2></div>
+            <div><p className="case-section-label">{String(4 + (content.sections?.length || 0)).padStart(2, '0')} / {t.related}</p><h2 id="case-related-title">{isNl ? 'Andere builds in beweging.' : 'Other builds in motion.'}</h2></div>
             <div className="case-related-list">
               {otherProjects.map((item) => (
                 <Link key={item.slug} to={localizePath(getProjectCasePath(item.slug), language)} className="case-related-link">

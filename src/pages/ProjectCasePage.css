@@ -41,3 +41,48 @@
 .case-gallery figure { margin: 0; }
 .case-gallery img { width: 100%; height: auto; display: block; border-radius: var(--radius); }
 .case-gallery figcaption { margin-top: .8rem; color: var(--text-muted); font-size: .85rem; line-height: 1.7; }
+
+.project-case-page--refundheist .case-hero { background-position: center 38%; }
+.project-case-page--refundheist .case-hero::before { background: linear-gradient(0deg, rgba(5, 12, 10, .97), rgba(5, 12, 10, .64) 52%, rgba(5, 12, 10, .18)); }
+.project-case-page--refundheist .case-title-block { padding: 0; background: transparent; }
+.project-case-page--refundheist .case-logo-wrap { width: 6rem; min-width: 0; padding: 0; }
+.project-case-page--refundheist .case-hero-grid { grid-template-columns: minmax(0, 1fr) 6rem; }
+.project-case-page--refundheist .case-title-block h1 { max-width: none; font-size: clamp(2.4rem, 6.5vw, 6rem); }
+.project-case-page--refundheist .case-gallery { display: grid; gap: 3rem; }
+@media (min-width: 841px) {
+  .project-case-page--refundheist .case-content { padding-right: 11rem; }
+}
+.case-deep-dive { margin-top: clamp(3rem, 7vw, 7rem); }
+.case-chapter { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(2rem, 7vw, 7rem); padding: clamp(2.5rem, 6vw, 5rem) 0; border-top: 1px solid var(--line); }
+.case-chapter h2, .case-identity h2, .case-play-cta h2 { margin: .9rem 0 0; font: 400 clamp(1.5rem, 2.6vw, 2.5rem)/1.15 'Bungee', Impact, sans-serif; letter-spacing: -.025em; }
+.case-chapter-copy p, .case-identity p:not(.case-section-label), .case-play-cta p { color: var(--muted); line-height: 1.8; }
+.case-chapter-copy p { margin: 1rem 0 0; }
+.case-service-icon { display: block; border-radius: .75rem; }
+.case-identity { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(2rem, 6vw, 6rem); padding: clamp(3rem, 7vw, 6rem) 0; border-top: 1px solid var(--line); }
+.case-character-lineup { display: flex; justify-content: center; align-items: center; gap: clamp(.5rem, 2vw, 1.5rem); }
+.case-character-lineup img { width: min(28%, 144px); height: auto; transition: transform .25s ease; }
+.case-character-lineup img:nth-child(2) { transform: translateY(-1.25rem); }
+.case-character-lineup img:hover { transform: translateY(-.5rem) rotate(-4deg); }
+.case-play-cta { padding: clamp(3rem, 7vw, 6rem) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: center; }
+.case-play-cta > img { display: block; margin: 0 auto 1.5rem; }
+.case-play-cta p { max-width: 50ch; margin: 1.2rem auto 1.8rem; }
+@keyframes case-enter { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: no-preference) {
+  .project-case-page--refundheist .case-title-block { animation: case-enter .6s ease-out both; }
+  .project-case-page--refundheist .case-logo-wrap { animation: case-enter .7s .15s ease-out both; }
+  @supports (animation-timeline: view()) {
+    .project-case-page--refundheist .case-chapter, .project-case-page--refundheist .case-identity { animation: case-enter linear both; animation-timeline: view(); animation-range: entry 0% entry 22%; }
+  }
+}
+@media (max-width: 760px) {
+  .project-case-page--refundheist .case-hero-grid { grid-template-columns: 1fr; }
+  .project-case-page--refundheist .case-logo-wrap { display: none; }
+  .project-case-page--refundheist .case-title-block h1 { font-size: clamp(1.9rem, 9vw, 4rem); letter-spacing: -.045em; }
+  .case-chapter, .case-identity { grid-template-columns: 1fr; }
+  .case-chapter { gap: 1.5rem; }
+  .case-character-lineup { min-height: 9rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-character-lineup img { transition: none; }
+  .case-character-lineup img:hover { transform: none; }
+}

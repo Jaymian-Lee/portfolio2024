@@ -11,6 +11,19 @@ import './App.css';
 
 const projectData = [
 {
+  name: 'RefundHeist',
+  slug: 'refundheist',
+  url: 'https://refundheist.com/',
+  image: '/projects/refundheist/cover.png',
+  logo: '/projects/refundheist/icon.svg',
+  timeline: { start: 'October 2026', end: 'ongoing' },
+  type: 'Daily AI detective game',
+  summary: 'Follow a fictional paper trail and outsmart an AI support bot to win your refund.',
+  tags: ['AI', 'Game design', 'Next.js'],
+  tone: 'mint',
+  note: 'Free daily game, live now'
+},
+{
   "name": "Deurwebshop.nl",
   "displayName": "Deurwebshop",
   "slug": "deurwebshop",
@@ -226,7 +239,7 @@ const projectData = [
 ];
 
 // Deliberate showcase order, shared with the case index.
-const showcaseOrder = ["corthex","slecto","vizualy","deurwebshop","martijnkozijn","refacthor","publion","sjmoeleboek","woonproblemen","botforger","mintventory","twigsie","vizualy-prints"];
+const showcaseOrder = ["corthex","slecto","vizualy","deurwebshop","martijnkozijn","refundheist","refacthor","publion","sjmoeleboek","woonproblemen","botforger","mintventory","twigsie","vizualy-prints"];
 const projects = projectData
   .sort((a, b) => showcaseOrder.indexOf(a.slug) - showcaseOrder.indexOf(b.slug))
   .map((project, index) => ({
@@ -242,13 +255,13 @@ const archivedProjects = projects.filter((project) => archivedProjectNames.has(p
 const formatProjectTimeline = ({ start, end }, isNl) => start ? `${start} - ${end === 'ongoing' && isNl ? 'heden' : end}` : (isNl ? 'In ontwikkeling' : 'In development');
 
 const projectNotes = {
-  en: { slecto: 'In use, still being developed', vizualy: 'Pilot at a first company', corthex: 'Grew out of Botforger', woonproblemen: 'Testing and measuring SEO / GEO', sjmoeleboek: 'Free web app, live now', publion: 'Public code on GitHub' },
-  nl: { deurwebshop: 'In ontwikkeling bij MartijnKozijn', slecto: 'In gebruik, wordt doorontwikkeld', vizualy: 'Pilot bij een eerste bedrijf', corthex: 'Voortgekomen uit Botforger', woonproblemen: 'SEO / GEO testen en meten', sjmoeleboek: 'Gratis webapp, nu live', publion: 'Publieke code op GitHub' }
+  en: { refundheist: 'Free daily game, live now', slecto: 'In use, still being developed', vizualy: 'Pilot at a first company', corthex: 'Grew out of Botforger', woonproblemen: 'Testing and measuring SEO / GEO', sjmoeleboek: 'Free web app, live now', publion: 'Public code on GitHub' },
+  nl: { refundheist: 'Gratis dagelijkse game, nu live', deurwebshop: 'In ontwikkeling bij MartijnKozijn', slecto: 'In gebruik, wordt doorontwikkeld', vizualy: 'Pilot bij een eerste bedrijf', corthex: 'Voortgekomen uit Botforger', woonproblemen: 'SEO / GEO testen en meten', sjmoeleboek: 'Gratis webapp, nu live', publion: 'Publieke code op GitHub' }
 };
 const formatCasePeriod = (project, isNl) => {
   const period = getProjectCase(project.slug)?.period;
   return period
-    ? period.replace('May', isNl ? 'Mei' : 'May').replace('Late', isNl ? 'Eind' : 'Late').replace('ongoing', isNl ? 'heden' : 'ongoing')
+    ? period.replace('May', isNl ? 'Mei' : 'May').replace('October', isNl ? 'Oktober' : 'October').replace('Late', isNl ? 'Eind' : 'Late').replace('ongoing', isNl ? 'heden' : 'ongoing')
     : formatProjectTimeline(project.timeline, isNl);
 };
 
@@ -466,7 +479,7 @@ function App() {
             <div>
               <p>{isNl ? 'Tussen de builds door' : 'Between the builds'}</p>
               <strong>{isNl ? 'Niet alles hoeft een startup te worden.' : 'Not everything has to become a startup.'}</strong>
-              <p className="lab-bridge-copy">{isNl ? 'Word-Lee voor een snelle woordpuzzel, Toepen en Pesten om de score bij te houden, en tools om met cijfers en streams te spelen. Kleine ideeën, gewoon bouwen en proberen!' : 'Word-Lee for a quick puzzle, Toepen and Pesten for keeping score, and tools for playing with numbers and streams. Small ideas. Build them and see what happens!'}</p>
+              <p className="lab-bridge-copy">{isNl ? 'Word-Lee voor een snelle woordpuzzel, RefundHeist om een AI-supportbot te slim af te zijn, Toepen en Pesten om de score bij te houden. En tools om met cijfers en streams te spelen!' : 'Word-Lee for a quick puzzle, RefundHeist to outsmart an AI support bot, and Toepen and Pesten for keeping score. Plus tools for playing with numbers and streams!'}</p>
             </div>
             <Link to={localizePath('/lab', language)}>{isNl ? 'Bekijk het Lab' : 'See the Lab'} <AnimatedIcon name="arrow-right" size={18} /></Link>
           </section>

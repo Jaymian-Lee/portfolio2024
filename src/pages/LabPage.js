@@ -20,6 +20,7 @@ const copy = {
     lead: 'Alle subprojecten op één logische plek. Hier staan experiments, tools en speelse builds.',
     sectionTitle: 'Subprojecten',
     open: 'Open project',
+    play: 'Speel RefundHeist',
     home: 'Home',
     categories: {
       games: { title: 'Games', description: 'Kleine speelse experiments en dagelijkse challenges.', icon: 'gamepad' },
@@ -35,6 +36,7 @@ const copy = {
     lead: 'All sub projects in one clear place. This is where experiments, tools, and playful builds live.',
     sectionTitle: 'Sub projects',
     open: 'Open project',
+    play: 'Play RefundHeist',
     home: 'Home',
     categories: {
       games: { title: 'Games', description: 'Playful experiments and daily challenges.', icon: 'gamepad' },
@@ -54,6 +56,15 @@ const projects = {
         badge: 'Word Game',
         description: 'Dagelijkse woordchallenge met leaderboard, wereldrecord en snelle rounds.',
         tags: ['React', 'Game', 'Realtime ranking']
+    },
+    {
+      name: 'RefundHeist',
+      url: 'https://refundheist.com/',
+      category: 'games',
+      badge: 'Daily AI Detective Game',
+      logo: '/projects/refundheist/icon.svg',
+      description: 'Doorzoek fictieve mails, verzamel bewijs en overtuig een AI-supportbot om je geld terug te geven. Elke dag een nieuwe zaak.',
+      tags: ['AI', 'Detective', 'Daily challenge']
     },
     {
       name: 'Stream Dashboard',
@@ -104,6 +115,15 @@ const projects = {
         badge: 'Word Game',
         description: 'Daily word challenge with leaderboard, world record, and quick rounds.',
         tags: ['React', 'Game', 'Realtime ranking']
+    },
+    {
+      name: 'RefundHeist',
+      url: 'https://refundheist.com/',
+      category: 'games',
+      badge: 'Daily AI Detective Game',
+      logo: '/projects/refundheist/icon.svg',
+      description: 'Search fictional emails, gather evidence and convince an AI support bot to refund your purchase. A new case every day.',
+      tags: ['AI', 'Detective', 'Daily challenge']
     },
     {
       name: 'Stream Dashboard',
@@ -210,8 +230,8 @@ export default function LabPage() {
       <Seo
         title={language === 'nl' ? 'The Lab | Experimentele subprojecten' : 'The Lab | Experimental subprojects'}
         description={language === 'nl'
-          ? 'Bekijk The Lab: een overzicht van experimentele tools, games en utilities zoals Word-Lee, Stream Dashboard, Stream Chat, Toepen en de S&P 500 calculator.'
-          : 'Explore The Lab: an overview of experimental tools, games, and utilities such as Word-Lee, Stream Dashboard, Stream Chat, Toepen, and the S&P 500 calculator.'}
+          ? 'Bekijk The Lab: games en tools zoals Word-Lee, RefundHeist, Stream Dashboard, Toepen en de S&P 500 calculator.'
+          : 'Explore The Lab: games and tools including Word-Lee, RefundHeist, Stream Dashboard, Toepen, and the S&P 500 calculator.'}
         canonicalPath={canonicalPath}
         language={language}
         alternatePaths={alternatePaths}
@@ -252,24 +272,28 @@ export default function LabPage() {
                 </div>
               </header>
               <div className="lab-grid">
-                {category.projects.map((project) => (
-                  <Link
+                {category.projects.map((project) => {
+                  const ProjectLink = project.url ? 'a' : Link;
+                  const linkProps = project.url ? { href: project.url } : { to: localizePath(project.path, language) };
+                  return (
+                  <ProjectLink
                     className="lab-card"
                     key={project.name}
-                    to={localizePath(project.path, language)}
+                    {...linkProps}
                     aria-label={`${t.open}: ${project.name}`}
                   >
                     <p className="lab-card-badge">{project.badge}</p>
-                    <h3>{project.name}</h3>
+                    <h3 className="lab-card-title">{project.logo && <img src={project.logo} alt="" width="32" height="32" />}{project.name}</h3>
                     <p>{project.description}</p>
                     <div className="lab-tags" aria-label="Project tags">
                       {project.tags.map((tag) => (
                         <span className="lab-tag" key={`${project.name}-${tag}`}>{tag}</span>
                       ))}
                     </div>
-                    <span className="lab-open-link">{t.open} <AnimatedIcon name="arrow-right" size={17} /></span>
-                  </Link>
-                ))}
+                    <span className="lab-open-link">{project.url ? t.play : t.open} <AnimatedIcon name="arrow-right" size={17} /></span>
+                  </ProjectLink>
+                  );
+                })}
               </div>
             </section>
           ))}

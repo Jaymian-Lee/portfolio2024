@@ -259,6 +259,177 @@ export const projectCases = [
     }
   },
   {
+    "slug": "refundheist",
+    "name": "RefundHeist",
+    "url": "https://refundheist.com/",
+    "image": "/projects/refundheist/cover.png",
+    "logo": "/projects/refundheist/icon.svg",
+    "period": "October 2026 - ongoing",
+    "role": "Concept & development",
+    "status": "Live",
+    "relatedSlugs": [
+      "corthex",
+      "slecto",
+      "sjmoeleboek"
+    ],
+    "gallery": [
+      {
+        "image": "/projects/refundheist/home.jpg",
+        "width": 1265,
+        "height": 712,
+        "en": "The daily case starts with a fictional shop, a purchase and a refund to recover. Screenshot of refundheist.com, October 2026.",
+        "nl": "De dagelijkse zaak begint bij een fictieve winkel, een aankoop en een refund die je moet terugverdienen. Screenshot van refundheist.com, oktober 2026."
+      },
+      {
+        "image": "/projects/refundheist/evidence.jpg",
+        "width": 1280,
+        "height": 720,
+        "en": "The Evidence desk brings a searchable mailbox, fictional websites and a notebook into one investigation workspace.",
+        "nl": "De Evidence desk brengt een doorzoekbare mailbox, fictieve websites en een notitieboek samen in één onderzoeksomgeving."
+      },
+      {
+        "image": "/projects/refundheist/support.jpg",
+        "width": 1265,
+        "height": 712,
+        "en": "The support conversation: the current question, credibility, elapsed playing time and the remaining messages stay in view.",
+        "nl": "Het supportgesprek: de actuele vraag, geloofwaardigheid, speeltijd en het aantal resterende berichten blijven in beeld."
+      }
+    ],
+    "artwork": [
+      "/projects/refundheist/bot-concierge.svg",
+      "/projects/refundheist/bot-scout.svg",
+      "/projects/refundheist/bot-dreamer.svg"
+    ],
+    "en": {
+      "label": "Daily AI detective game",
+      "role": "Concept & development",
+      "visit": "Play RefundHeist",
+      "intro": "A refund request turns into a daily detective game. Search fictional emails, connect the evidence and convince an AI support bot to give your money back.",
+      "story": "RefundHeist takes a familiar frustration and makes it playable: a webshop chatbot that always needs one more detail. Since October 2026, I have been working on a browser game where that conversation becomes an investigation. You read a case, examine the records and make your argument. The shops, purchases and refunds belong to the fiction; the challenge is to work out which facts actually matter.",
+      "features": [
+        {
+          "title": "A new case every day",
+          "text": "Everyone starts with the same daily case. A fictional shop, product, fault and policy provide a new starting point for the investigation."
+        },
+        {
+          "title": "An evidence desk to explore",
+          "text": "Search Inbox, Sent and Spam, inspect attachments and visit fictional order, device and delivery portals. The answer can be spread across several records."
+        },
+        {
+          "title": "Twelve messages to make your case",
+          "text": "Every message to support uses a turn. Exploring the evidence and using hint buttons are free, so reading carefully matters before you answer."
+        },
+        {
+          "title": "Credibility you can rebuild",
+          "text": "Wrong answers reduce credibility. Correcting them can restore it. The interface keeps the current question and your standing visible alongside the conversation."
+        },
+        {
+          "title": "Fewer messages, less time",
+          "text": "A strong result takes fewer messages and less playing time. Waiting for the bot does not count towards the timer; the investigation does."
+        },
+        {
+          "title": "One daily attempt, room to practise",
+          "text": "One run per day counts for your score. Replays are practice, while shareable results and a daily streak give you a reason to return."
+        }
+      ],
+      "sections": [
+        {
+          "icon": "/projects/refundheist/mail.svg",
+          "title": "The puzzle lives in the paperwork",
+          "paragraphs": [
+            "The mailbox is part of the game world. Order confirmations, earlier support reports, delivery updates and unrelated messages share the same space. A believable paper trail lets you discover a fact instead of simply being handed an answer.",
+            "An estimated delivery date can differ from the completed receipt. A frame serial can be different from the battery serial the claim concerns. Those small distinctions turn an ordinary customer-service exchange into a reading and deduction puzzle."
+          ]
+        },
+        {
+          "icon": "/projects/refundheist/web.svg",
+          "title": "AI with a concrete role in the game",
+          "paragraphs": [
+            "The support bot has a specific job: respond to the refund request and ask for the details needed to progress. The case file and evidence desk give the conversation context. That makes each answer part of a larger investigation.",
+            "The design keeps you moving between reading, checking and replying. A visible message budget adds pressure, while the current support request and credibility meter help you understand what the next answer needs to achieve."
+          ]
+        },
+        {
+          "icon": "/projects/refundheist/notebook.svg",
+          "title": "A short ritual, with room to improve",
+          "paragraphs": [
+            "The daily format gives everyone a shared starting point without a long onboarding process. The game is free to play in the browser and does not require an account. A fresh case arrives at 00:00 UTC.",
+            "Separating the scored run from practice lets you return to the puzzle without replacing the result of your first attempt. RefundHeist is live and continues to develop; the focus is the quality of the investigation and the clarity of the playing experience."
+          ]
+        }
+      ],
+      "identityTitle": "A support desk with a personality",
+      "identityText": "A dark interface, green accents, receipt imagery and illustrated support robots connect the website to the game. The original cover, logo, robots and service icons shown here all come from refundheist.com. Each fictional company gives the daily case its own character.",
+      "outcome": "A playable experiment in AI, storytelling and interaction design. A familiar support conversation becomes a daily puzzle about finding evidence, choosing your words and making a convincing case. Live since October 2026, with development ongoing.",
+      "closingTitle": "Your next case is waiting.",
+      "closingText": "Open the daily case, follow the paper trail and see whether you can get past the support bot."
+    },
+    "nl": {
+      "label": "Dagelijkse AI-detectivegame",
+      "role": "Concept & ontwikkeling",
+      "visit": "Speel RefundHeist",
+      "intro": "Een refundverzoek wordt een dagelijkse detectivegame. Doorzoek fictieve mails, verbind de aanwijzingen en overtuig een AI-supportbot om je geld terug te geven.",
+      "story": "RefundHeist maakt iets herkenbaars speelbaar: een webshopchatbot die steeds nog één detail nodig heeft. Sinds oktober 2026 werk ik aan een browsergame waarin dat gesprek verandert in een onderzoek. Je leest een dossier, pluist de administratie uit en bouwt je argument op. De winkels, aankopen en refunds zijn fictief; de uitdaging zit in ontdekken welke feiten er werkelijk toe doen.",
+      "features": [
+        {
+          "title": "Iedere dag een nieuwe zaak",
+          "text": "Iedereen begint met dezelfde dagelijkse zaak. Een fictieve winkel, een product, een defect en de voorwaarden vormen het vertrekpunt van je onderzoek."
+        },
+        {
+          "title": "Een bewijsdesk om te doorzoeken",
+          "text": "Zoek in Inbox, Verzonden en Spam, open bijlagen en bezoek fictieve bestel-, apparaat- en bezorgportalen. Het antwoord kan over meerdere documenten verspreid staan."
+        },
+        {
+          "title": "Twaalf berichten voor je argument",
+          "text": "Elk bericht aan support kost een beurt. Bewijs bekijken en hintknoppen gebruiken kost geen bericht. Eerst goed lezen, dan pas antwoorden."
+        },
+        {
+          "title": "Geloofwaardigheid opbouwen",
+          "text": "Onjuiste antwoorden verlagen je geloofwaardigheid. Met correcties kun je die herstellen. De actuele vraag en je positie blijven naast het gesprek zichtbaar."
+        },
+        {
+          "title": "Minder berichten, minder tijd",
+          "text": "Een sterk resultaat vraagt minder berichten en minder speeltijd. Wachten op de bot telt niet mee voor de timer; het uitzoekwerk wel."
+        },
+        {
+          "title": "Eén dagpoging, daarna oefenen",
+          "text": "Eén ronde per dag telt voor je score. Opnieuw spelen is oefenen. Deelbare resultaten en een dagelijkse streak geven een reden om terug te komen."
+        }
+      ],
+      "sections": [
+        {
+          "icon": "/projects/refundheist/mail.svg",
+          "title": "De puzzel zit in de administratie",
+          "paragraphs": [
+            "De mailbox hoort bij de spelwereld. Orderbevestigingen, eerdere supportmeldingen, bezorgupdates en afleidende mails staan door elkaar. Een geloofwaardig papierspoor laat je zelf een feit ontdekken, in plaats van meteen een antwoord voorgeschoteld te krijgen.",
+            "Een verwachte bezorgdatum kan verschillen van het daadwerkelijke ontvangstbewijs. Het serienummer van een fietsframe is iets anders dan dat van de accu waarover de klacht gaat. Juist zulke details maken van een klantenservicegesprek een lees- en denkpuzzel."
+          ]
+        },
+        {
+          "icon": "/projects/refundheist/web.svg",
+          "title": "AI met een duidelijke rol in het spel",
+          "paragraphs": [
+            "De supportbot heeft een concrete taak: reageren op je refundverzoek en de gegevens uitvragen die nodig zijn om verder te komen. Het dossier en de bewijsdesk geven dat gesprek context. Zo wordt ieder antwoord onderdeel van een groter onderzoek.",
+            "De opzet laat je steeds wisselen tussen lezen, controleren en reageren. Het zichtbare berichtenbudget zorgt voor spanning. De actuele supportvraag en de geloofwaardigheidsmeter helpen je begrijpen wat je volgende antwoord moet bereiken."
+          ]
+        },
+        {
+          "icon": "/projects/refundheist/notebook.svg",
+          "title": "Een dagelijks ritueel met ruimte om te leren",
+          "paragraphs": [
+            "Het dagelijkse format geeft iedereen hetzelfde startpunt, zonder een lang instapproces. Je speelt gratis in de browser en hebt geen account nodig. Om 00:00 UTC staat er een nieuwe zaak klaar.",
+            "Door de scoreronde en oefenrondes te scheiden kun je de puzzel opnieuw bekijken, terwijl het resultaat van je eerste poging blijft staan. RefundHeist is live en wordt verder ontwikkeld. De aandacht ligt op een goed onderzoek en een spelervaring die duidelijk blijft."
+          ]
+        }
+      ],
+      "identityTitle": "Een supportdesk met karakter",
+      "identityText": "Een donkere interface, groene accenten, kassabonmotieven en geïllustreerde supportrobots verbinden de website met het spel. De originele cover, het logo, de robots en de service-iconen op deze pagina komen allemaal van refundheist.com. Iedere fictieve winkel geeft de dagelijkse zaak een eigen karakter.",
+      "outcome": "Een speelbaar experiment met AI, verhalen en interactieontwerp. Een herkenbaar supportgesprek wordt een dagelijkse puzzel over bewijs vinden, je woorden kiezen en je zaak onderbouwen. Sinds oktober 2026 live en nog volop in ontwikkeling.",
+      "closingTitle": "Je volgende zaak ligt klaar.",
+      "closingText": "Open het dagelijkse dossier, volg het papierspoor en ontdek of jij voorbij de supportbot komt."
+    }
+  },
+  {
     "slug": "refacthor",
     "name": "Refacthor",
     "url": "https://refacthor.nl/",

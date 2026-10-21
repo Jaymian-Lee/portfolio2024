@@ -87,7 +87,9 @@
       "/nl/projects/sjmoeleboek",
       "/nl/projects/publion",
       "/projects/deurwebshop",
-      "/nl/projects/deurwebshop"
+      "/nl/projects/deurwebshop",
+      "/projects/refundheist",
+      "/nl/projects/refundheist"
     ]
   },
   "eslintConfig": {
