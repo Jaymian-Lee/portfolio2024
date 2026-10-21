@@ -531,7 +531,7 @@ function DailyWordPage() {
         if (cancelled) return;
         if (!todayResponse.ok) throw new Error(todayData?.error || copy[language].leaderboardError);
         setLeaderboard(
-          (Array.isArray(todayData.top3) ? todayData.top3 : []).sort(compareLeaderboardEntries)
+          (Array.isArray(todayData.entries) ? todayData.entries : (Array.isArray(todayData.top3) ? todayData.top3 : [])).sort(compareLeaderboardEntries)
         );
         setMonthlyWorldRecord(todayData.monthlyWorldRecord || null);
         setWeeklyTopDays(
@@ -850,7 +850,7 @@ function DailyWordPage() {
       if (!response.ok) throw new Error(data?.error || copy[language].leaderboardError);
 
       setLeaderboard(
-        (Array.isArray(data.top3) ? data.top3 : []).sort(compareLeaderboardEntries)
+        (Array.isArray(data.entries) ? data.entries : (Array.isArray(data.top3) ? data.top3 : [])).sort(compareLeaderboardEntries)
       );
       setScoreSubmitted(true);
       setShowJoinPopup(false);

@@ -672,10 +672,6 @@ async function getLeaderboardEntries(dateKey, language) {
   });
 }
 
-async function getTop3(dateKey, language) {
-  return (await getLeaderboardEntries(dateKey, language)).slice(0, 3);
-}
-
 function compareLeaderboardEntries(a, b) {
   const aFailed = a.result === 'failed';
   const bFailed = b.result === 'failed';
@@ -715,7 +711,7 @@ async function getLeaderboardOverview(dateKey, language) {
   const weekDateKeys = getWeekDateKeys(dateKey);
   const overviewDateKeys = Array.from(new Set([...monthDateKeys, ...weekDateKeys]));
   const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getLeaderboardEntries(key, language) })));
-  const today = (rows.find((row) => row.dateKey === dateKey)?.entries || []).slice(0, 3);
+  const entries = rows.find((row) => row.dateKey === dateKey)?.entries || [];
   const monthlyCandidates = rows
     .filter((row) => row.entries[0])
     .map((row) => ({ ...row.entries[0], dateKey: row.dateKey }))
@@ -729,7 +725,8 @@ async function getLeaderboardOverview(dateKey, language) {
       ...row,
       word: row.dateKey < getTodayKey() ? getDailyWord(language, row.dateKey).toUpperCase() : null
     }));
-  const value = { top3: today, monthlyWorldRecord: monthlyCandidates[0] || null, weeklyTopDays };
+  // Keep the legacy response key compatible while returning the complete ranking.
+  const value = { entries, top3: entries, monthlyWorldRecord: monthlyCandidates[0] || null, weeklyTopDays };
   leaderboardOverviewCache.set(cacheKey, { createdAt: Date.now(), value });
   return value;
 }
@@ -1023,9 +1020,9 @@ app.get('/api/wordlee/leaderboard', async (req, res) => {
       const overview = await getLeaderboardOverview(dateKey, language);
       return res.json({ dateKey, language, ...overview });
     }
-    const top3 = await getTop3(dateKey, language);
+    const entries = await getLeaderboardEntries(dateKey, language);
 
-    return res.json({ dateKey, language, top3 });
+    return res.json({ dateKey, language, entries, top3: entries });
   } catch (error) {
     console.error('Leaderboard GET error:', error);
     if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {
@@ -1171,8 +1168,8 @@ app.post('/api/wordlee/leaderboard', async (req, res) => {
 
     leaderboardOverviewCache.clear();
 
-    const top3 = await getTop3(dateKey, language);
-    return res.json({ ok: true, dateKey, language, top3, result: status });
+    const entries = await getLeaderboardEntries(dateKey, language);
+    return res.json({ ok: true, dateKey, language, entries, top3: entries, result: status });
   } catch (error) {
     console.error('Leaderboard POST error:', error);
     if (String(error.message || '').includes('KV_NOT_CONFIGURED')) {

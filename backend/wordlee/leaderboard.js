@@ -142,10 +142,6 @@ async function getLeaderboardEntries(dateKey, language) {
     .sort(compareLeaderboardEntries);
 }
 
-async function getTop3(dateKey, language) {
-  return (await getLeaderboardEntries(dateKey, language)).slice(0, 3);
-}
-
 function getMonthDateKeys(dateKey) {
   const base = new Date(`${dateKey}T00:00:00`);
   const year = base.getFullYear();
@@ -172,7 +168,7 @@ async function getOverview(dateKey, language) {
   const weekDateKeys = getWeekDateKeys(dateKey);
   const overviewDateKeys = Array.from(new Set([...getMonthDateKeys(dateKey), ...weekDateKeys]));
   const rows = await Promise.all(overviewDateKeys.map(async (key) => ({ dateKey: key, entries: await getLeaderboardEntries(key, language) })));
-  const top3 = (rows.find((row) => row.dateKey === dateKey)?.entries || []).slice(0, 3);
+  const entries = rows.find((row) => row.dateKey === dateKey)?.entries || [];
   const monthlyWorldRecord = rows
     .filter((row) => row.entries[0])
     .map((row) => ({ ...row.entries[0], dateKey: row.dateKey }))
@@ -184,7 +180,8 @@ async function getOverview(dateKey, language) {
       ...row,
       word: row.dateKey < getTodayKey() ? getDailyWord(language, row.dateKey).toUpperCase() : null
     }));
-  const value = { top3, monthlyWorldRecord, weeklyTopDays };
+  // Keep the legacy response key compatible while returning the complete ranking.
+  const value = { entries, top3: entries, monthlyWorldRecord, weeklyTopDays };
   overviewCache.set(cacheKey, { createdAt: Date.now(), value });
   return value;
 }
@@ -199,13 +196,13 @@ module.exports = async (req, res) => {
 
       const language = normalizeLanguage(req.query?.language);
       if (!isKvConfigured) {
-        return res.status(200).json({ dateKey, language, top3: [], storage: 'unavailable' });
+        return res.status(200).json({ dateKey, language, entries: [], top3: [], storage: 'unavailable' });
       }
       if (req.query?.overview === '1') {
         return res.status(200).json({ dateKey, language, ...(await getOverview(dateKey, language)) });
       }
-      const top3 = await getTop3(dateKey, language);
-      return res.status(200).json({ dateKey, language, top3 });
+      const entries = await getLeaderboardEntries(dateKey, language);
+      return res.status(200).json({ dateKey, language, entries, top3: entries });
     }
 
     if (req.method === 'POST') {
@@ -299,8 +296,8 @@ module.exports = async (req, res) => {
       await kvCommand(['HSET', playerIndexKey(language), memberKey, canonicalName]);
       overviewCache.clear();
 
-      const top3 = await getTop3(dateKey, language);
-      return res.status(200).json({ ok: true, dateKey, language, top3, result: status });
+      const entries = await getLeaderboardEntries(dateKey, language);
+      return res.status(200).json({ ok: true, dateKey, language, entries, top3: entries, result: status });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
