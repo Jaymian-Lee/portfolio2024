@@ -242,12 +242,18 @@ const projectData = [
 const showcaseOrder = ["corthex","slecto","vizualy","deurwebshop","martijnkozijn","refundheist","refacthor","publion","sjmoeleboek","woonproblemen","botforger","mintventory","twigsie","vizualy-prints"];
 const projects = projectData
   .sort((a, b) => showcaseOrder.indexOf(a.slug) - showcaseOrder.indexOf(b.slug))
-  .map((project, index) => ({
-    ...project,
-    summary: getProjectCase(project.slug)?.en.intro || project.summary,
-    type: getProjectCase(project.slug)?.en.label || project.type,
-    number: String(index + 1).padStart(2, '0')
-  }));
+  .map((project, index) => {
+    const caseStudy = getProjectCase(project.slug);
+    return {
+      ...project,
+      image: caseStudy?.image || project.image,
+      logo: caseStudy ? caseStudy.logo : project.logo,
+      monogram: caseStudy?.monogram || project.monogram,
+      summary: caseStudy?.en.intro || project.summary,
+      type: caseStudy?.en.label || project.type,
+      number: String(index + 1).padStart(2, '0')
+    };
+  });
 
 const archivedProjectNames = new Set(['Mintventory', 'Twigsie', 'Vizualy Prints']);
 const activeProjects = projects.filter((project) => !archivedProjectNames.has(project.name));

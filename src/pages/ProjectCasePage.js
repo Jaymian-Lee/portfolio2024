@@ -41,6 +41,8 @@ export default function ProjectCasePage() {
   const alternatePaths = getAlternateLocalePaths(canonicalPath);
   const pageUrl = `${siteSeo.siteUrl}${canonicalPath}`;
   const imageUrl = `${siteSeo.siteUrl}${project.image}`;
+  const visitHref = project.previewOnly ? '#case-gallery' : project.url;
+  const visitLabel = project.previewOnly ? (isNl ? 'Bekijk projectbeelden' : 'View project images') : (content.visit || t.visit);
   const jsonLd = [
     createWebsiteSchema({ language: ['en', 'nl'] }),
     createWebPageSchema({ name: `${project.name} | ${content.label}`, url: pageUrl, description: content.intro, language: isNl ? 'nl-NL' : 'en-US', image: imageUrl }),
@@ -55,6 +57,7 @@ export default function ProjectCasePage() {
       name: project.name,
       description: content.intro,
       image: imageUrl,
+      ...(project.updatedAt ? { dateModified: project.updatedAt } : {}),
       url: pageUrl,
       creator: { '@id': `${siteSeo.siteUrl}/#person` },
       inLanguage: isNl ? 'nl-NL' : 'en-US',
@@ -105,7 +108,7 @@ export default function ProjectCasePage() {
                 <h1>{project.displayName || project.name}</h1>
                 <p className="case-intro">{content.intro}</p>
                 <div className="case-actions">
-                  <a className="case-primary-action" href={project.url} target="_blank" rel="noreferrer">{content.visit || t.visit}<AnimatedIcon name="arrow-right" size={18} /></a>
+                  <a className="case-primary-action" href={visitHref} target={project.previewOnly ? undefined : '_blank'} rel={project.previewOnly ? undefined : 'noreferrer'}>{visitLabel}<AnimatedIcon name="arrow-right" size={18} /></a>
                   <span className={`case-status ${project.status.toLowerCase()}`}><i aria-hidden="true" />{project.status}</span>
                 </div>
               </div>
@@ -123,7 +126,15 @@ export default function ProjectCasePage() {
             <div><span>{t.status}</span><strong>{project.status}</strong></div>
           </div>
 
-          <div className="case-story-grid">
+          {content.sections && <nav className="case-contents" aria-label={isNl ? 'Op deze pagina' : 'On this page'}>
+            <span>{isNl ? 'Op deze pagina' : 'On this page'}</span>
+            <a href="#case-story">{isNl ? 'Het project' : 'The project'}</a>
+            <a href="#case-features-title">{isNl ? 'Wat het doet' : 'What it does'}</a>
+            <a href="#case-gallery">{isNl ? 'In beeld' : 'In pictures'}</a>
+            <a href="#case-deep-dive">{isNl ? 'Verdieping' : 'A closer look'}</a>
+          </nav>}
+
+          <div className="case-story-grid" id="case-story">
             <div className="case-story">
               <p className="case-section-label">01 / {t.brief}</p>
               <h2>{t.approach}</h2>
@@ -149,11 +160,20 @@ export default function ProjectCasePage() {
             </ol>
           </section>
 
-          {project.gallery && <section className="case-gallery" aria-label={isNl ? 'Projectbeelden' : 'Project screenshots'}>
-            {project.gallery.map((shot) => <figure key={shot.image}><img src={shot.image} alt={shot[language] || shot.en} width={shot.width} height={shot.height} loading="lazy" /><figcaption>{shot[language] || shot.en}</figcaption></figure>)}
+          {project.gallery && <section className="case-gallery" id="case-gallery" aria-labelledby="case-gallery-title">
+            <header className="case-gallery-heading">
+              <p className="case-section-label">{isNl ? 'Projectbeelden' : 'Project images'}</p>
+              <h2 id="case-gallery-title">{isNl ? 'Het project in beeld.' : 'A look at the project.'}</h2>
+            </header>
+            {project.gallery.map((shot) => <figure key={shot.image}>
+              <a className="case-gallery-image" href={shot.image} target="_blank" rel="noreferrer" aria-label={`${isNl ? 'Bekijk afbeelding op volledig formaat' : 'View full-size image'}: ${shot[language] || shot.en}`}>
+                <img src={shot.image} alt={shot[language] || shot.en} width={shot.width} height={shot.height} loading="lazy" />
+              </a>
+              <figcaption><span>{shot[language] || shot.en}</span>{shot.source && <a className="case-gallery-source" href={shot.source} target="_blank" rel="noreferrer">{isNl ? 'Bekijk bron' : 'View source'} <AnimatedIcon name="arrow-right" size={14} /></a>}</figcaption>
+            </figure>)}
           </section>}
 
-          {content.sections && <section className="case-deep-dive" aria-label={isNl ? 'Het verhaal achter de game' : 'Behind the game'}>
+          {content.sections && <section className="case-deep-dive" id="case-deep-dive" aria-label={isNl ? 'Het verhaal achter het project' : 'Behind the project'}>
             {content.sections.map((section, index) => (
               <article className="case-chapter" key={section.title}>
                 <div>
@@ -180,10 +200,10 @@ export default function ProjectCasePage() {
           </section>}
 
           {content.closingTitle && <section className="case-play-cta" aria-labelledby="case-play-title">
-            <img src={project.logo} alt="" width="56" height="56" loading="lazy" />
+            {project.logo && <img src={project.logo} alt="" width="56" height="56" loading="lazy" />}
             <h2 id="case-play-title">{content.closingTitle}</h2>
             <p>{content.closingText}</p>
-            <a className="case-primary-action" href={project.url} target="_blank" rel="noreferrer">{content.visit || t.visit}<AnimatedIcon name="arrow-right" size={18} /></a>
+            <a className="case-primary-action" href={visitHref} target={project.previewOnly ? undefined : '_blank'} rel={project.previewOnly ? undefined : 'noreferrer'}>{visitLabel}<AnimatedIcon name="arrow-right" size={18} /></a>
           </section>}
 
           <section className="case-related" aria-labelledby="case-related-title">

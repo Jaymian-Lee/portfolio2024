@@ -23,5 +23,5 @@ test('Deurwebshop is grounded and the showcase leads with business work', () => 
   const door = projectCases.find(p => p.slug === 'deurwebshop');
   expect(door.role).toBe('Developer at MartijnKozijn');
   expect(door.nl.features[2].text).toContain('indicatief');
-  expect(door.gallery.length).toBe(1);
+  expect(door.gallery.some(shot => shot.image.includes('configurator'))).toBe(true);
 });
