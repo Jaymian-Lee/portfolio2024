@@ -361,7 +361,7 @@ Projects and links:
   - Role: Developer at MartijnKozijn. No separate start date, ownership claim or performance metrics established.
 - Corthex: https://corthex.app
   - Business-aware AI chatbots that can look up customer and order details, show products and add items to a basket through connected tools.
-  - Role: Co-Founder.
+  - Role: Founder.
   - Timeline: 2026 to present.
 - Botforger: https://botforger.com
   - Positioning: early chatbot and automation foundation.
