@@ -98,7 +98,7 @@ const projectData = [
     timeline: { start: '2026', end: 'ongoing' },
     type: 'AI knowledge platform',
     summary: 'AI workspaces and capable assistants, grounded in a team’s own knowledge.',
-    tags: ['Product', 'AI systems', 'Co-founder'],
+    tags: ['Product', 'AI systems', 'Founder'],
     tone: 'blue',
     note: 'Currently shaping the next release'
   },
