@@ -6,12 +6,12 @@ export const projectCases = [
     "image": "/projects/corthex-app.png",
     "logo": "https://www.google.com/s2/favicons?domain=corthex.app&sz=256",
     "period": "2026 - ongoing",
-    "role": "Co-founder",
+    "role": "Founder",
     "status": "Building",
     "en": {
       "label": "AI chatbot platform",
       "intro": "An assistant that knows your business and website, and can actually do something with that knowledge.",
-      "story": "Corthex grew out of Botforger, my earlier chatbot builder. As co-founder, I work on the step from a standalone chat widget to a workspace for business knowledge, customer conversations and useful actions. The central question is practical: how does an assistant help someone finish a task using the information a business already has? That brings source material, commerce integrations and human support into the same product.",
+      "story": "Corthex grew out of Botforger, my earlier chatbot builder. As founder, I work on the step from a standalone chat widget to a workspace for business knowledge, customer conversations and useful actions. The central question is practical: how does an assistant help someone finish a task using the information a business already has? That brings source material, commerce integrations and human support into the same product.",
       "features": [
         {
           "title": "Knowledge from files and websites",
@@ -68,7 +68,7 @@ export const projectCases = [
     "nl": {
       "label": "AI-chatbotplatform",
       "intro": "Een assistent die je bedrijf en website kent. En niet alleen praat, maar ook dingen kan doen!",
-      "story": "Corthex komt voort uit Botforger, mijn eerdere chatbotbouwer. Als co-founder werk ik aan de stap van een losse chatwidget naar een werkplek voor bedrijfskennis, klantgesprekken en bruikbare acties. De centrale vraag is praktisch: hoe helpt een assistent iemand een taak af te ronden met de informatie die een bedrijf al heeft? Daarvoor komen bronmateriaal, webshopkoppelingen en menselijke ondersteuning samen in één product.",
+      "story": "Corthex komt voort uit Botforger, mijn eerdere chatbotbouwer. Als founder werk ik aan de stap van een losse chatwidget naar een werkplek voor bedrijfskennis, klantgesprekken en bruikbare acties. De centrale vraag is praktisch: hoe helpt een assistent iemand een taak af te ronden met de informatie die een bedrijf al heeft? Daarvoor komen bronmateriaal, webshopkoppelingen en menselijke ondersteuning samen in één product.",
       "features": [
         {
           "title": "Kennis uit bestanden en websites",
